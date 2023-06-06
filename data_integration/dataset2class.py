@@ -1,9 +1,9 @@
 dataset2class = {
-    'MovieLens100k': {
+    'ml-100k': {
         'submodule': 'movielens',
         'class': 'MovieLens100k'
     },
-    'MovieLens1M': {
+    'ml-1m': {
         'submodule': 'movielens',
         'class': 'MovieLens1M'
     }
