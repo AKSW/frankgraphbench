@@ -19,7 +19,7 @@ def main():
     parser.add_argument('-ci', '--convert_item', action='store_true', help='Use this flag if you want to convert item data.')
     parser.add_argument('-cu', '--convert_user', action='store_true', help='Use this flag if you want to convert user data.')
     parser.add_argument('-cr', '--convert_rating', action='store_true', help='Use this flag if you want to convert rating data.')
-    parser.add_argument('-map', '--map_URIs', action='store_true', help='USe this flag if you want to map dataset items with DBpedia.')
+    parser.add_argument('-map', '--map_URIs', action='store_true', help='Use this flag if you want to map dataset items with DBpedia.')
 
 
     args = parser.parse_args()
