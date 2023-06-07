@@ -10,7 +10,13 @@ source venv_data_integration/bin/activate
 pip3 install -r requirements_data_integration.txt 
 ```
 
-Install the full dataset using bash scripts located at `datasets/`.
+Install the full dataset using bash scripts located at `datasets/`:
+
+```shell
+cd datasets
+bash ml-100k.sh # Downloaded at `datasets/ml-100k` folder
+bash ml-1m.sh   # Downloaded at `datasets/ml-1m` folder
+```
 
 ## Usage
 ```shell
@@ -34,3 +40,12 @@ python3 data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-1
 ```
 
 Check [Makefile](Makefile) for more examples.
+
+## Supported datasets
+
+| Dataset | #items matched | #items |
+|---------|---------------|---|
+|[MovieLens-100k](https://grouplens.org/datasets/movielens/100k/)|1462|1681|
+|[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3356|3883| 
+
+
