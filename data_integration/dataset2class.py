@@ -6,5 +6,9 @@ dataset2class = {
     'ml-1m': {
         'submodule': 'movielens',
         'class': 'MovieLens1M'
+    },
+    'lastfm': {
+        'submodule': 'lastfm',
+        'class': 'LastFM'
     }
 }
