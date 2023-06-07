@@ -1,0 +1,15 @@
+isodate==0.6.1
+Levenshtein==0.21.0
+numpy==1.24.3
+pandas==2.0.2
+pyparsing==3.0.9
+python-dateutil==2.8.2
+python-Levenshtein==0.21.0
+pytz==2023.3
+rapidfuzz==3.0.0
+rdflib==6.3.2
+six==1.16.0
+SPARQLWrapper==2.0.0
+thefuzz==0.19.0
+tqdm==4.65.0
+tzdata==2023.3

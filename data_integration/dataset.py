@@ -27,12 +27,10 @@ class Dataset():
         self.item_separator = '' 
         self.user_separator = ''
         self.rating_separator = ''
-
         # Chosen features to be extracted from dataset
         self.item_features = []
         self.user_features = []
         self.rating_features = []
-
         self.query_template = Template(None)
 
 
@@ -64,7 +62,7 @@ class Dataset():
     def entity_linking(self, df_item) -> pd.DataFrame():
         """
         Entity link each item to their corresponding DBpedia's URI
-        :return: returns pd.Dataframe() containing each movie id and their mapped URI 
+        :return: returns pd.Dataframe() containing each item_id and their mapped URI 
         """
         raise NotImplementedError
     
