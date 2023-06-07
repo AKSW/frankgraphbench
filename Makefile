@@ -5,3 +5,7 @@ ml-100k:
 ml-1m:
 	python3 data_integration.py -d 'ml-1m' -i 'datasets/ml-1m' -o 'datasets/ml-1m/processed' \
 		-ci -cu -cr -map
+
+lastfm:
+	python3 data_integration.py -d 'lastfm' -i 'datasets/lastfm' -o 'datasets/lastfm/processed' \
+		-ci -map
