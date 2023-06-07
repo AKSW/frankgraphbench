@@ -1,4 +1,5 @@
 #!/bin/sh
+# install MovieLens-1M
 wget https://files.grouplens.org/datasets/movielens/ml-1m.zip
 if md5sum --status -c ml-1m.zip.md5; then
     echo "Checksum matched correctly!"
