@@ -78,6 +78,12 @@ class Dataset():
         raise NotImplementedError
 
     def parallel_queries(self, queue):
+        """
+        Parallel query SPARQL endpoint using Threads
+        :arguments: 
+            queue: queue of tuples indicating the item_id and SPARQL query string
+        :returns: list containing tuples with item_id and response result in JSON
+        """
         n_iters = queue.qsize()
         pbar = tqdm(total=n_iters)
         pbar.set_description('Requesting SPARQL endpoint for each item')

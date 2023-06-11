@@ -32,6 +32,7 @@ Arguments:
 - **-cu:** Use this flag if you want to convert user data.
 - **-cr:** Use this flag if you want to convert rating data.
 - **-map:** Use this flag if you want to map dataset items with DBpedia. At least the item data should be already converted.
+- **-w:** Choose the number of workers(threads) to be used for parallel queries.
 
 Usage Example:
 
@@ -46,6 +47,7 @@ Check [Makefile](Makefile) for more examples.
 | Dataset | #items matched | #items |
 |---------|---------------|---|
 |[MovieLens-100k](https://grouplens.org/datasets/movielens/100k/)|1462|1681|
-|[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3356|3883| 
+|[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3356|3883|
+|[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/) 
 
 

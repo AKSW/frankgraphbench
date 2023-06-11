@@ -89,7 +89,6 @@ class LastFM(Dataset):
         return df
 
     def entity_linking(self, df_item) -> pd.DataFrame():
-        n_iters = df_item.shape[0]
         q = queue.Queue()
         for idx, row in df_item[['name']].iterrows():
             params = self.get_query_params(row['name'])
