@@ -13,19 +13,19 @@ def main():
         description="Script for Data Integration between DBpedia and some standard Recommender System datasets."
     )
 
-    parser.add_argument('-d', '--dataset',  type=str, required=True, help='Choose a supported RS dataset.')
-    parser.add_argument('-i', '--input_path', type=str, required=True, help='Path where the dataset is located.')
-    parser.add_argument('-o', '--output_path', type=str, required=True, help='Path where the processed dataset will be placed.')
-    parser.add_argument('-ci', '--convert_item', action='store_true', help='Use this flag if you want to convert item data.')
-    parser.add_argument('-cu', '--convert_user', action='store_true', help='Use this flag if you want to convert user data.')
-    parser.add_argument('-cr', '--convert_rating', action='store_true', help='Use this flag if you want to convert rating data.')
+    parser.add_argument('-d',   '--dataset',  type=str, required=True, help='Choose a supported RS dataset.')
+    parser.add_argument('-i',   '--input_path', type=str, required=True, help='Path where the dataset is located.')
+    parser.add_argument('-o',   '--output_path', type=str, required=True, help='Path where the processed dataset will be placed.')
+    parser.add_argument('-ci',  '--convert_item', action='store_true', help='Use this flag if you want to convert item data.')
+    parser.add_argument('-cu',  '--convert_user', action='store_true', help='Use this flag if you want to convert user data.')
+    parser.add_argument('-cr',  '--convert_rating', action='store_true', help='Use this flag if you want to convert rating data.')
     parser.add_argument('-map', '--map_URIs', action='store_true', help='Use this flag if you want to map dataset items with DBpedia.')
-
+    parser.add_argument('-w',   '--n_workers', type=int, default=1, help='Choose the number of workers(threads) to be used for parallel queries.')
 
     args = parser.parse_args()
     module_name, class_name = get_dataset_class(args.dataset)
     dataset = getattr(importlib.import_module(module_name), class_name)
-    dataset = dataset(args.input_path, args.output_path)
+    dataset = dataset(args.input_path, args.output_path, n_workers=args.n_workers)
     
     if args.convert_item:
         dataset.convert_item_data()
