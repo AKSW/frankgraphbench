@@ -1,15 +1,19 @@
 import os
 import pandas as pd
 from string import Template
+from .worker import Worker
+
 from SPARQLWrapper import SPARQLWrapper, JSON
+from tqdm import tqdm
 
 class Dataset():
-    def __init__(self, input_path, output_path):
+    def __init__(self, input_path, output_path, n_workers=8):
         r"""
         Base class for Recommender System's datasets
         """
         self.input_path = input_path
         self.output_path = output_path
+        self.n_workers = n_workers
 
         self.sparql_endpoint = "http://dbpedia.org/sparql"
 
@@ -73,7 +77,29 @@ class Dataset():
         """
         raise NotImplementedError
 
-    def query(self, params) -> dict():
+    def parallel_queries(self, queue):
+        n_iters = queue.qsize()
+        pbar = tqdm(total=n_iters)
+        pbar.set_description('Requesting SPARQL endpoint for each item')
+        workers = []
+        for _ in range(self.n_workers):
+            worker = Worker(queue, self._query, pbar)
+            worker.start()
+            workers.append(worker)
+            # queue.put(('', ''))
+
+        for worker in workers:
+            worker.join()
+        pbar.close()
+
+        responses = []
+        for worker in workers:
+            responses.extend(worker.local_results)
+        
+        return responses
+
+
+    def _query(self, params) -> dict():
         sparql_query = self.query_template.substitute(**params)
         sparql = SPARQLWrapper(self.sparql_endpoint)
         sparql.setQuery(sparql_query)

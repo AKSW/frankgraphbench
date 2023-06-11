@@ -1,15 +1,17 @@
 import os
 import re
+import queue
 from string import Template
 from .dataset import Dataset
+from .worker import Worker
 
 import pandas as pd
 from tqdm import tqdm
 from thefuzz import process
 
 class LastFM(Dataset):
-    def __init__(self, input_path, output_path):
-        super().__init__(input_path, output_path)
+    def __init__(self, input_path, output_path, n_workers=1):
+        super().__init__(input_path, output_path, n_workers)
         self.dataset_name = 'LastFM'
 
         self.item_separator = '\t'
@@ -87,30 +89,29 @@ class LastFM(Dataset):
         return df
 
     def entity_linking(self, df_item) -> pd.DataFrame():
-        URI_mapping = {}
         n_iters = df_item.shape[0]
-        for idx, row in tqdm(df_item[['name']].iterrows(), total=n_iters):
-            try:
-                params = self.get_query_params(row['name'])
-                result = self.query(params)
-                candidate_URIs = []
-                for binding in result['results']['bindings']:
-                    URI = binding['artist']['value']
-                    candidate_URIs.append(URI)
-                
-                print(candidate_URIs)
-                expected_URI = f'http://dbpedia.org/resource/{row["name"]}'
-                str_matching_result = process.extractOne(expected_URI, candidate_URIs)
-
-                if str_matching_result is not None:
-                    URI, _ = str_matching_result
-                    URI_mapping[idx] = URI
-                    print(URI)
-
-            except Exception as e:
-                print(f'Error while matching {row["name"]}:')
-                print(e)
+        q = queue.Queue()
+        for idx, row in df_item[['name']].iterrows():
+            params = self.get_query_params(row['name'])
+            q.put((idx, params))
         
+        responses = self.parallel_queries(q)
+        
+        URI_mapping = {}
+        for response in tqdm(responses, desc='Disambiguating query return'):
+            candidate_URIs = []
+            idx, result = response
+            for binding in result['results']['bindings']:
+                URI = binding['artist']['value']
+                candidate_URIs.append(URI)
+            
+            expected_URI = f'http://dbpedia.org/resource/{row["name"]}'
+            str_matching_result = process.extractOne(expected_URI, candidate_URIs)
+
+            if str_matching_result is not None:
+                URI, _ = str_matching_result
+                URI_mapping[idx] = URI
+
         df_map = pd.DataFrame({'item_id': df_item['item_id']})
         df_map.set_index('item_id')
         df_map['URI'] = pd.Series(URI_mapping)
@@ -118,6 +119,8 @@ class LastFM(Dataset):
         return df_map
     
     def get_query_params(self, name) -> dict():
+        # name = '.*'.join([re.escape(x) for x in name.split(' ')])
         name = name.replace(' ', '.*')
+        name = '^' + name
         return {'name_regex': name}
     

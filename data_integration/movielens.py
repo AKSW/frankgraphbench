@@ -1,5 +1,6 @@
 import os
 import re
+import queue
 from string import Template
 from .dataset import Dataset
 
@@ -12,8 +13,8 @@ class MovieLens(Dataset):
     """
     General MovieLens(Dataset) class for data integration between DBpedia and MovieLens
     """
-    def __init__(self, input_path, output_path):
-        super().__init__(input_path, output_path)
+    def __init__(self, input_path, output_path, n_workers=1):
+        super().__init__(input_path, output_path, n_workers)
         self.query_template = Template('''
             PREFIX dct:  <http://purl.org/dc/terms/>
             PREFIX dbo:  <http://dbpedia.org/ontology/>
@@ -63,27 +64,27 @@ class MovieLens(Dataset):
         return movie_year
 
     def entity_linking(self, df_item) -> pd.DataFrame():
+        q = queue.Queue()
+        for idx, row in df_item[['movie_title', 'movie_year']].iterrows():
+            params = self.get_query_params(row['movie_title'], row['movie_year'])
+            q.put((idx, params))
+
+        responses = self.parallel_queries(q)
+        
         URI_mapping = {}
-        n_iters = df_item.shape[0]
-        for idx, row in tqdm(df_item[['movie_title', 'movie_year']].iterrows(), total=n_iters):
-            try:
-                params = self.get_query_params(row['movie_title'], row['movie_year'])
-                result = self.query(params)
-                candidate_URIs = []
-                for binding in result['results']['bindings']:
-                    URI = binding['film']['value']
-                    candidate_URIs.append(URI)
-                
-                expected_URI = f'http://dbpedia.org/resource/{row["movie_title"]}'
-                str_matching_result = process.extractOne(expected_URI, candidate_URIs)
+        for response in tqdm(responses, desc='Disambiguating query return'):
+            candidate_URIs = []
+            idx, result = response
+            for binding in result['results']['bindings']:
+                URI = binding['film']['value']
+                candidate_URIs.append(URI)
+            
+            expected_URI = f'http://dbpedia.org/resource/{row["movie_title"]}'
+            str_matching_result = process.extractOne(expected_URI, candidate_URIs)
 
-                if str_matching_result is not None:
-                    URI, _ = str_matching_result
-                    URI_mapping[idx] = URI
-
-            except Exception as e:
-                print(f'Error while matching {row["movie_title"]}:')
-                print(e)
+            if str_matching_result is not None:
+                URI, _ = str_matching_result
+                URI_mapping[idx] = URI
         
         df_map = pd.DataFrame({'item_id': df_item['item_id']})
         df_map.set_index('item_id')
@@ -92,7 +93,9 @@ class MovieLens(Dataset):
         return df_map
 
     def get_query_params(self, title, year) -> dict():
+        # title = '.*'.join([re.escape(x) for x in title.split(' ')])
         title = title.replace(' ', '.*')
+        title = '^' + title
         return {'name_regex': title, 'year_category': f'dbr:Category:{str(year)}_films'}
     
 
@@ -101,8 +104,8 @@ class MovieLens100k(MovieLens):
     """
     Dataset class for data integration between DBpedia and MovieLens-100k
     """
-    def __init__(self, input_path, output_path):
-        super().__init__(input_path, output_path)
+    def __init__(self, input_path, output_path, n_workers=1):
+        super().__init__(input_path, output_path, n_workers)
         self.dataset_name = 'MovieLens100k'
 
         self.item_separator = '|'
@@ -179,8 +182,8 @@ class MovieLens1M(MovieLens):
     """
     Dataset class for data integration between DBpedia and MovieLens 1M
     """
-    def __init__(self, input_path, output_path):
-        super().__init__(input_path, output_path)
+    def __init__(self, input_path, output_path, n_workers=1):
+        super().__init__(input_path, output_path, n_workers)
         self.dataset_name = 'MovieLens1M'
 
         self.item_separator = '::'
