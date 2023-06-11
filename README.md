@@ -48,6 +48,6 @@ Check [Makefile](Makefile) for more examples.
 |---------|---------------|---|
 |[MovieLens-100k](https://grouplens.org/datasets/movielens/100k/)|1462|1681|
 |[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3356|3883|
-|[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/) 
+|[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/)|11815|17632| 
 
 
