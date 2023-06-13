@@ -87,17 +87,19 @@ class Dataset():
         n_iters = queue.qsize()
         pbar = tqdm(total=n_iters)
         pbar.set_description('Requesting SPARQL endpoint for each item')
+        
+        # instantiating each Worker
         workers = []
         for _ in range(self.n_workers):
             worker = Worker(queue, self._query, pbar)
             worker.start()
             workers.append(worker)
-            # queue.put(('', ''))
 
         for worker in workers:
             worker.join()
         pbar.close()
 
+        # combining results
         responses = []
         for worker in workers:
             responses.extend(worker.local_results)
