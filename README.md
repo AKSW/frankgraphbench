@@ -37,7 +37,8 @@ Arguments:
 Usage Example:
 
 ```shell
-python3 data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/processed' -ci -cu -cr -map
+python3 data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/processed' \
+    -ci -cu -cr -map -w 8
 ```
 
 Check [Makefile](Makefile) for more examples.
