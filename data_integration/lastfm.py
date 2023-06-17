@@ -104,7 +104,7 @@ class LastFM(Dataset):
                 URI = binding['artist']['value']
                 candidate_URIs.append(URI)
             
-            expected_URI = f'http://dbpedia.org/resource/{row["name"]}'
+            expected_URI = f'http://dbpedia.org/resource/{df_item.iloc[idx]["name"]}'
             str_matching_result = process.extractOne(expected_URI, candidate_URIs)
 
             if str_matching_result is not None:
@@ -118,7 +118,7 @@ class LastFM(Dataset):
         return df_map
     
     def get_query_params(self, name) -> dict():
-        # name = '.*'.join([re.escape(x) for x in name.split(' ')])
+        name = name.translate(self._special_chars_map)
         name = name.replace(' ', '.*')
         name = '^' + name
         return {'name_regex': name}

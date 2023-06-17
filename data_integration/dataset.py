@@ -25,6 +25,10 @@ class Dataset():
 
         # create output path if doesn't exist
         self.has_output_path()
+        # Mapping regex special chars
+        self._special_chars_map = {"-":  r"\-", "]":  r"\]", "\\": r"\\",
+                       "^":  r"\^", "$":  r"\$", "*":  r"\*", ".":  r"\."}
+
 
         # The following variables need to be overwritten by the subclasses of Dataset()
         self.dataset_name = ''

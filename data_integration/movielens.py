@@ -78,10 +78,10 @@ class MovieLens(Dataset):
             for binding in result['results']['bindings']:
                 URI = binding['film']['value']
                 candidate_URIs.append(URI)
-            
-            expected_URI = f'http://dbpedia.org/resource/{row["movie_title"]}'
+                
+            expected_URI = f"http://dbpedia.org/resource/{df_item.iloc[idx]['movie_title']}"
             str_matching_result = process.extractOne(expected_URI, candidate_URIs)
-
+            
             if str_matching_result is not None:
                 URI, _ = str_matching_result
                 URI_mapping[idx] = URI
@@ -93,7 +93,7 @@ class MovieLens(Dataset):
         return df_map
 
     def get_query_params(self, title, year) -> dict():
-        # title = '.*'.join([re.escape(x) for x in title.split(' ')])
+        title = title.translate(self._special_chars_map)
         title = title.replace(' ', '.*')
         title = '^' + title
         return {'name_regex': title, 'year_category': f'dbr:Category:{str(year)}_films'}
