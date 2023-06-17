@@ -1,5 +1,5 @@
 datasets/**/
-out 
+*.out 
 notes.txt
 
 # Byte-compiled / optimized / DLL files
