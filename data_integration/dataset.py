@@ -1,4 +1,5 @@
 import os
+import string
 import pandas as pd
 from string import Template
 from .worker import Worker
@@ -16,6 +17,7 @@ class Dataset():
         self.n_workers = n_workers
 
         self.sparql_endpoint = "http://dbpedia.org/sparql"
+        self.timeout = 180
 
         # Output files
         self.item_filename = os.path.join(self.output_path, 'item.csv')
@@ -26,8 +28,7 @@ class Dataset():
         # create output path if doesn't exist
         self.has_output_path()
         # Mapping regex special chars
-        self._special_chars_map = {"-":  r"\-", "]":  r"\]", "\\": r"\\",
-                       "^":  r"\^", "$":  r"\$", "*":  r"\*", ".":  r"\."}
+        self._special_chars_map = str.maketrans({x:'' for x in string.punctuation})
 
 
         # The following variables need to be overwritten by the subclasses of Dataset()
@@ -114,6 +115,7 @@ class Dataset():
     def _query(self, params) -> dict():
         sparql_query = self.query_template.substitute(**params)
         sparql = SPARQLWrapper(self.sparql_endpoint)
+        sparql.setTimeout(self.timeout)
         sparql.setQuery(sparql_query)
         sparql.setReturnFormat(JSON)
 
