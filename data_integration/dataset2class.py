@@ -10,5 +10,9 @@ dataset2class = {
     'lastfm': {
         'submodule': 'lastfm',
         'class': 'LastFM'
+    },
+    'book-crossing': {
+        'submodule': 'book-crossing',
+        'class': 'BookCrossing'
     }
 }
