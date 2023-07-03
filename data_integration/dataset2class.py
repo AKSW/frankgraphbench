@@ -14,5 +14,9 @@ dataset2class = {
     'book-crossing': {
         'submodule': 'book-crossing',
         'class': 'BookCrossing'
+    },
+    'steam': {
+        'submodule': 'steam',
+        'class': 'Steam'
     }
 }

@@ -8,4 +8,12 @@ ml-1m:
 
 lastfm:
 	python3 data_integration.py -d 'lastfm' -i 'datasets/lastfm' -o 'datasets/lastfm/processed' \
-		-w 16 -ci -map
+		-w 32 -ci -cr -map
+
+book-crossing:
+	python3 data_integration.py -d 'book-crossing' -i 'datasets/book-crossing' -o 'datasets/book-crossing/processed' \
+		-ci -map -w 16
+
+steam:
+	python3 data_integration.py -d 'steam' -i 'datasets/steam' -o 'datasets/steam/processed' \
+		-ci -map -w 8
