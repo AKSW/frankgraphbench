@@ -3,7 +3,6 @@ import re
 import queue
 from string import Template
 from .dataset import Dataset
-from .worker import Worker
 
 import pandas as pd
 from tqdm import tqdm
