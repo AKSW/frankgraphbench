@@ -93,7 +93,10 @@ class LastFM(Dataset):
             params = self.get_query_params(row['name'])
             q.put((idx, params))
         
-        responses = self.parallel_queries(q)
+        if self.n_workers > 1:
+            responses = self.parallel_queries(q)
+        else:
+            responses = self.sequential_queries(q)
         
         URI_mapping = {}
         for response in tqdm(responses, desc='Disambiguating query return'):

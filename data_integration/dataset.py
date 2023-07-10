@@ -1,4 +1,5 @@
 import os
+import queue
 import string
 import pandas as pd
 from string import Template
@@ -8,7 +9,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from tqdm import tqdm
 
 class Dataset():
-    def __init__(self, input_path, output_path, n_workers=8):
+    def __init__(self, input_path, output_path, n_workers=1):
         r"""
         Base class for Recommender System's datasets
         """
@@ -110,7 +111,31 @@ class Dataset():
             responses.extend(worker.local_results)
         
         return responses
+    
+    def sequential_queries(self, q):
+        """
+        Sequential query SPARQL endpoint
+        :arguments: 
+            queue: queue of tuples indicating the item_id and SPARQL query string
+        :returns: list containing tuples with item_id and response result in JSON
+        """
+        pbar = tqdm(total=q.qsize())
+        pbar.set_description('Requesting SPARQL endpoint for each item')
+        responses = []
 
+        while True:
+            try:
+                idx, params = q.get(block=False)
+                response = self._query(params)
+                responses.append((idx, response))
+                pbar.update(n=1)
+            except queue.Empty:
+                break
+            except Exception as e:
+                print(f'Exception:')
+                print(e)
+
+        return responses
 
     def _query(self, params) -> dict():
         sparql_query = self.query_template.substitute(**params)

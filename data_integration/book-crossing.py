@@ -3,7 +3,6 @@ import re
 import queue
 from string import Template
 from .dataset import Dataset
-from .worker import Worker
 
 import pandas as pd
 from tqdm import tqdm
@@ -23,6 +22,28 @@ class BookCrossing(Dataset):
         self.rating_fields = ['user_id', 'item_id', 'rating']
         # self.map_fields = ['item_id', 'URI']
 
+        self.query_template = Template('''
+            PREFIX dct:  <http://purl.org/dc/terms/>
+            PREFIX dbo:  <http://dbpedia.org/ontology/>
+            PREFIX dbr:  <http://dbpedia.org/resource/>
+            PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT DISTINCT ?book WHERE {
+                {
+                    ?book rdf:type dbo:WrittenWork .
+                    ?book rdfs:label ?label .
+                    FILTER regex(?label, "$name_regex", "i")
+                }
+                UNION
+                {
+                    ?book rdf:type dbo:WrittenWork .
+                    ?tmp dbo:wikiPageRedirects ?book .
+                    ?tmp rdfs:label ?label .
+                    FILTER regex(?label, "$name_regex", "i") .
+                }
+            }
+        ''')
+
 
     def load_item_data(self) -> pd.DataFrame():
         filename = os.path.join(self.input_path, 'BX-Books.csv')
@@ -31,5 +52,43 @@ class BookCrossing(Dataset):
         df = df.drop(df.columns[-3:], axis=1) # Will not use picture URL related fields
         df.columns = self.item_fields
         return df
+    
+    def entity_linking(self, df_item) -> pd.DataFrame():
+        q = queue.Queue()
+        for idx, row in df_item[['title']].iterrows():
+            params = self.get_query_params(row['title'])
+            q.put((idx, params))
+        
+        if self.n_workers > 1:
+            responses = self.parallel_queries(q)
+        else:
+            responses = self.sequential_queries(q)
+        
+        URI_mapping = {}
+        for response in tqdm(responses, desc='Disambiguating query return'):
+            candidate_URIs = []
+            idx, result = response
+            for binding in result['results']['bindings']:
+                URI = binding['book']['value']
+                candidate_URIs.append(URI)
+            
+            expected_URI = f'http://dbpedia.org/resource/{df_item.iloc[idx]["title"]}'
+            str_matching_result = process.extractOne(expected_URI, candidate_URIs)
+
+            if str_matching_result is not None:
+                URI, _ = str_matching_result
+                URI_mapping[idx] = URI
+
+        df_map = pd.DataFrame({'item_id': df_item['item_id']})
+        df_map.set_index('item_id')
+        df_map['URI'] = pd.Series(URI_mapping)
+
+        return df_map
+    
+    def get_query_params(self, book_title) -> dict():
+        book_title = book_title.translate(self._special_chars_map)
+        book_title = book_title.replace(' ', '.*')
+        book_title = '^' + book_title
+        return {'name_regex': book_title}
 
    

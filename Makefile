@@ -16,4 +16,4 @@ book-crossing:
 
 steam:
 	python3 data_integration.py -d 'steam' -i 'datasets/steam' -o 'datasets/steam/processed' \
-		-ci -map -w 8
+		-ci -map -w 1

@@ -60,7 +60,10 @@ class Steam(Dataset):
             params = self.get_query_params(row['title'])
             q.put((idx, params))
         
-        responses = self.parallel_queries(q)
+        if self.n_workers > 1:
+            responses = self.parallel_queries(q)
+        else:
+            responses = self.sequential_queries(q)
 
         URI_mapping = {}
         for response in tqdm(responses, desc='Disambiguating query return'):
@@ -87,7 +90,7 @@ class Steam(Dataset):
         title = title.encode('ascii', 'ignore').decode()
         title = title.translate(self._special_chars_map)
         title = title.replace(' ', '.*')
-        title = '^' + title
+        title = '^' + title + '$'
 
         return {'name_regex': title}
 
