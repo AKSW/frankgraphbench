@@ -25,6 +25,7 @@ class Dataset():
         self.user_filename = os.path.join(self.output_path, 'user.csv')
         self.rating_filename = os.path.join(self.output_path, 'rating.csv')
         self.map_filename = os.path.join(self.output_path, 'map.csv')
+        self.enriched_filename = os.path.join(self.output_path, 'enriched.csv')
 
         # create output path if doesn't exist
         self.has_output_path()
@@ -41,7 +42,8 @@ class Dataset():
         self.item_features = []
         self.user_features = []
         self.rating_features = []
-        self.query_template = Template(None)
+        self.map_query_template = Template(None)
+        self.enrich_query_template =  Template(None)
 
 
     def has_output_path(self):
@@ -75,15 +77,25 @@ class Dataset():
         :return: returns pd.Dataframe() containing each item_id and their mapped URI 
         """
         raise NotImplementedError
+
+    def enrich(self, df_map):
+        raise NotImplementedError
     
-    def get_query_params(self, *args, **kwargs) -> dict():
+    def get_map_query(self, *args, **kwargs) -> str:
         """
-        Returns query parameters to be substituted in the query template.
-        :returns: returns dictionary to substitute query_template placeholders
+        Returns query parameters to be substituted in the map query template.
+        :returns: returns string query
         """
         raise NotImplementedError
 
-    def parallel_queries(self, queue):
+    def get_enrich_query(self, *args, **kwargs) -> str:
+        """
+        Returns query parameters to be substituted in the enrich query template.
+        :returns: returns string query
+        """
+        raise NotImplementedError
+
+    def parallel_queries(self, queue, return_type=JSON):
         """
         Parallel query SPARQL endpoint using Threads
         :arguments: 
@@ -97,7 +109,7 @@ class Dataset():
         # instantiating each Worker
         workers = []
         for _ in range(self.n_workers):
-            worker = Worker(queue, self._query, pbar)
+            worker = Worker(queue, lambda q: self._query(q, return_type), pbar)
             worker.start()
             workers.append(worker)
 
@@ -112,7 +124,7 @@ class Dataset():
         
         return responses
     
-    def sequential_queries(self, q):
+    def sequential_queries(self, q, return_type=JSON):
         """
         Sequential query SPARQL endpoint
         :arguments: 
@@ -125,8 +137,8 @@ class Dataset():
 
         while True:
             try:
-                idx, params = q.get(block=False)
-                response = self._query(params)
+                idx, query = q.get(block=False)
+                response = self._query(query, return_type)
                 responses.append((idx, response))
                 pbar.update(n=1)
             except queue.Empty:
@@ -137,12 +149,11 @@ class Dataset():
 
         return responses
 
-    def _query(self, params) -> dict():
-        sparql_query = self.query_template.substitute(**params)
+    def _query(self, query, return_type=JSON) -> dict():
         sparql = SPARQLWrapper(self.sparql_endpoint)
         sparql.setTimeout(self.timeout)
-        sparql.setQuery(sparql_query)
-        sparql.setReturnFormat(JSON)
+        sparql.setQuery(query)
+        sparql.setReturnFormat(return_type)
 
         try:
             return sparql.query().convert()
@@ -206,6 +217,35 @@ class Dataset():
 
         except NotImplementedError:
             print('Override entity_linking() method of your Dataset subclass.')
+
+    def enrich_data(self):
+        """
+        Enrich each mapped item using DBpedia's resources.
+        """
+
+        try:
+            df_map = pd.read_csv(self.map_filename)
+            print(f'Enriching each item with DBpedia resources: {self.enriched_filename}')
+            df_enrich = self.enrich(df_map)
+            df_enrich.to_csv(self.enriched_filename)            
+
+        except NotImplementedError:
+            print('Override entity_linking() method of your Dataset subclass.')
+    
+    def get_enriching_query(self, URI, metadata):
+        relations, patterns = [], []
+        for r in metadata['properties']:
+            relations.append(f'?{r["relation"]}')
+            patterns.append(f'\t\t\t\tOPTIONAL {{ <{URI}> {r["property"]} ?{r["relation"]} }} .')
+        
+        params = {
+            "relations": ' '.join(relations),
+            "patterns":  '\n'.join(patterns)
+        }
+        return self.enrich_query_template.substitute(params)
+
+
+
 
     
 

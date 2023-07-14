@@ -18,8 +18,8 @@ class Worker(Thread):
     def run(self):
         while True:
             try:
-                idx, params = self.queue.get(block=False)
-                response = self.query(params)
+                idx, query = self.queue.get(block=False)
+                response = self.query(query)
                 self.local_results.append((idx, response))
                 if self.pbar is not None:
                     self.pbar.update(n=1)

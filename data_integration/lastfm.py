@@ -22,27 +22,27 @@ class LastFM(Dataset):
         self.rating_fields = ['user_id', 'item_id', 'rating']
         # self.map_fields = ['item_id', 'URI']
 
-        self.query_template = Template('''
-            PREFIX dct:  <http://purl.org/dc/terms/>
-            PREFIX dbo:  <http://dbpedia.org/ontology/>
-            PREFIX dbr:  <http://dbpedia.org/resource/>
-            PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            SELECT DISTINCT ?artist WHERE {
-                {
-                    ?artist rdf:type dbo:MusicalArtist .
-                    ?artist rdfs:label ?label .
-                    FILTER regex(?label, "$name_regex", "i")
-                }
-                UNION
-                {
-                    ?artist rdf:type dbo:Band .
-                    ?artist rdfs:label ?label .
-                    FILTER regex(?label, "$name_regex", "i")
-                }
-            }
-        ''')
-        self.query_template = Template('''
+        # self.map_query_template = Template('''
+        #     PREFIX dct:  <http://purl.org/dc/terms/>
+        #     PREFIX dbo:  <http://dbpedia.org/ontology/>
+        #     PREFIX dbr:  <http://dbpedia.org/resource/>
+        #     PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        #     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        #     SELECT DISTINCT ?artist WHERE {
+        #         {
+        #             ?artist rdf:type dbo:MusicalArtist .
+        #             ?artist rdfs:label ?label .
+        #             FILTER regex(?label, "$name_regex", "i")
+        #         }
+        #         UNION
+        #         {
+        #             ?artist rdf:type dbo:Band .
+        #             ?artist rdfs:label ?label .
+        #             FILTER regex(?label, "$name_regex", "i")
+        #         }
+        #     }
+        # ''')
+        self.map_query_template = Template('''
             PREFIX dct:  <http://purl.org/dc/terms/>
             PREFIX dbo:  <http://dbpedia.org/ontology/>
             PREFIX dbr:  <http://dbpedia.org/resource/>
@@ -89,9 +89,9 @@ class LastFM(Dataset):
 
     def entity_linking(self, df_item) -> pd.DataFrame():
         q = queue.Queue()
-        for idx, row in df_item[['name']].iterrows():
-            params = self.get_query_params(row['name'])
-            q.put((idx, params))
+        for idx, row in list(df_item[['name']].iterrows())[:100]:
+            query = self.get_map_query(row['name'])
+            q.put((idx, query))
         
         if self.n_workers > 1:
             responses = self.parallel_queries(q)
@@ -119,11 +119,14 @@ class LastFM(Dataset):
 
         return df_map
     
-    def get_query_params(self, name) -> dict():
+    def get_map_query(self, name) -> str:
         name = name.translate(self._special_chars_map)
         name = name.replace(' ', '.*')
         name = '^' + name
-        return {'name_regex': name}
+        
+        params = {'name_regex': name}
+        query = self.map_query_template.substitute(**params)
+        return query
     
     def load_rating_data(self) -> pd.DataFrame():
         filename = os.path.join(self.input_path, 'user_artists.dat')

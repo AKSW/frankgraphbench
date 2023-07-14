@@ -20,7 +20,9 @@ def main():
     parser.add_argument('-cu',  '--convert_user', action='store_true', help='Use this flag if you want to convert user data.')
     parser.add_argument('-cr',  '--convert_rating', action='store_true', help='Use this flag if you want to convert rating data.')
     parser.add_argument('-map', '--map_URIs', action='store_true', help='Use this flag if you want to map dataset items with DBpedia.')
+    parser.add_argument('-enrich',  '--enrich_data', action='store_true', help='Use this flag if you want to enrich dataset with DBpedia.')
     parser.add_argument('-w',   '--n_workers', type=int, default=1, help='Choose the number of workers(threads) to be used for parallel queries.')
+
 
     args = parser.parse_args()
     module_name, class_name = get_dataset_class(args.dataset)
@@ -35,6 +37,8 @@ def main():
         dataset.convert_rating_data()
     if args.map_URIs:
         dataset.map_URIs()
+    if args.enrich_data:
+        dataset.enrich_data()
 
 
 if __name__ == '__main__':

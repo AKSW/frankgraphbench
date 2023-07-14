@@ -1,12 +1,18 @@
 import os
 import re
+import json
 import queue
+from io import BytesIO
+from collections import defaultdict
+
+
 from string import Template
 from .dataset import Dataset
 
 import pandas as pd
 from tqdm import tqdm
 from thefuzz import process
+from SPARQLWrapper import CSV 
 
 
 class MovieLens(Dataset):
@@ -15,7 +21,7 @@ class MovieLens(Dataset):
     """
     def __init__(self, input_path, output_path, n_workers=1):
         super().__init__(input_path, output_path, n_workers)
-        self.query_template = Template('''
+        self.map_query_template = Template('''
             PREFIX dct:  <http://purl.org/dc/terms/>
             PREFIX dbo:  <http://dbpedia.org/ontology/>
             PREFIX dbr:  <http://dbpedia.org/resource/>
@@ -36,6 +42,26 @@ class MovieLens(Dataset):
                     ?tmp rdfs:label ?label .
                     FILTER regex(?label, "$name_regex", "i") .
                 }
+            }
+        ''')
+        self.enrich_query_template = Template('''
+            PREFIX dct:  <http://purl.org/dc/terms/>
+            PREFIX dbo:  <http://dbpedia.org/ontology/>
+            PREFIX dbr:  <http://dbpedia.org/resource/>
+            PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT DISTINCT
+                (GROUP_CONCAT(DISTINCT ?subject; SEPARATOR="::") AS ?subject)
+                (GROUP_CONCAT(DISTINCT ?starring; SEPARATOR="::") AS ?starring)
+                (GROUP_CONCAT(DISTINCT ?director; SEPARATOR="::") AS ?director)
+                ?basedOn ?previousWork ?subsequentWork
+            WHERE {
+				OPTIONAL { <$URI> dct:subject ?subject } .
+				OPTIONAL { <$URI> dbo:starring ?starring } .
+				OPTIONAL { <$URI> dbo:director ?director } .
+				OPTIONAL { <$URI> dbo:basedOn ?basedOn } .
+				OPTIONAL { <$URI> dbo:previousWork ?previousWork } .
+				OPTIONAL { <$URI> dbo:subsequentWork ?subsequentWork } .
             }
         ''')
     
@@ -66,15 +92,15 @@ class MovieLens(Dataset):
     def entity_linking(self, df_item) -> pd.DataFrame():
         q = queue.Queue()
         for idx, row in df_item[['movie_title', 'movie_year']].iterrows():
-            params = self.get_query_params(row['movie_title'], row['movie_year'])
-            q.put((idx, params))
+            query = self.get_map_query(row['movie_title'], row['movie_year'])
+            q.put((idx, query))
 
         if self.n_workers > 1:
             responses = self.parallel_queries(q)
         else:
             responses = self.sequential_queries(q)
         
-        URI_mapping = {}
+        URI_mapping = collections.defaultdict(dict)
         for response in tqdm(responses, desc='Disambiguating query return'):
             candidate_URIs = []
             idx, result = response
@@ -95,13 +121,50 @@ class MovieLens(Dataset):
 
         return df_map
 
-    def get_query_params(self, title, year) -> dict():
+    def get_map_query(self, title, year) -> str:
         title = title.translate(self._special_chars_map)
         title = title.replace(' ', '.*')
         title = '^' + title
-        return {'name_regex': title, 'year_category': f'dbr:Category:{str(year)}_films'}
+        
+        params = {
+            'name_regex': title,
+            'year_category': f'dbr:Category:{str(year)}_films'
+        }
+        query = self.map_query_template.substitute(**params)
+        return query
     
+    def enrich(self, df_map) -> pd.DataFrame():
+        df_map = df_map[df_map['URI'].notna()]
 
+        q = queue.Queue()
+        for _, row in df_map[['URI', 'item_id']].iterrows():
+            query = self.get_enrich_query(row['URI'])
+            q.put((row['item_id'], query))
+
+        if self.n_workers > 1:
+            responses = self.parallel_queries(q, CSV)
+        else:
+            responses = self.sequential_queries(q, CSV)
+        
+        item_enriching = defaultdict(dict)
+        for response in responses:
+            idx, result = response
+            df = pd.read_csv(BytesIO(result))
+
+            if df.shape[0] > 1:
+                print('At least one property has more than one value!')
+
+            item_enriching[idx] = df.iloc[0] # getting pd.Series
+
+        df_enrich = pd.DataFrame.from_dict(item_enriching, orient='index')
+        df_enrich.index.name = 'item_id'
+
+        return df_enrich
+    
+    def get_enrich_query(self, URI) -> str:
+        params = {'URI': URI}
+        query = self.enrich_query_template.substitute(**params)
+        return query
 
 class MovieLens100k(MovieLens):
     """

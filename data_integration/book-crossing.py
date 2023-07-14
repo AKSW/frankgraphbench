@@ -22,7 +22,7 @@ class BookCrossing(Dataset):
         self.rating_fields = ['user_id', 'item_id', 'rating']
         # self.map_fields = ['item_id', 'URI']
 
-        self.query_template = Template('''
+        self.map_query_template = Template('''
             PREFIX dct:  <http://purl.org/dc/terms/>
             PREFIX dbo:  <http://dbpedia.org/ontology/>
             PREFIX dbr:  <http://dbpedia.org/resource/>
@@ -56,8 +56,8 @@ class BookCrossing(Dataset):
     def entity_linking(self, df_item) -> pd.DataFrame():
         q = queue.Queue()
         for idx, row in df_item[['title']].iterrows():
-            params = self.get_query_params(row['title'])
-            q.put((idx, params))
+            query = self.get_map_query(row['title'])
+            q.put((idx, query))
         
         if self.n_workers > 1:
             responses = self.parallel_queries(q)
@@ -85,10 +85,14 @@ class BookCrossing(Dataset):
 
         return df_map
     
-    def get_query_params(self, book_title) -> dict():
+    def get_map_query(self, book_title) -> str:
         book_title = book_title.translate(self._special_chars_map)
         book_title = book_title.replace(' ', '.*')
         book_title = '^' + book_title
-        return {'name_regex': book_title}
+   
+        params = {'name_regex': book_title}
+        query = self.map_query_template.substitute(**params)
+        return query
+
 
    
