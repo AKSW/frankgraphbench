@@ -227,10 +227,18 @@ class Dataset():
             df_map = pd.read_csv(self.map_filename)
             print(f'Enriching each item with DBpedia resources: {self.enriched_filename}')
             df_enrich = self.enrich(df_map)
-            df_enrich.to_csv(self.enriched_filename)            
+            df_enrich.to_csv(self.enriched_filename)
+
+            self.report_enriching(df_enrich)            
 
         except NotImplementedError:
             print('Override entity_linking() method of your Dataset subclass.')
+    
+    def report_enriching(self, df):
+        n_rows = df.shape[0]
+        for col in df.columns:
+            n_rows_with = df[col].notna().sum()
+            print(f'# of entities with the property {col}: {n_rows_with} ({n_rows_with/n_rows*100:.2f}%)')
     
     def get_enriching_query(self, URI, metadata):
         relations, patterns = [], []

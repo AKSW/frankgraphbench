@@ -44,26 +44,35 @@ class MovieLens(Dataset):
                 }
             }
         ''')
+        
         self.enrich_query_template = Template('''
-            PREFIX dct:  <http://purl.org/dc/terms/>
-            PREFIX dbo:  <http://dbpedia.org/ontology/>
-            PREFIX dbr:  <http://dbpedia.org/resource/>
-            PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            SELECT DISTINCT
-                (GROUP_CONCAT(DISTINCT ?subject; SEPARATOR="::") AS ?subject)
-                (GROUP_CONCAT(DISTINCT ?starring; SEPARATOR="::") AS ?starring)
-                (GROUP_CONCAT(DISTINCT ?director; SEPARATOR="::") AS ?director)
-                ?basedOn ?previousWork ?subsequentWork
-            WHERE {
-				OPTIONAL { <$URI> dct:subject ?subject } .
-				OPTIONAL { <$URI> dbo:starring ?starring } .
-				OPTIONAL { <$URI> dbo:director ?director } .
-				OPTIONAL { <$URI> dbo:basedOn ?basedOn } .
-				OPTIONAL { <$URI> dbo:previousWork ?previousWork } .
-				OPTIONAL { <$URI> dbo:subsequentWork ?subsequentWork } .
-            }
-        ''')
+        PREFIX dct:  <http://purl.org/dc/terms/>
+        PREFIX dbo:  <http://dbpedia.org/ontology/>
+        PREFIX dbr:  <http://dbpedia.org/resource/>
+        PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        SELECT DISTINCT
+            ?abstract 
+            (GROUP_CONCAT(DISTINCT ?producer; SEPARATOR="::") AS ?producer)
+            (GROUP_CONCAT(DISTINCT ?distributor; SEPARATOR="::") AS ?distributor)
+            (GROUP_CONCAT(DISTINCT ?writer; SEPARATOR="::") AS ?writer)
+            (GROUP_CONCAT(DISTINCT ?cinematography; SEPARATOR="::") AS ?cinematography)
+            (GROUP_CONCAT(DISTINCT ?subject; SEPARATOR="::") AS ?subject)
+            (GROUP_CONCAT(DISTINCT ?starring; SEPARATOR="::") AS ?starring)
+            (GROUP_CONCAT(DISTINCT ?director; SEPARATOR="::") AS ?director)
+        WHERE {
+            OPTIONAL { <$URI>   dct:subject         ?subject            }   .
+            OPTIONAL { <$URI>   dbo:starring        ?starring           }   .
+            OPTIONAL { <$URI>   dbo:director        ?director           }   .
+            OPTIONAL { <$URI>   dbo:abstract        ?abstract           }   .
+            OPTIONAL { <$URI>   dbo:producer        ?producer           }   .
+            OPTIONAL { <$URI>   dbo:distributor     ?distributor        }   .
+            OPTIONAL { <$URI>   dbo:writer          ?writer             }   .
+            OPTIONAL { <$URI>   dbo:cinematography  ?cinematography     }   .
+
+            FILTER(LANG(?abstract) = 'en')
+        }
+    ''')
     
     def _extract_title(self, title):
         regex = re.compile(r'\((\d{4})\)')
@@ -153,6 +162,7 @@ class MovieLens(Dataset):
 
             if df.shape[0] > 1:
                 print('At least one property has more than one value!')
+                print(df.value_counts(dropna=False))
 
             item_enriching[idx] = df.iloc[0] # getting pd.Series
 
