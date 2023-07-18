@@ -238,7 +238,7 @@ class Dataset():
         n_rows = df.shape[0]
         for col in df.columns:
             n_rows_with = df[col].notna().sum()
-            print(f'# of entities with the property {col}: {n_rows_with} ({n_rows_with/n_rows*100:.2f}%)')
+            print(f'number of entities with the property {col}: {n_rows_with} ({n_rows_with/n_rows*100:.2f}%)')
     
     # def get_enriching_query(self, URI, metadata):
     #     relations, patterns = [], []

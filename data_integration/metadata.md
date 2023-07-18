@@ -72,3 +72,14 @@ Statistics report for MovieLens-100k:
 - number of entities with the property subject: 1457 (100.00%)
 - number of entities with the property starring: 1367 (93.82%)
 - number of entities with the property director: 1358 (93.21%)
+
+Statistics report for MovieLens-1m:
+- number of entities with the property item_id: 3347 (100.00%)
+- number of entities with the property abstract: 3342 (99.85%)
+- number of entities with the property producer: 2513 (75.08%)
+- number of entities with the property distributor: 2891 (86.38%)
+- number of entities with the property writer: 2775 (82.91%)
+- number of entities with the property cinematography: 2414 (72.12%)
+- number of entities with the property subject: 3347 (100.00%)
+- number of entities with the property starring: 3116 (93.10%)
+- number of entities with the property director: 3120 (93.22%)
