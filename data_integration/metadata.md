@@ -62,3 +62,13 @@ After removing some properties that aren't used, the final query template obtain
         FILTER(LANG(?abstract) = 'en')
     }
 ```
+
+Statistics report for MovieLens-100k:
+- number of entities with the property abstract: 1453 (99.73%)
+- number of entities with the property producer: 1120 (76.87%)
+- number of entities with the property distributor: 1277 (87.65%)
+- number of entities with the property writer: 1212 (83.18%)
+- number of entities with the property cinematography: 1060 (72.75%)
+- number of entities with the property subject: 1457 (100.00%)
+- number of entities with the property starring: 1367 (93.82%)
+- number of entities with the property director: 1358 (93.21%)
