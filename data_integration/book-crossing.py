@@ -55,9 +55,9 @@ class BookCrossing(Dataset):
     
     def entity_linking(self, df_item) -> pd.DataFrame():
         q = queue.Queue()
-        for idx, row in df_item[['title']].iterrows():
+        for idx, row in df_item[['title', 'item_id']].iterrows():
             query = self.get_map_query(row['title'])
-            q.put((idx, query))
+            q.put((row['item_id'], query))
         
         if self.n_workers > 1:
             responses = self.parallel_queries(q)
@@ -81,7 +81,7 @@ class BookCrossing(Dataset):
 
         df_map = pd.DataFrame({'item_id': df_item['item_id']})
         df_map.set_index('item_id')
-        df_map['URI'] = pd.Series(URI_mapping)
+        df_map['URI'] = df_map['item_id'].apply(lambda id: URI_mapping.get(id))
 
         return df_map
     

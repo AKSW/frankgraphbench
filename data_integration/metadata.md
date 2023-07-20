@@ -4,7 +4,7 @@ Some useful DBpedia's properties for enriching Recommender Systems datasets, con
 # Datasets
 Useful properties per dataset.
 
-## MovieLens-100k
+## MovieLens
 *dbo:Film* *maybe* useful properties/resources:
 - dct:subject*
 - dbo:genre
@@ -83,3 +83,22 @@ Statistics report for MovieLens-1m:
 - number of entities with the property subject: 3347 (100.00%)
 - number of entities with the property starring: 3116 (93.10%)
 - number of entities with the property director: 3120 (93.22%)
+
+## LastFM
+
+Useful properties for dbo:MusicalArtist:
+
+- dbo:genre
+- dbo:musicSubgenre
+- dct:subject
+- dbo:creator
+- dbo:musicalBand
+- dbo:associatedBand
+- dbo:stylisticOrigin
+
+Useful properties for dbo:Band:
+- dbo:associatedMusicalArtist
+- dbo:genre
+- dbo:musicSubgenre
+- dct:subject
+- dbo:creator
