@@ -116,7 +116,7 @@ class MovieLens(Dataset):
                 URI = binding['film']['value']
                 candidate_URIs.append(URI)
                 
-            expected_URI = f"http://dbpedia.org/resource/{df_item.iloc[idx]['movie_title']}"
+            expected_URI = f"http://dbpedia.org/resource/{df_item.loc[df_item.item_id == idx]['movie_title']}"
             str_matching_result = process.extractOne(expected_URI, candidate_URIs)
             
             if str_matching_result is not None:

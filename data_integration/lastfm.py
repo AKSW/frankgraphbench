@@ -92,7 +92,7 @@ class LastFM(Dataset):
                 URI = binding['artist']['value']
                 candidate_URIs.append(URI)
             
-            expected_URI = f'http://dbpedia.org/resource/{df_item.iloc[idx]["name"]}'
+            expected_URI = f'http://dbpedia.org/resource/{df_item.loc[df_item.item_id == idx]["name"]}'
             str_matching_result = process.extractOne(expected_URI, candidate_URIs)
 
             if str_matching_result is not None:

@@ -72,7 +72,7 @@ class BookCrossing(Dataset):
                 URI = binding['book']['value']
                 candidate_URIs.append(URI)
             
-            expected_URI = f'http://dbpedia.org/resource/{df_item.iloc[idx]["title"]}'
+            expected_URI = f'http://dbpedia.org/resource/{df_item.loc[df_item.item_id == idx]["title"]}'
             str_matching_result = process.extractOne(expected_URI, candidate_URIs)
 
             if str_matching_result is not None:
