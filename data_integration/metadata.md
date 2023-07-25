@@ -102,3 +102,19 @@ Useful properties for dbo:Band:
 - dbo:musicSubgenre
 - dct:subject
 - dbo:creator
+
+After using script to order the properties by number of ocurrences:
+- http://dbpedia.org/ontology/abstract
+- http://purl.org/dc/terms/subject
+- http://dbpedia.org/property/genre
+- http://dbpedia.org/ontology/genre (difference???)
+- http://dbpedia.org/property/origin
+- http://dbpedia.org/ontology/recordLabel
+- http://dbpedia.org/property/currentMembers
+- http://dbpedia.org/ontology/background
+- http://dbpedia.org/ontology/bandMember
+- http://dbpedia.org/ontology/associatedBand
+- http://dbpedia.org/ontology/FormerBandMember
+- http://dbpedia.org/ontology/associatedMusicalArtist
+- http://dbpedia.org/property/associatedActs
+- http://dbpedia.org/property/awards

@@ -63,6 +63,36 @@ class LastFM(Dataset):
             }
         ''')
 
+        self.enrich_query_template = Template('''
+            PREFIX dct:  <http://purl.org/dc/terms/>
+            PREFIX dbo:  <http://dbpedia.org/ontology/>
+            PREFIX dbr:  <http://dbpedia.org/resource/>
+            PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT DISTINCT
+                ?abstract 
+                (GROUP_CONCAT(DISTINCT ?bandMember; SEPARATOR="::") AS ?bandMember)
+                (GROUP_CONCAT(DISTINCT ?genre; SEPARATOR="::") AS ?genre)
+                (GROUP_CONCAT(DISTINCT ?associatedMusicalArtist; SEPARATOR="::") AS ?associatedMusicalArtist)
+                (GROUP_CONCAT(DISTINCT ?associatedActs; SEPARATOR="::") AS ?associatedActs)
+                (GROUP_CONCAT(DISTINCT ?awards; SEPARATOR="::") AS ?awards)
+                (GROUP_CONCAT(DISTINCT ?recordLabel; SEPARATOR="::") AS ?recordLabel)
+                (GROUP_CONCAT(DISTINCT ?associatedBand; SEPARATOR="::") AS ?associatedBand)
+            WHERE {
+                OPTIONAL { <$URI>   dbo:genre           ?genre              }   .
+                OPTIONAL { <$URI>   dbo:abstract        ?abstract           }   .
+                OPTIONAL { <$URI>   dbp:origin          ?origin             }   .
+                OPTIONAL { <$URI>   dbo:recordLabel     ?recordLabel        }   .
+                OPTIONAL { <$URI>   dbo:bandMember     ?bandMember        }   .
+                OPTIONAL { <$URI>   dbo:associatedBand     ?associatedBand        }   .
+                OPTIONAL { <$URI>   dbo:associatedMusicalArtist     ?associatedMusicalArtist        }   .
+                OPTIONAL { <$URI>   dbo:associatedBand     ?associatedBand        }   .
+                OPTIONAL { <$URI>   dbo:associatedActs     ?associatedActs        }   .
+                OPTIONAL { <$URI>   dbp:awards     ?awards        }   .
+                                              
+                FILTER(LANG(?abstract) = 'en')
+            }
+        ''')
 
     def load_item_data(self) -> pd.DataFrame():
         filename = os.path.join(self.input_path, 'artists.dat')
@@ -121,6 +151,7 @@ class LastFM(Dataset):
         q = queue.Queue()
         for _, row in df_map[['URI', 'item_id']].iterrows():
             query = self.get_enrich_query(row['URI'])
+            print(query)
             q.put((row['item_id'], query))
 
         if self.n_workers > 1:
@@ -140,12 +171,15 @@ class LastFM(Dataset):
             item_enriching[idx] = df.iloc[0] # getting pd.Series
 
         df_enrich = pd.DataFrame.from_dict(item_enriching, orient='index')
+        print(df_enrich)
         df_enrich.index.name = 'item_id'
 
         return df_enrich
 
     def get_enrich_query(self, URI) -> str:
-        pass
+        params = {'URI': URI}
+        query = self.enrich_query_template.substitute(**params)
+        return query
         
     
     def load_rating_data(self) -> pd.DataFrame():
