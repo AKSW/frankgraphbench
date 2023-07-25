@@ -70,24 +70,22 @@ class LastFM(Dataset):
             PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             SELECT DISTINCT
-                ?abstract 
+                ?abstract
                 (GROUP_CONCAT(DISTINCT ?bandMember; SEPARATOR="::") AS ?bandMember)
                 (GROUP_CONCAT(DISTINCT ?genre; SEPARATOR="::") AS ?genre)
                 (GROUP_CONCAT(DISTINCT ?associatedMusicalArtist; SEPARATOR="::") AS ?associatedMusicalArtist)
-                (GROUP_CONCAT(DISTINCT ?associatedActs; SEPARATOR="::") AS ?associatedActs)
                 (GROUP_CONCAT(DISTINCT ?awards; SEPARATOR="::") AS ?awards)
                 (GROUP_CONCAT(DISTINCT ?recordLabel; SEPARATOR="::") AS ?recordLabel)
                 (GROUP_CONCAT(DISTINCT ?associatedBand; SEPARATOR="::") AS ?associatedBand)
+                (GROUP_CONCAT(DISTINCT ?origin; SEPARATOR="::") AS ?origin)
             WHERE {
                 OPTIONAL { <$URI>   dbo:genre           ?genre              }   .
                 OPTIONAL { <$URI>   dbo:abstract        ?abstract           }   .
                 OPTIONAL { <$URI>   dbp:origin          ?origin             }   .
                 OPTIONAL { <$URI>   dbo:recordLabel     ?recordLabel        }   .
                 OPTIONAL { <$URI>   dbo:bandMember     ?bandMember        }   .
-                OPTIONAL { <$URI>   dbo:associatedBand     ?associatedBand        }   .
                 OPTIONAL { <$URI>   dbo:associatedMusicalArtist     ?associatedMusicalArtist        }   .
                 OPTIONAL { <$URI>   dbo:associatedBand     ?associatedBand        }   .
-                OPTIONAL { <$URI>   dbo:associatedActs     ?associatedActs        }   .
                 OPTIONAL { <$URI>   dbp:awards     ?awards        }   .
                                               
                 FILTER(LANG(?abstract) = 'en')
@@ -151,7 +149,6 @@ class LastFM(Dataset):
         q = queue.Queue()
         for _, row in df_map[['URI', 'item_id']].iterrows():
             query = self.get_enrich_query(row['URI'])
-            print(query)
             q.put((row['item_id'], query))
 
         if self.n_workers > 1:
@@ -171,7 +168,6 @@ class LastFM(Dataset):
             item_enriching[idx] = df.iloc[0] # getting pd.Series
 
         df_enrich = pd.DataFrame.from_dict(item_enriching, orient='index')
-        print(df_enrich)
         df_enrich.index.name = 'item_id'
 
         return df_enrich
