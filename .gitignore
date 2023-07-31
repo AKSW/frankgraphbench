@@ -1,4 +1,13 @@
-datasets/**/
+# Ignore all subfolder of datasets
+datasets/*/*
+# Un-ignore processed subfolder of datasets/*/
+!datasets/*/processed/
+# Ignore all .csv files
+datasets/*/processed/*.csv
+# Except map.csv and item.csv
+!datasets/*/processed/map.csv
+!datasets/*/processed/enriched.csv
+
 *.out 
 notes.txt
 
