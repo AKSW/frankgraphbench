@@ -232,7 +232,7 @@ class Dataset():
             self.report_enriching(df_enrich)            
 
         except NotImplementedError:
-            print('Override entity_linking() method of your Dataset subclass.')
+            print('Override enrich() method of your Dataset subclass.')
     
     def report_enriching(self, df):
         n_rows = df.shape[0]
@@ -240,17 +240,6 @@ class Dataset():
             n_rows_with = df[col].notna().sum()
             print(f'number of entities with the property {col}: {n_rows_with} ({n_rows_with/n_rows*100:.2f}%)')
     
-    # def get_enriching_query(self, URI, metadata):
-    #     relations, patterns = [], []
-    #     for r in metadata['properties']:
-    #         relations.append(f'?{r["relation"]}')
-    #         patterns.append(f'\t\t\t\tOPTIONAL {{ <{URI}> {r["property"]} ?{r["relation"]} }} .')
-        
-    #     params = {
-    #         "relations": ' '.join(relations),
-    #         "patterns":  '\n'.join(patterns)
-    #     }
-    #     return self.enrich_query_template.substitute(params)
 
 
 
