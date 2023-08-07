@@ -2,7 +2,7 @@ import os
 import re
 import queue
 from string import Template
-from .dataset import Dataset
+from ..dataset import Dataset
 
 from io import BytesIO
 from collections import defaultdict

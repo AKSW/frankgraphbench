@@ -6,7 +6,7 @@ from collections import defaultdict
 
 
 from string import Template
-from .dataset import Dataset
+from ..dataset import Dataset
 
 import pandas as pd
 from tqdm import tqdm

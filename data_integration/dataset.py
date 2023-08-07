@@ -3,7 +3,7 @@ import queue
 import string
 import pandas as pd
 from string import Template
-from .worker import Worker
+from .extend.worker import Worker
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 from tqdm import tqdm
