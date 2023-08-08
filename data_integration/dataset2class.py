@@ -1,22 +1,22 @@
 dataset2class = {
     'ml-100k': {
-        'submodule': 'extend.movielens',
+        'submodule': 'datasets.movielens',
         'class': 'MovieLens100k'
     },
     'ml-1m': {
-        'submodule': 'extend.movielens',
+        'submodule': 'datasets.movielens',
         'class': 'MovieLens1M'
     },
     'lastfm': {
-        'submodule': 'extend.lastfm',
+        'submodule': 'datasets.lastfm',
         'class': 'LastFM'
     },
     'book-crossing': {
-        'submodule': 'extend.book-crossing',
+        'submodule': 'datasets.book-crossing',
         'class': 'BookCrossing'
     },
     'steam': {
-        'submodule': 'extend.steam',
+        'submodule': 'datasets.steam',
         'class': 'Steam'
     }
 }
