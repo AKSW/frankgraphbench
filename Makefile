@@ -31,5 +31,12 @@ enrich_ml-1m:
 
 enrich_lastfm:
 	python3 data_integration.py -d 'lastfm' -i 'datasets/lastfm' -o 'datasets/lastfm/processed' \
-		-enrich -w 4
+		-enrich -w 1
 	
+# Experiments
+experiment:
+	python3 framework.py -c 'config_files/test.yml'
+
+test:
+	python3 data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/test' \
+		-ci -cu -cr -map -w 4 

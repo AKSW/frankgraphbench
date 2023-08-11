@@ -13,7 +13,7 @@ experiment:
     enrich:
       map_path: datasets/ml-100k/processed/map.csv
       enrich_path: datasets/ml-100k/processed/enriched.csv
-      remove_unmatched: True
+      remove_unmatched: False
       properties:
         - type: subject
           grouped: True
@@ -22,13 +22,14 @@ experiment:
           grouped: True
           sep: "::"
 
-
   preprocess:
-    - binarize:
-        threshold: 3
-        parameter2: teste
-    - process2: 
-        test: aaaaaa
+    - method: filter_by_rating  
+      parameters:
+        min: 3  #inclusive
+        max: 11 #inclusive
+    - method: binarize
+      parameters: 
+        threshold: 4
   filter:
     strategy: global_threshold
     threshold: 10
