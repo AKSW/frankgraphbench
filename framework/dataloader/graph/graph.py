@@ -1,4 +1,4 @@
-import os
+from collections import defaultdict
 
 from .node import *
 
@@ -10,29 +10,67 @@ import matplotlib.pyplot as plt
 """
     Class wrapper on the top of a nx.Graph
 """
-class Graph():
+class Graph(nx.Graph):
     def __init__(self, name, item, user, ratings, enrich = None):
-        self.graph = nx.Graph()
+        super().__init__()
         self.name = name 
-
+        self.item_nodes = []
+        self.user_nodes = []
+        self.rating_edges = defaultdict(list)
         
         # Adding item nodes and properties nodes
         self._add_item_info(item, enrich)
         self._add_user_info(user)
         self._add_ratings(ratings)
 
-        print(self.graph[UserNode(1)])
-        print(self.graph[ItemNode(1)])
+    def get_item_nodes(self) -> [ItemNode]:
+        return self.item_nodes
 
+    def get_user_nodes(self) -> [UserNode]:
+        return self.user_nodes
 
+    def get_rating_edges(self) -> tuple:
+        for user, items in self.rating_edges.items():
+            for item in items:
+                yield (user, item)
+    
+    def add_node(self, node_for_adding: Node, **attr):
+        super().add_node(node_for_adding, **attr)
+        if isinstance(node_for_adding, ItemNode):
+            self.item_nodes.append(node_for_adding)
+        elif isinstance(node_for_adding, UserNode):
+            self.user_nodes.append(node_for_adding)
+    
+    def add_edge(self, u_of_edge, v_of_edge, **attr):
+        data = self.get_edge_data(u_of_edge, v_of_edge, default={})
+        edge_type = data.get('type')
 
-    def to_network(self):
-        return self.graph
+        if edge_type == 'rated':
+            self.rating_edges[u_of_edge].append(v_of_edge)
+            
+        super().add_edge(u_of_edge, v_of_edge, **attr)
+    
+    def remove_edge(self, u, v):
+        if isinstance(u, UserNode) and isinstance(v, ItemNode):
+            self.rating_edges[u].remove(v)
+
+        return super().remove_edge(u, v)
+    
+    def remove_node(self, n):
+        super().remove_node(n)
+        if isinstance(n, ItemNode):
+            self.item_nodes.remove(n)
+            for user, items in self.rating_edges.items():
+                if n in items:
+                    self.rating_edges[user].remove(n)
+        elif isinstance(n, UserNode):
+            self.user_nodes.remove(n)
+            del self.rating_edges[n]
 
     def _add_item_info(self, item, enrich):
         # Extracting info from .csv
         df_item = pd.read_csv(item['path'])
-        extra_features = self._get_optional_argument(item, 'extra_faetures', [])
+        extra_features = self._get_optional_argument(item, 'extra_features', [])
         df_item = df_item[['item_id'] + extra_features]
         if enrich is not None:
             # Merging info from original dataset and enriched 
@@ -53,7 +91,8 @@ class Graph():
         # Adding item nodes and properties nodes
         for _, row in tqdm(df_item.iterrows(), total=n_items, desc=desc):
             item_node = ItemNode(row['item_id'])
-            self.graph.add_node(item_node)
+            self.add_node(item_node)
+            # self.item_nodes.append(item_node)
 
             for property_ in properties:
                 self._add_node_property(item_node, row, property_)
@@ -63,12 +102,12 @@ class Graph():
         if not isinstance(prop_value, list) and pd.notna(prop_value):
             # Single property_
             property_node = PropertyNode(row[property_], property_)
-            self.graph.add_edge(source, property_node, type=property_)
+            self.add_edge(source, property_node, type='has_property')
         elif isinstance(prop_value, list):
             # Multiples properties
             for value in row[property_]:
                 property_node = PropertyNode(value, property_)
-                self.graph.add_edge(source, property_node, type=property_)
+                self.add_edge(source, property_node, type='has_property')
 
 
     def _get_optional_argument(self, config, key, default):
@@ -104,7 +143,8 @@ class Graph():
 
         for _, row in tqdm(df_user.iterrows(), total=total_users, desc=desc):
             user_node = UserNode(row['user_id'])
-            self.graph.add_node(user_node)
+            self.add_node(user_node)
+            # self.user_nodes.append(user_node)
 
             for property_ in properties:
                 self._add_node_property(user_node, row, property_)
@@ -117,47 +157,10 @@ class Graph():
         for _, row in tqdm(df_ratings.iterrows(), total=total_ratings, desc=desc):
             item_node = ItemNode(row['item_id'])
             user_node = UserNode(row['user_id'])
+            attrs = {'type': 'rated', 'rating': row['rating']}
             if ratings['timestamp']:
-                self.graph.add_edge(item_node, user_node, timestamp=row['timestamp'])
-            else:
-                self.graph.add_edge(item_node, user_node)
+                attrs['timestamp'] = row['timestamp']
 
-
-        
-    
-    # def _add_items(self, **items_config):
-    #     df = pd.read_csv(items_config['path']) 
-    #     n_items = df.shape[0]
-    #     desc = 'Adding item nodes and their original dataset features'
-
-    #     for _, row in tqdm(df.head(40).iterrows(), total=n_items, desc=desc):
-    #         item_node = ItemNode(row['item_id'])
-    #         self.graph.add_node(item_node)
-
-    #         for feature in items_config['extra_features']:
-    #             feat_node = PropertyNode(row[feature], feature)
-    #             self.graph.add_edge(item_node, feat_node, type=feature)
-
-    # def _add_enrich(self, **enrich_config):
-    #     df = pd.read_csv(enrich_config['map_path'])
-    #     # if enrich_config['remove_unmatched']:
-    #     #     df = df[df['URI'].notna()]
-        
-    #     n_items = df.shape[0]
-    #     desc = 'Adding edges between item_id and URI'
-
-    #     for _, row in tqdm(df.head(40).iterrows(), total=n_items, desc=desc):
-    #         item = ItemNode(row['item_id'])
-    #         uri = row['URI']
-    #         if not pd.isna(uri):
-    #             uri = PropertyNode(uri, 'URI')
-    #             self.graph.add_edge(item, uri, type='uri')
-    #         else:
-    #             self.graph.add_node(item)
-
-
-        
-        
-
-
-        
+            self.add_edge(user_node, item_node, **attrs)
+            self.rating_edges[user_node].append(item_node)
+            
