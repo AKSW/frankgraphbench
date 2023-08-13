@@ -16,7 +16,8 @@ class Graph(nx.Graph):
         self.name = name 
         self.item_nodes = []
         self.user_nodes = []
-        self.rating_edges = defaultdict(list)
+        self.rating_edges = defaultdict(list)       # user: [items]
+        self.rating_item2users = defaultdict(list)   # item: [users]
         
         # Adding item nodes and properties nodes
         self._add_item_info(item, enrich)
@@ -29,8 +30,18 @@ class Graph(nx.Graph):
     def get_user_nodes(self) -> [UserNode]:
         return self.user_nodes
 
-    def get_rating_edges(self) -> tuple:
-        for user, items in self.rating_edges.items():
+    def get_rating_edges(self, key_type='user') -> tuple:
+        key2dict = {
+            'user': self.rating_edges,
+            'item': self.rating_item2users
+        }
+        data = None
+        try:
+            data = key2dict[key_type]
+        except:
+            raise KeyError('This key type doesnt exist for rating dicts')
+        
+        for user, items in data.items():
             for item in items:
                 yield (user, item)
     
@@ -42,17 +53,20 @@ class Graph(nx.Graph):
             self.user_nodes.append(node_for_adding)
     
     def add_edge(self, u_of_edge, v_of_edge, **attr):
+        super().add_edge(u_of_edge, v_of_edge, **attr)
         data = self.get_edge_data(u_of_edge, v_of_edge, default={})
         edge_type = data.get('type')
 
         if edge_type == 'rated':
             self.rating_edges[u_of_edge].append(v_of_edge)
+            self.rating_item2users[v_of_edge].append(u_of_edge)
             
-        super().add_edge(u_of_edge, v_of_edge, **attr)
     
     def remove_edge(self, u, v):
         if isinstance(u, UserNode) and isinstance(v, ItemNode):
             self.rating_edges[u].remove(v)
+            self.rating_item2users[v].remove(u)
+
 
         return super().remove_edge(u, v)
     
@@ -60,12 +74,16 @@ class Graph(nx.Graph):
         super().remove_node(n)
         if isinstance(n, ItemNode):
             self.item_nodes.remove(n)
+            del self.rating_item2users[n]
             for user, items in self.rating_edges.items():
                 if n in items:
                     self.rating_edges[user].remove(n)
         elif isinstance(n, UserNode):
             self.user_nodes.remove(n)
             del self.rating_edges[n]
+            for item, users in self.rating_item2users.items():
+                if n in users:
+                    self.rating_item2users[item].remove(n)
 
     def _add_item_info(self, item, enrich):
         # Extracting info from .csv
@@ -80,7 +98,7 @@ class Graph(nx.Graph):
                 df_item = df_item[df_item['URI'].notna()]
             
             df_enriched = self._get_enrich_dataframe(**enrich)
-            df_item = pd.merge(df_item, df_enriched, on='item_id')
+            df_item = pd.merge(df_item, df_enriched, on='item_id', how="left")
 
         # Creating graph from dataframe
         desc = 'Adding item info into network'
@@ -92,7 +110,6 @@ class Graph(nx.Graph):
         for _, row in tqdm(df_item.iterrows(), total=n_items, desc=desc):
             item_node = ItemNode(row['item_id'])
             self.add_node(item_node)
-            # self.item_nodes.append(item_node)
 
             for property_ in properties:
                 self._add_node_property(item_node, row, property_)
@@ -157,10 +174,13 @@ class Graph(nx.Graph):
         for _, row in tqdm(df_ratings.iterrows(), total=total_ratings, desc=desc):
             item_node = ItemNode(row['item_id'])
             user_node = UserNode(row['user_id'])
-            attrs = {'type': 'rated', 'rating': row['rating']}
-            if ratings['timestamp']:
-                attrs['timestamp'] = row['timestamp']
 
-            self.add_edge(user_node, item_node, **attrs)
-            self.rating_edges[user_node].append(item_node)
+            if item_node in self and user_node in self:
+                attrs = {'type': 'rated', 'rating': row['rating']}
+                if ratings['timestamp']:
+                    attrs['timestamp'] = row['timestamp']
+
+                self.add_edge(user_node, item_node, **attrs)
+            else:
+                print(item_node, user_node)
             

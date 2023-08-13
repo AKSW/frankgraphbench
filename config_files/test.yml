@@ -30,6 +30,11 @@ experiment:
     - method: binarize
       parameters: 
         threshold: 4
+    - method: filter_kcore
+      parameters:
+        core: 5
+        iterations: 3
+        target: user # user or rating
   filter:
     strategy: global_threshold
     threshold: 10
