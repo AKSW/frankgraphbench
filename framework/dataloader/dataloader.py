@@ -14,11 +14,7 @@ def load(**data_config):
     return G
 
 def preprocess(G, methods: list):
-    print(len(list(G.get_rating_edges())))
-    print(len(list(G.get_rating_edges(key_type='item'))))
     for method in methods:
         apply_method(G, **method)
-    print(len(list(G.get_rating_edges())))
-    print(len(list(G.get_rating_edges(key_type='item'))))
         
     

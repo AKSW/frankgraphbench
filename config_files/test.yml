@@ -35,9 +35,6 @@ experiment:
         core: 5
         iterations: 3
         target: user # user or rating
-  filter:
-    strategy: global_threshold
-    threshold: 10
   split:
     strategy: ratio
     ratio: [50, 30, 20]

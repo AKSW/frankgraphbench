@@ -181,6 +181,3 @@ class Graph(nx.Graph):
                     attrs['timestamp'] = row['timestamp']
 
                 self.add_edge(user_node, item_node, **attrs)
-            else:
-                print(item_node, user_node)
-            
