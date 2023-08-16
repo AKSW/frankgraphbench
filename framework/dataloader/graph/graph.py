@@ -1,11 +1,12 @@
 from collections import defaultdict
 
 from .node import *
+from ...utils import get_optional_argument
 
 import networkx as nx
 import pandas as pd
 from tqdm import tqdm
-import matplotlib.pyplot as plt
+import numpy as np
 
 """
     Class wrapper on the top of a nx.Graph
@@ -24,26 +25,28 @@ class Graph(nx.Graph):
         self._add_user_info(user)
         self._add_ratings(ratings)
 
+    def info(self):
+        return nx.info(self)
+
     def get_item_nodes(self) -> [ItemNode]:
         return self.item_nodes
 
     def get_user_nodes(self) -> [UserNode]:
         return self.user_nodes
 
-    def get_rating_edges(self, key_type='user') -> tuple:
-        key2dict = {
-            'user': self.rating_edges,
-            'item': self.rating_item2users
-        }
-        data = None
-        try:
-            data = key2dict[key_type]
-        except:
-            raise KeyError('This key type doesnt exist for rating dicts')
-        
-        for user, items in data.items():
+    def get_rating_edges(self) -> tuple:
+        for user, items in self.rating_edges.items():
             for item in items:
                 yield (user, item)
+    
+    def get_ratings_with_labels(self):
+        edges, labels = [], []
+        for (u,v) in list(self.get_rating_edges()):
+            data = self.get_edge_data(u,v)
+            edges.append((u.get_id(), v.get_id()))
+            labels.append(data['rating'])
+
+        return np.array(edges), np.array(labels)
     
     def add_node(self, node_for_adding: Node, **attr):
         super().add_node(node_for_adding, **attr)
@@ -88,7 +91,7 @@ class Graph(nx.Graph):
     def _add_item_info(self, item, enrich):
         # Extracting info from .csv
         df_item = pd.read_csv(item['path'])
-        extra_features = self._get_optional_argument(item, 'extra_features', [])
+        extra_features = get_optional_argument(item, 'extra_features', [])
         df_item = df_item[['item_id'] + extra_features]
         if enrich is not None:
             # Merging info from original dataset and enriched 
@@ -150,7 +153,7 @@ class Graph(nx.Graph):
 
     def _add_user_info(self, user):
         df_user = pd.read_csv(user['path'])
-        extra_features = self._get_optional_argument(user, 'extra_features', [])
+        extra_features = get_optional_argument(user, 'extra_features', [])
         df_user = df_user[['user_id'] + extra_features]
 
         total_users = df_user.shape[0]

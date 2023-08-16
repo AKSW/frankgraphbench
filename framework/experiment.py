@@ -1,7 +1,7 @@
 import yaml
 import json
 
-from .dataloader.dataloader import load, preprocess
+from .dataloader.dataloader import load, preprocess, split
 
 def run(config_path):
     config = None
@@ -11,5 +11,6 @@ def run(config_path):
     print(json.dumps(config, indent=4))
 
     G = load(**config['experiment']['dataset'])
-    preprocess(G, config['experiment']['preprocess'])    
+    preprocess(G, config['experiment']['preprocess'])
+    split(G, **config['experiment']['split'])    
 
