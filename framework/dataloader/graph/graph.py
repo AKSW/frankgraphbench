@@ -70,7 +70,6 @@ class Graph(nx.Graph):
             self.rating_edges[u].remove(v)
             self.rating_item2users[v].remove(u)
 
-
         return super().remove_edge(u, v)
     
     def remove_node(self, n):

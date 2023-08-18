@@ -1,9 +1,11 @@
 import random
+import math
 from copy import deepcopy
 
 from ..graph.graph import Graph
 
 import numpy as np
+from sklearn.model_selection import KFold
 
 class EdgeSplitter():
     def __init__(self, G: Graph, seed : int = 42):
@@ -15,7 +17,8 @@ class EdgeSplitter():
         self.supported_methods = [
             'random_by_ratio',
             'timestamp_by_ratio',
-            'fixed_timestamp'
+            'fixed_timestamp',
+            'k_fold'
         ]
     
     def split(self, **config):
@@ -23,23 +26,23 @@ class EdgeSplitter():
         if method not in self.supported_methods:
             raise ValueError(f'Invalid split method provided. So far, the supported ones are:\n{self.supported_methods}')
 
-        ratings = np.array(list(self.G.get_rating_edges()))
-
         if method in ['random_by_ratio', 'timestamp_by_ratio']:
             p = config['p']
             level = config["level"]
             if p <= 0 or p >= 1:
                 raise ValueError('The parameter p must be in the interval (0,1)')
+
+            if level not in ['user', 'global']:
+                raise ValueError('Invalid level parameter for splitting. Choose between user and global level.')
             
             print(f'Splitting data using {method} method at {level} level, where p={p} ...')
             
-            if method == 'random_by_ratio' and level == 'global':
-                np.random.shuffle(ratings)
-            elif method == 'timestamp_by_ratio' and level == 'global':
-                ratings = self._sort_by_timestamp(ratings)
-
-            n_test = int(len(ratings) * p)
-            test = ratings[-n_test:]
+            if method == 'random_by_ratio':
+                test = self._random_by_ratio(p, level)
+            elif method == 'timestamp_by_ratio':
+                test = self._timestamp_by_ratio(p, level)
+            
+            yield self._extract_dataset(test)
 
         elif method == 'fixed_timestamp':
             print(f'Splitting data using {method} method, where timestamp={config["timestamp"]} ...')
@@ -49,8 +52,27 @@ class EdgeSplitter():
                 data = self.G.get_edge_data(u,v)
                 if data['timestamp'] > config['timestamp']:
                     test.append((u,v))
+            yield self._extract_dataset(test)
+
+        elif method == 'k_fold':
+            k = config['k']
+            if k < 2:
+                raise ValueError('k parameter for K-fold must be at least 2.')
+            
+            for test in self._kfold(k):
+                yield self._extract_dataset(test)
 
 
+        # edges, labels = [], []
+        # for (u, v) in test:
+        #     data = self.G.get_edge_data(u,v)
+        #     self.G.remove_edge(u,v)
+        #     edges.append((u.get_id(), v.get_id()))
+        #     labels.append(data['rating'])
+
+        # yield self.G, np.array(edges), np.array(labels)
+
+    def _extract_dataset(self, test):
         edges, labels = [], []
         for (u, v) in test:
             data = self.G.get_edge_data(u,v)
@@ -58,9 +80,56 @@ class EdgeSplitter():
             edges.append((u.get_id(), v.get_id()))
             labels.append(data['rating'])
 
-        return self.G, np.array(edges), np.array(labels)
+        return self.G, np.array(edges), np.array(labels) 
+    
+    def _random_by_ratio(self, p: float, level: str) -> np.array:
+        if level == 'global':
+            ratings = np.array(list(self.G.get_rating_edges()))
+            np.random.shuffle(ratings)
+            n_test = math.ceil(ratings.shape[0] * p)
 
-    def _sort_by_timestamp(self, ratings: list):
+            return ratings[-n_test:]
+        elif level == 'user':
+            test = []
+            for user, items in self.G.rating_edges.items():
+                # Number of test items for user
+                items = np.array(items)
+                np.random.shuffle(items)
+                n_test = math.ceil(items.shape[0] * p)
+                test += [(user, item) for item in items[-n_test:]]
+
+            return np.array(test)
+        
+    def _timestamp_by_ratio(self, p: float, level: str) -> np.array:
+        if level == 'global':
+            ratings = list(self.G.get_rating_edges())
+            ratings = self._sort_by_timestamp(ratings)
+            ratings = np.array(ratings)
+            n_test = math.ceil(ratings.shape[0] * p)
+
+            return ratings[-n_test:]
+        elif level == 'user':
+            test = []
+            for user, items in self.G.rating_edges.items():
+                ratings = [(user, item) for item in items]
+                ratings = self._sort_by_timestamp(ratings)
+                n_test = math.ceil(len(ratings) * p)    
+                test += ratings[-n_test:]
+
+            return np.array(test) 
+        
+    def _kfold(self, k):
+        G_Copy = deepcopy(self.G)
+        ratings = list(self.G.get_rating_edges())
+        ratings = np.array(ratings)
+        np.random.shuffle(ratings)
+        kfold = KFold(n_splits=k)
+        for _, test_index in kfold.split(ratings):
+            yield ratings[test_index]
+            self.G = deepcopy(G_Copy)
+
+
+    def _sort_by_timestamp(self, ratings: list) -> list:
         # globally sort the ratings by timestamp
         f = lambda edge: self.G.get_edge_data(edge[0], edge[1])['timestamp']
         return sorted(ratings, key=f)

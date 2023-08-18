@@ -12,5 +12,6 @@ def run(config_path):
 
     G = load(**config['experiment']['dataset'])
     preprocess(G, config['experiment']['preprocess'])
-    split(G, **config['experiment']['split'])    
+    for x in split(G, **config['experiment']['split']):
+        print(x.ratings_test)    
 
