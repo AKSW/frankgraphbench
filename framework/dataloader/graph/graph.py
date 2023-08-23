@@ -163,7 +163,6 @@ class Graph(nx.Graph):
         for _, row in tqdm(df_user.iterrows(), total=total_users, desc=desc):
             user_node = UserNode(row['user_id'])
             self.add_node(user_node)
-            # self.user_nodes.append(user_node)
 
             for property_ in properties:
                 self._add_node_property(user_node, row, property_)

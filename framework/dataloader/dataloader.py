@@ -29,9 +29,12 @@ def split(G, **split_config):
         print(f'\tNumber of test instances: {ratings_test.shape[0]}')
 
         if get_optional_argument(split_config, 'validation', False):
+            print('Dentro da validação')
+            if split_config['test']['method'] == 'k_fold' and split_config['validation']['method'] == 'k_fold':
+                raise ValueError("Validation split does not support k_fold method.")
+            
             edge_splitter_val = EdgeSplitter(G_train, seed=seed)
             for G_train, ratings_val, labels_val in edge_splitter_val.split(**split_config['validation']):
-            # G_train, ratings_val, labels_val = edge_splitter_val.split(**split_config['validation'])
                 dataset.set_val_data(ratings_val, labels_val)
                 print(f'\tGraph info after splitting validation data: {G_train.info()}')
                 print(f'\tNumber of validation instances: {ratings_val.shape[0]}')

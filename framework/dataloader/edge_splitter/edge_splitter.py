@@ -59,7 +59,12 @@ class EdgeSplitter():
             if k < 2:
                 raise ValueError('k parameter for K-fold must be at least 2.')
             
-            for test in self._kfold(k):
+            level = config['level']
+            if level not in ['user', 'global']:
+                raise ValueError('Invalid level parameter for splitting. Choose between user and global level.')
+            
+            
+            for test in self._kfold(k, level):
                 yield self._extract_dataset(test)
 
 
@@ -118,16 +123,37 @@ class EdgeSplitter():
 
             return np.array(test) 
         
-    def _kfold(self, k):
+    def _kfold(self, k : int, level : str):
         G_Copy = deepcopy(self.G)
-        ratings = list(self.G.get_rating_edges())
-        ratings = np.array(ratings)
-        np.random.shuffle(ratings)
-        kfold = KFold(n_splits=k)
-        for _, test_index in kfold.split(ratings):
-            yield ratings[test_index]
-            self.G = deepcopy(G_Copy)
+        
+        if level == 'global':
+            ratings = list(self.G.get_rating_edges())
+            ratings = np.array(ratings)
+            np.random.shuffle(ratings)
+            kfold = KFold(n_splits=k)
+            for _, test_index in kfold.split(ratings):
+                yield ratings[test_index]
+                self.G = deepcopy(G_Copy)
 
+        elif level == 'user':
+            kfold_users, ratings_per_user = [], []
+            for user, items in self.G.rating_edges.items():
+                items = np.array(items)
+                np.random.shuffle(items)
+                kfold = KFold(n_splits=k).split(items)
+                kfold_users.append(kfold)
+                edges = np.array([(user, item) for item in items])
+                ratings_per_user.append(edges)
+
+            for _ in range(k):
+                test = []
+                for idx, kfold in enumerate(kfold_users):
+                    _, test_index = next(kfold)
+                    test_ratings = ratings_per_user[idx][test_index].tolist()
+                    test += test_ratings
+                test = np.array(test)
+                yield test
+                self.G = deepcopy(G_Copy)
 
     def _sort_by_timestamp(self, ratings: list) -> list:
         # globally sort the ratings by timestamp

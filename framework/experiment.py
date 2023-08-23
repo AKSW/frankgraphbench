@@ -12,6 +12,8 @@ def run(config_path):
 
     G = load(**config['experiment']['dataset'])
     preprocess(G, config['experiment']['preprocess'])
-    for x in split(G, **config['experiment']['split']):
-        print(x.ratings_test)    
+    # Loop over dataset (specially if its a k-fold split)
+    for dataset in split(G, **config['experiment']['split']):
+        print(dataset.ratings_test)
+    print(G.info())    
 
