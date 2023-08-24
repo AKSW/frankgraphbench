@@ -10,8 +10,8 @@ class Dataset():
     
     def set_train_data(self, G, X, y):
         self.G_train = G
-        self.X = X
-        self.y = y
+        self.ratings_train = X
+        self.labels_train = y
     
     def set_test_data(self, X, y):
         self.ratings_test = X
@@ -20,3 +20,12 @@ class Dataset():
     def set_val_data(self, X, y):
         self.ratings_val = X
         self.labels_val = y
+
+    def get_train_data(self):
+        return self.G_train, self.ratings_train, self.labels_train
+
+    def get_test_data(self):
+        return self.ratings_test, self.labels_test
+
+    def get_val_data(self):
+        return self.ratings_val, self.labels_val

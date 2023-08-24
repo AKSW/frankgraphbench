@@ -15,7 +15,7 @@ class Graph(nx.Graph):
     def __init__(self, name, item, user, ratings, enrich = None):
         super().__init__()
         self.name = name 
-        self.item_nodes = []
+        self.item_nodes = [] # it is really necessary? O(n) removing nodes
         self.user_nodes = []
         self.rating_edges = defaultdict(list)       # user: [items]
         self.rating_item2users = defaultdict(list)   # item: [users]
@@ -26,7 +26,10 @@ class Graph(nx.Graph):
         self._add_ratings(ratings)
 
     def info(self):
-        return nx.info(self)
+        n_nodes = self.number_of_nodes()
+        n_edges = self.number_of_edges()
+        message =  f'{self.name} graph with a total of {n_nodes} nodes and {n_edges} edges'
+        return message
 
     def get_item_nodes(self) -> [ItemNode]:
         return self.item_nodes

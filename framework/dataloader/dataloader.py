@@ -29,7 +29,6 @@ def split(G, **split_config):
         print(f'\tNumber of test instances: {ratings_test.shape[0]}')
 
         if get_optional_argument(split_config, 'validation', False):
-            print('Dentro da validação')
             if split_config['test']['method'] == 'k_fold' and split_config['validation']['method'] == 'k_fold':
                 raise ValueError("Validation split does not support k_fold method.")
             
