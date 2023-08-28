@@ -1,10 +1,13 @@
+from framework.dataloader.graph.node import UserNode
 from ...recommender import Recommender
-from ...utils.walker import BiasedRandomWalker 
+from ...utils.walker import BiasedRandomWalker
 
-from gensim.models.word2vec import Word2Vec
 import walker
 import numpy as np
 import networkx as nx
+from gensim.models.word2vec import Word2Vec
+from sklearn.neighbors import NearestNeighbors
+from copy import deepcopy
 
 class DeepWalkBased(Recommender):
     def __init__(
@@ -33,10 +36,63 @@ class DeepWalkBased(Recommender):
         self.learning_rate = learning_rate
         self.min_count = min_count
         self.seed = seed
+        self._embedding = {}
 
     def train(self, G_train, ratings_train, labels_train):
+        self.G_train = deepcopy(G_train) # (?) Check why I cant acess the sets by reference
+        # self.G_train = G_train 
         self.fit(G_train)
-    
+
+    def get_recommendations(self, k: int = 5):
+        # Option 1: Knn with all the items than filter the first k unrated items?
+        # Will need to iterate over all knn indices
+        # Option 2: Knn for each user and their respective unrated items
+        # Wont need to iterate over all items
+        # parallelize??
+
+        # Set doesnt guarantee the order of set elements
+        users = list(self.G_train.get_user_nodes())
+        items = list(self.G_train.get_item_nodes())
+        users_embeddings = np.array([self._embedding[user] for user in users])
+        items_embeddings = np.array([self._embedding[item] for item in items])
+        knn = NearestNeighbors(n_neighbors=len(items), metric='cosine')
+        knn.fit(items_embeddings)
+        rec_indices = knn.kneighbors(users_embeddings, return_distance=False)
+        print(f'Shape indices {rec_indices.shape}')
+
+        recommendations = {}
+        for user_idx, user in enumerate(users):
+            rated_items = self.G_train.get_user_rated_items(user)
+            recs = []
+            for item_idx in rec_indices[user_idx]:
+                item = items[item_idx]
+                if item not in rated_items:
+                    recs.append(item)
+                    if len(recs) == k:
+                        break
+            
+            recommendations[user] = recs
+        
+        print(f'Quantidade de usuários com recomendação {len(list(recommendations.keys()))}')
+        return recommendations
+
+    def get_user_recommendation(self, user: UserNode, k: int = 5):
+        items = self.G_train.get_item_nodes()
+        rated_items = self.G_train.get_user_rated_items(user)
+        unrated_items = list(items - rated_items)
+        user_embedding = self._embedding[user].reshape(1, -1)
+        items_embeddings = np.array([self._embedding[item] for item in unrated_items])
+        knn = NearestNeighbors(n_neighbors=k, metric='cosine')
+        knn.fit(items_embeddings)
+        rec_indices = knn.kneighbors(user_embedding, return_distance=False)
+
+        recs = []
+        for idx in rec_indices[0]:
+            recs.append(unrated_items[idx])
+
+        return recs
+
+
     def fit(self, graph):
 
         self._convert_node_labels_to_integer(graph)
@@ -59,19 +115,10 @@ class DeepWalkBased(Recommender):
             seed=self.seed
         )
 
-        self._embedding = {}
-        for node in list(graph.nodes())[:10]:
-            # self._embedding[node] = model.wv[str(node)]
+        for node in graph.nodes():
             self._embedding[graph.nodes[node]['old_label']] = model.wv[node]
-
-        # convert back?
         
-        print(self._embedding)
         self._convert_back(graph)
-        print(list(graph.nodes())[:5])
-
-    def get_embedding(self):
-        return np.array(self._embedding)
     
     def _convert_node_labels_to_integer(self, G):
         N = G.number_of_nodes()

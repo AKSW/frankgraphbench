@@ -5,6 +5,7 @@ class Dataset():
         self.labels_train = None
         self.ratings_test = None
         self.labels_test = None
+        self.has_val = False
         self.ratings_val = None
         self.labels_val = None
     
@@ -18,6 +19,7 @@ class Dataset():
         self.labels_test = y
 
     def set_val_data(self, X, y):
+        self.has_val = True
         self.ratings_val = X
         self.labels_val = y
 
@@ -29,3 +31,6 @@ class Dataset():
 
     def get_val_data(self):
         return self.ratings_val, self.labels_val
+    
+    def has_val_data(self):
+        return self.has_val

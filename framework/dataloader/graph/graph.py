@@ -8,6 +8,8 @@ import pandas as pd
 from tqdm import tqdm
 import numpy as np
 
+from typing import Set
+
 """
     Class wrapper on the top of a nx.Graph
 """
@@ -15,10 +17,10 @@ class Graph(nx.Graph):
     def __init__(self, name, item, user, ratings, enrich = None):
         super().__init__()
         self.name = name 
-        self.item_nodes = [] # it is really necessary? O(n) removing nodes
-        self.user_nodes = []
-        self.rating_edges = defaultdict(list)       # user: [items]
-        self.rating_item2users = defaultdict(list)   # item: [users]
+        self.item_nodes = set()
+        self.user_nodes = set()
+        self.rating_edges = defaultdict(set)        # { user: Set([items]) }
+        self.rating_item2users = defaultdict(set)   # { item: Set([users]) }
         
         # Adding item nodes and properties nodes
         self._add_item_info(item, enrich)
@@ -31,10 +33,10 @@ class Graph(nx.Graph):
         message =  f'{self.name} graph with a total of {n_nodes} nodes and {n_edges} edges'
         return message
 
-    def get_item_nodes(self) -> [ItemNode]:
+    def get_item_nodes(self) -> Set[ItemNode]:
         return self.item_nodes
 
-    def get_user_nodes(self) -> [UserNode]:
+    def get_user_nodes(self) -> Set[UserNode]:
         return self.user_nodes
 
     def get_rating_edges(self) -> tuple:
@@ -51,12 +53,15 @@ class Graph(nx.Graph):
 
         return np.array(edges), np.array(labels)
     
+    def get_user_rated_items(self, user : UserNode):
+        return self.rating_edges[user]
+    
     def add_node(self, node_for_adding: Node, **attr):
         super().add_node(node_for_adding, **attr)
         if isinstance(node_for_adding, ItemNode):
-            self.item_nodes.append(node_for_adding)
+            self.item_nodes.add(node_for_adding)
         elif isinstance(node_for_adding, UserNode):
-            self.user_nodes.append(node_for_adding)
+            self.user_nodes.add(node_for_adding)
     
     def add_edge(self, u_of_edge, v_of_edge, **attr):
         super().add_edge(u_of_edge, v_of_edge, **attr)
@@ -64,8 +69,8 @@ class Graph(nx.Graph):
         edge_type = data.get('type')
 
         if edge_type == 'rated':
-            self.rating_edges[u_of_edge].append(v_of_edge)
-            self.rating_item2users[v_of_edge].append(u_of_edge)
+            self.rating_edges[u_of_edge].add(v_of_edge)
+            self.rating_item2users[v_of_edge].add(u_of_edge)
             
     
     def remove_edge(self, u, v):
