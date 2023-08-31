@@ -10,7 +10,6 @@ class Recommender:
     def __init__(self, config : dict = {}):
         if config is not None:
             self.save_weights = get_optional_argument(config, 'save_weights', False)
-        pass
 
     def train(self, G_train : Graph, ratings_train : [(UserNode, ItemNode)], labels_train : [int]):
         raise NotImplementedError('Override train() method for your model subclass.')

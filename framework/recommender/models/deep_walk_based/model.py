@@ -23,7 +23,8 @@ class DeepWalkBased(Recommender):
             epochs: int = 1,
             learning_rate : float = 0.05,
             min_count : int = 1,
-            seed : int = 42 
+            seed : int = 42,
+            all_recs : bool = False 
         ):
         super().__init__(config)
         self.walk_len = walk_len
@@ -36,6 +37,7 @@ class DeepWalkBased(Recommender):
         self.learning_rate = learning_rate
         self.min_count = min_count
         self.seed = seed
+        self.all_recs = all_recs
         self._embedding = {}
 
     def train(self, G_train, ratings_train, labels_train):
@@ -44,18 +46,14 @@ class DeepWalkBased(Recommender):
         self.fit(G_train)
 
     def get_recommendations(self, k: int = 5):
-        # Option 1: Knn with all the items than filter the first k unrated items?
-        # Will need to iterate over all knn indices
-        # Option 2: Knn for each user and their respective unrated items
-        # Wont need to iterate over all items
-        # parallelize??
-
         # Set doesnt guarantee the order of set elements
         users = list(self.G_train.get_user_nodes())
         items = list(self.G_train.get_item_nodes())
         users_embeddings = np.array([self._embedding[user] for user in users])
         items_embeddings = np.array([self._embedding[item] for item in items])
-        knn = NearestNeighbors(n_neighbors=len(items), metric='cosine')
+
+        n_neighbors = self._get_n_neighbors(users, items, k)
+        knn = NearestNeighbors(n_neighbors=n_neighbors, metric='cosine')
         knn.fit(items_embeddings)
         rec_indices = knn.kneighbors(users_embeddings, return_distance=False)
         print(f'Shape indices {rec_indices.shape}')
@@ -68,12 +66,11 @@ class DeepWalkBased(Recommender):
                 item = items[item_idx]
                 if item not in rated_items:
                     recs.append(item)
-                    if len(recs) == k:
+                    if not self.all_recs and len(recs) == k:
                         break
             
             recommendations[user] = recs
         
-        print(f'Quantidade de usuários com recomendação {len(list(recommendations.keys()))}')
         return recommendations
 
     def get_user_recommendation(self, user: UserNode, k: int = 5):
@@ -82,7 +79,8 @@ class DeepWalkBased(Recommender):
         unrated_items = list(items - rated_items)
         user_embedding = self._embedding[user].reshape(1, -1)
         items_embeddings = np.array([self._embedding[item] for item in unrated_items])
-        knn = NearestNeighbors(n_neighbors=k, metric='cosine')
+        n_neighbors = k if not self.all_recs else len(unrated_items)
+        knn = NearestNeighbors(n_neighbors=n_neighbors, metric='cosine')
         knn.fit(items_embeddings)
         rec_indices = knn.kneighbors(user_embedding, return_distance=False)
 
@@ -130,6 +128,20 @@ class DeepWalkBased(Recommender):
         mapping = {node: G.nodes[node]['old_label'] for node in G.nodes()}
         nx.relabel_nodes(G, mapping, copy=False)
         nx.set_node_attributes(G, {v: k for k, v in mapping.items()}, 'old_label')
+
+    def _get_n_neighbors(self, users, items, top_k):
+        n_neighbors = 0
+        if self.all_recs:
+            n_neighbors = len(items)
+        else:
+            max_recs = 0
+            for user in users:
+                rated_items = self.G_train.get_user_rated_items(user)
+                if len(rated_items) > max_recs:
+                    max_recs = len(rated_items)
+            n_neighbors = max_recs + top_k
+        
+        return n_neighbors
 
 
            

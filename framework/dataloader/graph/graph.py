@@ -22,7 +22,7 @@ class Graph(nx.Graph):
         self.rating_edges = defaultdict(set)        # { user: Set([items]) }
         self.rating_item2users = defaultdict(set)   # { item: Set([users]) }
         
-        # Adding item nodes and properties nodes
+        # Adding item, user and properties nodes
         self._add_item_info(item, enrich)
         self._add_user_info(user)
         self._add_ratings(ratings)
