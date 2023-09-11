@@ -48,7 +48,7 @@ class Graph(nx.Graph):
         ratings = defaultdict(list)
         for (u,v) in list(self.get_rating_edges()):
             data = self.get_edge_data(u,v)
-            ratings[u.get_id()].append((v.get_id(), data['rating']))
+            ratings[u].append((v, data['rating']))
 
         return ratings
     

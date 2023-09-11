@@ -17,6 +17,11 @@ class Recommender:
         raise NotImplementedError('Override train() method for your model subclass.')
     
     def get_recommendations(self, k : int = 5):
+        """
+        :param k: cutoff recommendation (int)
+        :return dict of recommendations for each user
+            of type {user1: [item1, item2]}
+        """
         raise NotImplementedError('Override get_recommendations() for your model subclass.')
 
     def get_user_recommendation(self, user : UserNode, k : int = 5):

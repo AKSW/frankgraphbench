@@ -74,7 +74,7 @@ class EdgeSplitter():
         for (u, v) in test:
             data = self.G.get_edge_data(u,v)
             self.G.remove_edge(u,v)
-            ratings[u.get_id()].append((v.get_id(), data['rating']))
+            ratings[u].append((v, data['rating']))
 
         return self.G, ratings 
     

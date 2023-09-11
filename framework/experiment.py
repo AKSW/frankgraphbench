@@ -38,7 +38,9 @@ def run(config_path):
     for metric in evaluation_config['metrics']:
         module_name, class_name = _load_metric_class(metric)
         metric_class = getattr(importlib.import_module(module_name), class_name)
-        metric_instance = metric_class(evaluation_config['k'], evaluation_config['relevance_threshold'])
+        k = evaluation_config['k']
+        relevance_threshold = evaluation_config['relevance_threshold']
+        metric_instance = metric_class(k, relevance_threshold)
         eval_metrics.append(metric_instance)
     print(f'Used metrics: {eval_metrics}')
     
@@ -58,7 +60,7 @@ def run(config_path):
 
             # Getting recomendations
             # From this data I can evaluate the result for validation and test data
-            x = model.get_recommendations()
+            x = model.get_recommendations(k=k)
 
             user = list(G.get_user_nodes())[0]
             print(f'Chosen user: {user}')
@@ -66,6 +68,21 @@ def run(config_path):
             print(f'Recommendations from get_user_recommendations: {model.get_user_recommendation(user)}')
 
             # Evaluate metrics for this dataset
+            print(f'Evaluating model ...')
+            for metric in eval_metrics:
+                print(f'{metric.name()}: {metric.eval(ratings_train, x)}')
+                ratings_train_test = {
+                    1: [(1, 10),(2, 10),(3, 10)],
+                    2: [(1, 10),(2, 10),(3, 10)],
+                    3: [(1, 10),(2, 10),(3, 10)],
+                }
+                x_test = {
+                    1: [1, 20, 30],
+                    2: [10,2,30],
+                    3: [10,20,3]
+                }
+                print(f'MAP metric: {metric.eval(ratings_train_test, x_test)}')
+
 
 
 

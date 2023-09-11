@@ -9,6 +9,8 @@ from gensim.models.word2vec import Word2Vec
 from sklearn.neighbors import NearestNeighbors
 from copy import deepcopy
 
+from ....dataloader.graph.node import ItemNode
+
 class DeepWalkBased(Recommender):
     def __init__(
             self, 
@@ -41,13 +43,14 @@ class DeepWalkBased(Recommender):
         self._embedding = {}
 
     def train(self, G_train, ratings_train):
-        self.G_train = deepcopy(G_train) # (?) Check why I cant acess the sets by reference
+        self.G_train = deepcopy(G_train) # (?) Check why I cant access the sets by reference
         self.fit(G_train)
 
     def get_recommendations(self, k: int = 5):
         # Set doesnt guarantee the order of set elements
         users = list(self.G_train.get_user_nodes())
         items = list(self.G_train.get_item_nodes())
+
         users_embeddings = np.array([self._embedding[user] for user in users])
         items_embeddings = np.array([self._embedding[item] for item in items])
 
