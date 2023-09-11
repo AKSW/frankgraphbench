@@ -45,13 +45,12 @@ class Graph(nx.Graph):
                 yield (user, item)
     
     def get_ratings_with_labels(self):
-        edges, labels = [], []
+        ratings = defaultdict(list)
         for (u,v) in list(self.get_rating_edges()):
             data = self.get_edge_data(u,v)
-            edges.append((u.get_id(), v.get_id()))
-            labels.append(data['rating'])
+            ratings[u.get_id()].append((v.get_id(), data['rating']))
 
-        return np.array(edges), np.array(labels)
+        return ratings
     
     def get_user_rated_items(self, user : UserNode):
         return self.rating_edges[user]

@@ -1,6 +1,7 @@
 import random
 import math
 from copy import deepcopy
+from collections import defaultdict
 
 from ..graph.graph import Graph
 
@@ -67,25 +68,15 @@ class EdgeSplitter():
             for test in self._kfold(k, level):
                 yield self._extract_dataset(test)
 
-
-        # edges, labels = [], []
-        # for (u, v) in test:
-        #     data = self.G.get_edge_data(u,v)
-        #     self.G.remove_edge(u,v)
-        #     edges.append((u.get_id(), v.get_id()))
-        #     labels.append(data['rating'])
-
-        # yield self.G, np.array(edges), np.array(labels)
-
     def _extract_dataset(self, test):
-        edges, labels = [], []
+        # edges, labels = [], []
+        ratings = defaultdict(list)
         for (u, v) in test:
             data = self.G.get_edge_data(u,v)
             self.G.remove_edge(u,v)
-            edges.append((u.get_id(), v.get_id()))
-            labels.append(data['rating'])
+            ratings[u.get_id()].append((v.get_id(), data['rating']))
 
-        return self.G, np.array(edges), np.array(labels) 
+        return self.G, ratings 
     
     def _random_by_ratio(self, p: float, level: str) -> np.array:
         if level == 'global':

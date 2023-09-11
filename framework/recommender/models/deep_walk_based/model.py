@@ -40,9 +40,8 @@ class DeepWalkBased(Recommender):
         self.all_recs = all_recs
         self._embedding = {}
 
-    def train(self, G_train, ratings_train, labels_train):
+    def train(self, G_train, ratings_train):
         self.G_train = deepcopy(G_train) # (?) Check why I cant acess the sets by reference
-        # self.G_train = G_train 
         self.fit(G_train)
 
     def get_recommendations(self, k: int = 5):
