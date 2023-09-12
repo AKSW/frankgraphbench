@@ -27,22 +27,67 @@ experiment:
       parameters:
         min: 3  #inclusive
         max: 11 #inclusive
-    - method: binarize
-      parameters: 
-        threshold: 4
+    # - method: binarize
+    #   parameters: 
+    #     threshold: 4
     - method: filter_kcore
       parameters:
         core: 5
         iterations: 3
         target: user # user or rating
-  split:
-    strategy: ratio
-    ratio: [50, 30, 20]
 
+  split:
+    seed: 42
+    test:
+      method: random_by_ratio 
+      level: global 
+      p: 0.2
+    validation:
+      method: random_by_ratio 
+      level: global 
+      p: 0.2
+
+    # test:
+    #   method: timestamp_by_ratio 
+    #   level: user 
+    #   p: 0.1
+    # validation:
+    #   level: user 
+    #   method: timestamp_by_ratio 
+    #   p: 0.2
+
+    # test:
+    #   method: fixed_timestamp 
+    #   # type: global_level 
+    #   timestamp: 890000000
+    # validation:
+    #   method: fixed_timestamp 
+    #   timestamp: 880000000
+
+
+    # test:
+    #   method: k_fold
+    #   k: 3 
+    #   level: 'user'
+    # Faz sentido adicionar validação para k-fold??
+    # validation:
+    #   method: random_by_ratio 
+    #   level: global 
+    #   p: 0.1
+
+  # TODO: deixar a opção de partir de alguns tipos especificos de nó
   models:
-    - model1:
-        parameters:
-          neighbors: 10
-    - model2:
-        parameters:
-          embedding_size: 64
+    - name: deepwalk_based
+      config:
+      parameters:
+        walk_len: 10
+        p: 0.7
+        q: 0.3
+        n_walks: 50
+        embedding_size: 64
+        epochs: 2
+  
+  evaluation:
+    k: 3
+    relevance_threshold: 0
+    metrics: [MAP, nDCG]
