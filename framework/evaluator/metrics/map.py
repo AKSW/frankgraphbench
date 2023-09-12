@@ -4,7 +4,7 @@ import numpy as np
 
 class MAP(Metric):
     # reference: https://github.com/benhamner/Metrics/blob/master/Python/ml_metrics/average_precision.py
-    def init(self, k : int, relevance_threshold):
+    def init(self, k : int, relevance_threshold=0):
         super().init(k, relevance_threshold)
 
     def name(self):
@@ -12,7 +12,7 @@ class MAP(Metric):
     
     def eval(self, ratings, recommendations):
         relevant_items = self._get_relevant_ratings(ratings)
-        users_apk = [self._apk(rel_items, recommendations[u]) for u, rel_items in relevant_items.items()]
+        users_apk = [self._apk(set(rel_items), recommendations[u]) for u, rel_items in relevant_items.items()]
         return np.mean(users_apk)
     
     def _apk(self, rel_items, recommendations):

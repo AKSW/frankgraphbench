@@ -16,13 +16,16 @@ class Metric:
         """
         raise NotImplementedError('Implement the eval() method for your metric subclass')
     
-    def _get_relevant_ratings(self, ratings):
+    def _get_relevant_ratings(self, ratings, with_ratings=False):
         relevant_ratings = {}
         for u, u_ratings in ratings.items():
             relevant_items = []
             for (i, rating) in u_ratings:
                 if rating >= self.relevance_threshold:
-                    relevant_items.append(i)
+                    if not with_ratings:
+                        relevant_items.append(i)
+                    else:
+                        relevant_items.append((i, rating))
                 else:
                     # It's sorted, so I'm sure the next ones wont be greater than threshold
                     break

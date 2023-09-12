@@ -81,7 +81,7 @@ def run(config_path):
                     2: [10,2,30],
                     3: [10,20,3]
                 }
-                print(f'MAP metric: {metric.eval(ratings_train_test, x_test)}')
+                print(f'{metric.name()} metric: {metric.eval(ratings_train_test, x_test)}')
 
 
 
