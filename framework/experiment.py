@@ -65,7 +65,7 @@ def run(config_path):
             user = list(G.get_user_nodes())[0]
             print(f'Chosen user: {user}')
             print(f'Recommendations from get_recommendations {x[user]}')
-            print(f'Recommendations from get_user_recommendations: {model.get_user_recommendation(user)}')
+            print(f'Recommendations from get_user_recommendations: {model.get_user_recommendation(user, k)}')
 
             # Evaluate metrics for this dataset
             print(f'Evaluating model ...')

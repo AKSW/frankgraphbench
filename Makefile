@@ -37,6 +37,9 @@ enrich_lastfm:
 experiment:
 	python3 framework.py -c 'config_files/test.yml'
 
+experiment2:
+	python3 framework.py -c 'config_files/test2.yml'
+
 test:
 	python3 data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/test' \
 		-ci -cu -cr -map -w 4 

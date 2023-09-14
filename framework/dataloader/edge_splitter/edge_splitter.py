@@ -69,7 +69,7 @@ class EdgeSplitter():
                 yield self._extract_dataset(test)
 
     def _extract_dataset(self, test):
-        # edges, labels = [], []
+        # Returns {user: [(item1, rating1), (item2, rating2) ...]}
         ratings = defaultdict(list)
         for (u, v) in test:
             data = self.G.get_edge_data(u,v)

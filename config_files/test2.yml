@@ -10,17 +10,17 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/ml-100k/processed/rating.csv 
       timestamp: True
-    enrich:
-      map_path: datasets/ml-100k/processed/map.csv
-      enrich_path: datasets/ml-100k/processed/enriched.csv
-      remove_unmatched: False
-      properties:
-        - type: subject
-          grouped: True
-          sep: "::"
-        - type: director
-          grouped: True
-          sep: "::"
+    # enrich:
+    #   map_path: datasets/ml-100k/processed/map.csv
+    #   enrich_path: datasets/ml-100k/processed/enriched.csv
+    #   remove_unmatched: False
+    #   properties:
+    #     - type: subject
+    #       grouped: True
+    #       sep: "::"
+    #     - type: director
+    #       grouped: True
+    #       sep: "::"
 
   preprocess:
     - method: filter_by_rating  
@@ -88,6 +88,6 @@ experiment:
         epochs: 2
   
   evaluation:
-    k: 1000
+    k: 10
     relevance_threshold: 3
     metrics: [MAP, nDCG]
