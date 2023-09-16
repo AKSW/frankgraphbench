@@ -42,7 +42,6 @@ def run(config_path):
         relevance_threshold = evaluation_config['relevance_threshold']
         metric_instance = metric_class(k, relevance_threshold)
         eval_metrics.append(metric_instance)
-    print(f'Used metrics: {eval_metrics}')
     
     # Loop over dataset (specially if its a k-fold split)
     for dataset in split(G, **experiment['split']):
@@ -56,32 +55,16 @@ def run(config_path):
             
             # Training model
             G_train, ratings_train = dataset.get_train_data()
+            print(f'Training model: {model.name()}...')
             model.train(G_train, ratings_train)
 
             # Getting recomendations
             # From this data I can evaluate the result for validation and test data
-            x = model.get_recommendations(k=k)
-
-            user = list(G.get_user_nodes())[0]
-            print(f'Chosen user: {user}')
-            print(f'Recommendations from get_recommendations {x[user]}')
-            print(f'Recommendations from get_user_recommendations: {model.get_user_recommendation(user, k)}')
-
-            # Evaluate metrics for this dataset
+            recs = model.get_recommendations(k=k)
             print(f'Evaluating model ...')
             for metric in eval_metrics:
-                print(f'{metric.name()}: {metric.eval(ratings_train, x)}')
-                ratings_train_test = {
-                    1: [(1, 10),(2, 10),(3, 10)],
-                    2: [(1, 10),(2, 10),(3, 10)],
-                    3: [(1, 10),(2, 10),(3, 10)],
-                }
-                x_test = {
-                    1: [1, 20, 30],
-                    2: [10,2,30],
-                    3: [10,20,3]
-                }
-                print(f'{metric.name()} metric: {metric.eval(ratings_train_test, x_test)}')
+                print(f'{metric.name()}: {metric.eval(ratings_train, recs)}')
+        
 
 
 

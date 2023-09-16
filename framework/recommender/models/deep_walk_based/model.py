@@ -42,8 +42,12 @@ class DeepWalkBased(Recommender):
         self.all_recs = all_recs
         self._embedding = {}
 
+    def name(self):
+        text = 'Node2Vec based model + cosine similarity'
+        return text
+
     def train(self, G_train, ratings_train):
-        self.G_train = deepcopy(G_train) # (?) Check why I cant access the sets by reference
+        self.G_train = G_train
         self.fit(G_train)
 
     def get_recommendations(self, k: int = 5):
@@ -58,7 +62,6 @@ class DeepWalkBased(Recommender):
         knn = NearestNeighbors(n_neighbors=n_neighbors, metric='cosine')
         knn.fit(items_embeddings)
         rec_indices = knn.kneighbors(users_embeddings, return_distance=False)
-        print(f'Shape indices {rec_indices.shape}')
 
         recommendations = {}
         for user_idx, user in enumerate(users):
@@ -94,7 +97,6 @@ class DeepWalkBased(Recommender):
 
 
     def fit(self, graph):
-
         self._convert_node_labels_to_integer(graph)
         self.walks = walker.random_walks(
             graph, n_walks=self.n_walks, walk_len=self.walk_len
@@ -141,7 +143,7 @@ class DeepWalkBased(Recommender):
                 rated_items = self.G_train.get_user_rated_items(user)
                 if len(rated_items) > max_recs:
                     max_recs = len(rated_items)
-            n_neighbors = max_recs + top_k
+            n_neighbors = min(max_recs + top_k, len(items))
         
         return n_neighbors
 

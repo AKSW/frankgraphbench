@@ -31,6 +31,7 @@ class Graph(nx.Graph):
         n_nodes = self.number_of_nodes()
         n_edges = self.number_of_edges()
         message =  f'{self.name} graph with a total of {n_nodes} nodes and {n_edges} edges'
+        message +=  f' ({len(self.user_nodes)} users, {len(self.item_nodes)} items and {len(list(self.get_rating_edges()))} ratings)'
         return message
 
     def get_item_nodes(self) -> Set[ItemNode]:
@@ -52,7 +53,7 @@ class Graph(nx.Graph):
 
         return ratings
     
-    def get_user_rated_items(self, user : UserNode):
+    def get_user_rated_items(self, user : UserNode) -> Set[ItemNode]:
         return self.rating_edges[user]
     
     def add_node(self, node_for_adding: Node, **attr):
@@ -77,7 +78,7 @@ class Graph(nx.Graph):
             self.rating_edges[u].remove(v)
             self.rating_item2users[v].remove(u)
 
-        return super().remove_edge(u, v)
+        super().remove_edge(u, v)
     
     def remove_node(self, n):
         super().remove_node(n)

@@ -25,7 +25,7 @@ def split(G, **split_config):
         dataset = Dataset()
         dataset.set_test_data(ratings_test)
         print(f'\tDisturbed graph info after splitting test data: {G_train.info()}')
-        print(f'\tNumber of test instances: {len(list(ratings_test.items()))}')
+        print(f'\tNumber of test instances: {len_instances(ratings_test)}')
 
         if get_optional_argument(split_config, 'validation', False):
             if split_config['test']['method'] == 'k_fold' and split_config['validation']['method'] == 'k_fold':
@@ -35,12 +35,16 @@ def split(G, **split_config):
             for G_train, ratings_val in edge_splitter_val.split(**split_config['validation']):
                 dataset.set_val_data(ratings_val)
                 print(f'\tGraph info after splitting validation data: {G_train.info()}')
-                print(f'\tNumber of validation instances: {len(list(ratings_val.items()))}')
+                print(f'\tNumber of validation instances: {len_instances(ratings_val)}')
 
         ratings_train = G_train.get_ratings_with_labels()
         dataset.set_train_data(G_train, ratings_train)
-        print(f'Number of training instances: {len(list(ratings_train.items()))}')
+        print(f'Number of training instances: {len_instances(ratings_train)}')
 
         yield dataset
+
+def len_instances(data):
+    return sum([len(items) for items in data.values()])
+
 
     

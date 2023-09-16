@@ -6,7 +6,7 @@ class nDCG(Metric):
         super().__init__(k, relevance_threshold)
     
     def name(self):
-        return 'nDCG'
+        return f'nDCG@{self.k}'
     
     def eval(self, ratings, recommendations):
         relevant_items = self._get_relevant_ratings(ratings, with_ratings=True)

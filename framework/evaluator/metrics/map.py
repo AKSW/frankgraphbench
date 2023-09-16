@@ -8,7 +8,7 @@ class MAP(Metric):
         super().init(k, relevance_threshold)
 
     def name(self):
-        return 'MAP'
+        return f'MAP@{self.k}'
     
     def eval(self, ratings, recommendations):
         relevant_items = self._get_relevant_ratings(ratings)

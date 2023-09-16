@@ -16,6 +16,9 @@ class Recommender:
     def train(self, G_train : Graph, ratings_train : t.Dict[UserNode, t.List[t.Tuple[ItemNode, float]]]):
         raise NotImplementedError('Override train() method for your model subclass.')
     
+    def name(self):
+        raise NotImplementedError('Override name() method for your model subclass.')
+    
     def get_recommendations(self, k : int = 5):
         """
         :param k: cutoff recommendation (int)

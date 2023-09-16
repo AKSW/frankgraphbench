@@ -76,7 +76,7 @@ class EdgeSplitter():
             self.G.remove_edge(u,v)
             ratings[u].append((v, data['rating']))
 
-        return self.G, ratings 
+        return deepcopy(self.G), ratings 
     
     def _random_by_ratio(self, p: float, level: str) -> np.array:
         if level == 'global':
@@ -89,7 +89,7 @@ class EdgeSplitter():
             test = []
             for user, items in self.G.rating_edges.items():
                 # Number of test items for user
-                items = np.array(items)
+                items = np.array(list(items))
                 np.random.shuffle(items)
                 n_test = math.ceil(items.shape[0] * p)
                 test += [(user, item) for item in items[-n_test:]]

@@ -42,10 +42,10 @@ experiment:
       method: random_by_ratio 
       level: global 
       p: 0.2
-    validation:
-      method: random_by_ratio 
-      level: global 
-      p: 0.2
+    # validation:
+    #   method: random_by_ratio 
+    #   level: global 
+    #   p: 0.2
 
     # test:
     #   method: timestamp_by_ratio 
@@ -81,13 +81,13 @@ experiment:
       config:
       parameters:
         walk_len: 10
-        p: 0.7
-        q: 0.3
+        p: 1.0
+        q: 1.0
         n_walks: 50
-        embedding_size: 300
+        embedding_size: 64
         epochs: 2
   
   evaluation:
-    k: 1000
+    k: 5
     relevance_threshold: 3
     metrics: [MAP, nDCG]
