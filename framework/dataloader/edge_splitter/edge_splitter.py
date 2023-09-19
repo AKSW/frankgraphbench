@@ -1,12 +1,16 @@
+from typing import Tuple, Dict, List
+
 import random
 import math
 from copy import deepcopy
 from collections import defaultdict
 
 from ..graph.graph import Graph
+from ..graph.node import UserNode, ItemNode
 
 import numpy as np
 from sklearn.model_selection import KFold
+
 
 class EdgeSplitter():
     def __init__(self, G: Graph, seed : int = 42):
@@ -22,7 +26,7 @@ class EdgeSplitter():
             'k_fold'
         ]
     
-    def split(self, **config):
+    def split(self, **config) -> Tuple[Graph, Dict[UserNode, List[Tuple[ItemNode, float]]]]:
         method = config['method']
         if method not in self.supported_methods:
             raise ValueError(f'Invalid split method provided. So far, the supported ones are:\n{self.supported_methods}')
@@ -69,7 +73,7 @@ class EdgeSplitter():
                 yield self._extract_dataset(test)
 
     def _extract_dataset(self, test):
-        # Returns {user: [(item1, rating1), (item2, rating2) ...]}
+        # Returns Graph, {user: [(item1, rating1), (item2, rating2) ...]}
         ratings = defaultdict(list)
         for (u, v) in test:
             data = self.G.get_edge_data(u,v)
@@ -129,7 +133,7 @@ class EdgeSplitter():
         elif level == 'user':
             kfold_users, ratings_per_user = [], []
             for user, items in self.G.rating_edges.items():
-                items = np.array(items)
+                items = np.array(list(items))
                 np.random.shuffle(items)
                 kfold = KFold(n_splits=k).split(items)
                 kfold_users.append(kfold)
