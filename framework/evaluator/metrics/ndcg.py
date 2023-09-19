@@ -15,7 +15,7 @@ class nDCG(Metric):
             u_recs = self._get_user_rec_relevance(rel_items, recommendations[u])
             ndcg = self._calculate_ndcg(rel_items, u_recs)
             users_ndcg.append(ndcg)
-        
+            
         return np.mean(users_ndcg)
 
     def _calculate_dcg(self, recs):

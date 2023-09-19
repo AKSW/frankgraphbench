@@ -19,7 +19,7 @@ class Recommender:
     def name(self):
         raise NotImplementedError('Override name() method for your model subclass.')
     
-    def get_recommendations(self, k : int = 5):
+    def get_recommendations(self, k : int = 5) -> t.Dict[UserNode, t.List[ItemNode]]:
         """
         :param k: cutoff recommendation (int)
         :return dict of recommendations for each user

@@ -10,38 +10,37 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/ml-100k/processed/rating.csv 
       timestamp: True
-    enrich:
-      map_path: datasets/ml-100k/processed/map.csv
-      enrich_path: datasets/ml-100k/processed/enriched.csv
-      remove_unmatched: False
-      properties:
-        - type: subject
-          grouped: True
-          sep: "::"
-        - type: director
-          grouped: True
-          sep: "::"
+    # enrich:
+    #   map_path: datasets/ml-100k/processed/map.csv
+    #   enrich_path: datasets/ml-100k/processed/enriched.csv
+    #   remove_unmatched: False
+    #   properties:
+    #     - type: subject
+    #       grouped: True
+    #       sep: "::"
+    #     - type: director
+    #       grouped: True
+    #       sep: "::"
 
   preprocess:
-    - method: filter_by_rating  
-      parameters:
-        min: 3  #inclusive
-        max: 11 #inclusive
+    # - method: filter_by_rating  
+    #   parameters:
+    #     threshold: 20
     # - method: binarize
     #   parameters: 
     #     threshold: 4
     - method: filter_kcore
       parameters:
-        core: 5
-        iterations: 3
+        k: 20
+        iterations: 1
         target: user # user or rating
 
   split:
     seed: 42
-    test:
-      method: random_by_ratio 
-      level: global 
-      p: 0.2
+    # test:
+    #   method: random_by_ratio 
+    #   level: global 
+    #   p: 0.2
     # validation:
     #   method: random_by_ratio 
     #   level: global 
@@ -65,27 +64,24 @@ experiment:
     #   timestamp: 880000000
 
 
-    # test:
-    #   method: k_fold
-    #   k: 3 
-    #   level: 'user'
-    # Faz sentido adicionar validação para k-fold??
-    # validation:
-    #   method: random_by_ratio 
-    #   level: global 
-    #   p: 0.1
+    test:
+      method: k_fold
+      k: 3
+      level: 'user'
+
 
   # TODO: deixar a opção de partir de alguns tipos especificos de nó
   models:
     - name: deepwalk_based
       config:
+        save_weights: True
       parameters:
         walk_len: 10
         p: 1.0
         q: 1.0
         n_walks: 50
         embedding_size: 64
-        epochs: 2
+        epochs: 1
   
   evaluation:
     k: 5
