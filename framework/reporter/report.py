@@ -15,6 +15,8 @@ class Reporter:
         results = self.__process(results)
         df = pd.DataFrame.from_dict(results, orient='index')
         df['model'] = df.index
+        df = df.set_index('model')
+
         self.__to_csv(df)        
 
     def __to_csv(self, df):
