@@ -9,7 +9,7 @@ ml-1m:
 
 lastfm:
 	python3 data_integration.py -d 'lastfm' -i 'datasets/lastfm' -o 'datasets/lastfm/processed' \
-		-ci -cr -map -w 4
+		-ci -cu -cr -cs
 
 book-crossing:
 	python3 data_integration.py -d 'book-crossing' -i 'datasets/book-crossing' -o 'datasets/book-crossing/processed' \
@@ -40,6 +40,5 @@ experiment:
 experiment2:
 	python3 framework.py -c 'config_files/test2.yml'
 
-test:
-	python3 data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/test' \
-		-ci -cu -cr -map -w 4 
+experiment3:
+	python3 framework.py -c 'config_files/test3.yml'

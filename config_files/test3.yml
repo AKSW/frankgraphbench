@@ -9,8 +9,8 @@ experiment:
     ratings: 
       path: datasets/lastfm/processed/rating.csv 
       timestamp: False
-    social:
-      path: datasets/lastfm/processed/social.csv 
+    # social:
+    #   path: datasets/lastfm/processed/social.csv 
     # enrich:
     #   map_path: datasets/last_fm/processed/map.csv
     #   enrich_path: datasets/last_fm/processed/enriched.csv
@@ -91,11 +91,10 @@ experiment:
         embedding_size: 64
         epochs: 1
 
-
   evaluation:
     k: 5
     relevance_threshold: 3
     metrics: [MAP, nDCG]
 
   report:
-    file: 'experiment_results/last_fm/run1_with_social_links.csv'
+    file: 'experiment_results/last_fm/run1.csv'

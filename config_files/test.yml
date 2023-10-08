@@ -10,17 +10,17 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/ml-100k/processed/rating.csv 
       timestamp: True
-    # enrich:
-    #   map_path: datasets/ml-100k/processed/map.csv
-    #   enrich_path: datasets/ml-100k/processed/enriched.csv
-    #   remove_unmatched: False
-    #   properties:
-    #     - type: subject
-    #       grouped: True
-    #       sep: "::"
-    #     - type: director
-    #       grouped: True
-    #       sep: "::"
+    enrich:
+      map_path: datasets/ml-100k/processed/map.csv
+      enrich_path: datasets/ml-100k/processed/enriched.csv
+      remove_unmatched: False
+      properties:
+        - type: subject
+          grouped: True
+          sep: "::"
+        - type: director
+          grouped: True
+          sep: "::"
 
   preprocess:
     # - method: filter_by_rating  
@@ -66,11 +66,10 @@ experiment:
 
     test:
       method: k_fold
-      k: 3
+      k: 2
       level: 'user'
 
 
-  # TODO: deixar a opção de partir de alguns tipos especificos de nó
   models:
     - name: deepwalk_based
       config:
@@ -82,8 +81,21 @@ experiment:
         n_walks: 50
         embedding_size: 64
         epochs: 1
+    - name: deepwalk_based
+      config:
+        save_weights: True
+      parameters:
+        walk_len: 10
+        p: 0.8
+        q: 0.6
+        n_walks: 50
+        embedding_size: 64
+        epochs: 1
   
   evaluation:
     k: 5
     relevance_threshold: 3
     metrics: [MAP, nDCG]
+
+  report:
+    file: 'experiment_results/ml100k_enriched/run1.csv'

@@ -10,7 +10,7 @@ def main():
 
     args = parser.parse_args()
     config_path = args.config
-    print(f'Running experiment defined by {config_path} ...')
+    print(f'Running experiment...')
     run(config_path)
 
 
