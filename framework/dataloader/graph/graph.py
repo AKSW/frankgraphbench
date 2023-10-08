@@ -8,24 +8,41 @@ import pandas as pd
 from tqdm import tqdm
 import numpy as np
 
-from typing import Set
+from typing import Set, Tuple
 
 """
     Class wrapper on the top of a nx.Graph
 """
 class Graph(nx.Graph):
-    def __init__(self, name, item, user, ratings, enrich = None):
+    # def __init__(self, name, item, user, ratings, enrich = None):
+    #     super().__init__()
+    #     self.name = name 
+    #     self.item_nodes = set()
+    #     self.user_nodes = set()
+    #     self.rating_edges = defaultdict(set)        # { user: Set([items]) }
+    #     self.rating_item2users = defaultdict(set)   # { item: Set([users]) }
+        
+    #     # Adding item, user and properties nodes
+    #     self._add_item_info(item, enrich)
+    #     self._add_user_info(user)
+    #     self._add_ratings(ratings)
+
+    def __init__(self):
         super().__init__()
-        self.name = name 
         self.item_nodes = set()
         self.user_nodes = set()
         self.rating_edges = defaultdict(set)        # { user: Set([items]) }
         self.rating_item2users = defaultdict(set)   # { item: Set([users]) }
-        
+
+    def build(self, name, item, user, ratings, enrich = None, social=None):        
         # Adding item, user and properties nodes
+        self.name = name 
         self._add_item_info(item, enrich)
         self._add_user_info(user)
         self._add_ratings(ratings)
+        if social is not None:
+            self._add_social_links(social)
+
 
     def info(self):
         n_nodes = self.number_of_nodes()
@@ -40,7 +57,7 @@ class Graph(nx.Graph):
     def get_user_nodes(self) -> Set[UserNode]:
         return self.user_nodes
 
-    def get_rating_edges(self) -> tuple:
+    def get_rating_edges(self) -> Tuple[UserNode, ItemNode]:
         for user, items in self.rating_edges.items():
             for item in items:
                 yield (user, item)
@@ -94,6 +111,31 @@ class Graph(nx.Graph):
             for item, users in self.rating_item2users.items():
                 if n in users:
                     self.rating_item2users[item].remove(n)
+
+    def convert_node_labels_to_integer(self):
+        N = self.number_of_nodes()
+        mapping = dict(zip(self.nodes(), range(0, N)))
+        G = nx.relabel_nodes(self, mapping, copy=True)
+        nx.set_node_attributes(G, {v: k for k, v in mapping.items()}, 'old_label')
+        
+        G.item_nodes = self.item_nodes.copy()
+        G.user_nodes = self.user_nodes.copy()
+        G.rating_edges = self.rating_edges.copy()
+        G.rating_item2users = self.rating_item2users.copy()
+
+        return G
+    
+    def convert_back(self):
+        mapping = {node: self.nodes[node]['old_label'] for node in self.nodes()}
+        G = nx.relabel_nodes(self, mapping, copy=True)
+        nx.set_node_attributes(G, {v: k for k, v in mapping.items()}, 'old_label')
+
+        G.item_nodes = self.item_nodes.copy()
+        G.user_nodes = self.user_nodes.copy()
+        G.rating_edges = self.rating_edges.copy()
+        G.rating_item2users = self.rating_item2users.copy()
+
+        return G
 
     def _add_item_info(self, item, enrich):
         # Extracting info from .csv
@@ -190,3 +232,15 @@ class Graph(nx.Graph):
                     attrs['timestamp'] = row['timestamp']
 
                 self.add_edge(user_node, item_node, **attrs)
+
+    def _add_social_links(self, social):
+        df_social = pd.read_csv(social['path'])
+        total_links = df_social.shape[0]
+        desc = 'Adding social links between users into network'
+
+        for _, row in tqdm(df_social.iterrows(), total=total_links, desc=desc):
+            user1_node = UserNode(row['user1'])
+            user2_node = UserNode(row['user2'])
+
+            if user1_node in self and user2_node in self:
+                self.add_edge(user1_node, user2_node)

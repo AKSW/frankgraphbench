@@ -80,7 +80,7 @@ class EdgeSplitter():
             self.G.remove_edge(u,v)
             ratings[u].append((v, data['rating']))
 
-        return deepcopy(self.G), ratings 
+        return self.G, ratings 
     
     def _random_by_ratio(self, p: float, level: str) -> np.array:
         if level == 'global':

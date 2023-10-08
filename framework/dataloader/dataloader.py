@@ -11,7 +11,9 @@ from .dataset.dataset import Dataset
     :returns: Networkx graph (train, val, test)
 """
 def load(**data_config):
-    G = Graph(**data_config)
+    # G = Graph(**data_config)
+    G = Graph()
+    G.build(**data_config)
     return G
 
 def preprocess(G, methods: list):
