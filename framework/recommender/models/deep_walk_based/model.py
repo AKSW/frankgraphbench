@@ -44,11 +44,12 @@ class DeepWalkBased(Recommender):
 
     def name(self):
         text = 'Node2Vec based model + cosine similarity'
+        text += f';q={self.q};p={self.p};embedding_size={self.embedding_size}'
         return text
 
     def train(self, G_train, ratings_train):
         self.G_train = G_train
-        self.fit(G_train)
+        self.fit()
 
     def get_recommendations(self, k: int = 5):
         # Set doesnt guarantee the order of set elements
@@ -96,8 +97,8 @@ class DeepWalkBased(Recommender):
         return recs
 
 
-    def fit(self, graph):
-        self._convert_node_labels_to_integer(graph)
+    def fit(self):
+        graph = self.G_train.convert_node_labels_to_integer()
         self.walks = walker.random_walks(
             graph, n_walks=self.n_walks, walk_len=self.walk_len
         )
@@ -120,13 +121,13 @@ class DeepWalkBased(Recommender):
         for node in graph.nodes():
             self._embedding[graph.nodes[node]['old_label']] = model.wv[node]
         
-        self._convert_back(graph)
+        # self.G_train.convert_back()
     
-    def _convert_node_labels_to_integer(self, G):
-        N = G.number_of_nodes()
-        mapping = dict(zip(G.nodes(), range(0, N)))
-        nx.relabel_nodes(G, mapping, copy=False)
-        nx.set_node_attributes(G, {v: k for k, v in mapping.items()}, 'old_label')
+    # def _convert_node_labels_to_integer(self, G):
+    #     N = G.number_of_nodes()
+    #     mapping = dict(zip(G.nodes(), range(0, N)))
+    #     nx.relabel_nodes(G, mapping, copy=False)
+    #     nx.set_node_attributes(G, {v: k for k, v in mapping.items()}, 'old_label')
 
     def _convert_back(self, G):
         mapping = {node: G.nodes[node]['old_label'] for node in G.nodes()}
