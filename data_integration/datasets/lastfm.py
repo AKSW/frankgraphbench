@@ -22,11 +22,13 @@ class LastFM(Dataset):
         self.item_separator = '\t'
         # self.user_separator = '|'
         self.rating_separator = '\t'
+        self.social_separator = '\t'
 
         self.item_fields = ['item_id', 'name']
-        # self.user_fields = ['user_id', 'age', 'gender', 'occupation']
+        self.user_fields = ['user_id']
         self.rating_fields = ['user_id', 'item_id', 'rating']
         # self.map_fields = ['item_id', 'URI']
+        self.social_fields = ['user1', 'user2']
 
         self.map_query_template = Template('''
             PREFIX dct:  <http://purl.org/dc/terms/>
@@ -184,4 +186,22 @@ class LastFM(Dataset):
         df.columns = self.rating_fields
 
         return df
-        
+    
+    def load_social_data(self) -> pd.DataFrame():
+        filename = os.path.join(self.input_path, 'user_friends.dat')
+        df = pd.read_csv(filename, sep=self.social_separator)
+        df.columns = self.social_fields
+
+        return df
+    
+    def load_user_data(self) -> pd.DataFrame():
+        # There is no .dat only for user (none aditional user info)
+        # Will extract the users from the rating data
+        filename = os.path.join(self.input_path, 'user_artists.dat')
+        df = pd.read_csv(filename, sep=self.rating_separator)
+        df.columns = self.rating_fields
+        users = df['user_id'].unique()
+        df = pd.DataFrame(pd.Series(users), columns=['user_id'])
+
+        return df
+    

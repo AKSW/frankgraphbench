@@ -24,6 +24,7 @@ class Dataset():
         self.item_filename = os.path.join(self.output_path, 'item.csv')
         self.user_filename = os.path.join(self.output_path, 'user.csv')
         self.rating_filename = os.path.join(self.output_path, 'rating.csv')
+        self.social_filename = os.path.join(self.output_path, 'social.csv')
         self.map_filename = os.path.join(self.output_path, 'map.csv')
         self.enriched_filename = os.path.join(self.output_path, 'enriched.csv')
 
@@ -38,6 +39,7 @@ class Dataset():
         self.item_separator = '' 
         self.user_separator = ''
         self.rating_separator = ''
+        self.social_separator = ''
         # Chosen features to be extracted from dataset
         self.item_features = []
         self.user_features = []
@@ -68,6 +70,13 @@ class Dataset():
         """
         Loads rating interactions of Dataset
         :return: returns pd.Dataframe() containing each rating interaction.
+        """
+        raise NotImplementedError
+    
+    def load_social_data(self) -> pd.DataFrame():
+        """
+        Loads social links of Dataset
+        :return: returns pd.Dataframe() containing each social link between users.
         """
         raise NotImplementedError
     
@@ -196,6 +205,18 @@ class Dataset():
             print(f'{df_rating.shape[0]} ratings with {df_rating.shape[1]} Fields')
             print('Fields: ' + ', '.join(self.rating_fields))
             df_rating.to_csv(self.rating_filename, index=False)
+        except NotImplementedError:
+            print(f'Override load_rating_data() of your Dataset subclass.')
+
+    def convert_social_data(self):
+        """
+        Converts loaded social data to a processed csv (social.csv)
+        """
+        try:
+            print(f'Creating file: {self.social_filename}')
+            df_social = self.load_social_data()
+            print(f'{df_social.shape[0]} social link between users')
+            df_social.to_csv(self.social_filename, index=False)
         except NotImplementedError:
             print(f'Override load_rating_data() of your Dataset subclass.')
 
