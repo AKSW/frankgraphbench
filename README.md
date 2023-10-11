@@ -20,7 +20,7 @@ bash ml-1m.sh   # Downloaded at `datasets/ml-1m` folder
 
 ## Usage
 ```shell
-python3 data_integration.py [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [-cu] [-cr] [-map]
+python3 data_integration.py [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-w]
 ```
 
 Arguments:
@@ -31,6 +31,7 @@ Arguments:
 - **-ci:** Use this flag if you want to convert item data.
 - **-cu:** Use this flag if you want to convert user data.
 - **-cr:** Use this flag if you want to convert rating data.
+- **-cs:** Use this flag if you want to convert social link data.
 - **-map:** Use this flag if you want to map dataset items with DBpedia. At least the item data should be already converted.
 - **-w:** Choose the number of workers(threads) to be used for parallel queries.
 
@@ -74,13 +75,13 @@ The experiment config file should be a .yaml file like this:
 experiment:
   dataset: 
     name: ml-100k
-    item: # infos related to item dataset (mandatory, at least item_id)
+    item:
       path: datasets/ml-100k/processed/item.csv 
-      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
-    user: # mandatory (at least user_id)
+      extra_features: [movie_year, movie_title] 
+    user:
       path: datasets/ml-100k/processed/user.csv 
-      extra_features: [gender, occupation] # features beside user_id
-    ratings: # mandatory (at least [user_id, item_id, rating])
+      extra_features: [gender, occupation] 
+    ratings: 
       path: datasets/ml-100k/processed/rating.csv 
       timestamp: True
     enrich:
@@ -96,38 +97,39 @@ experiment:
           sep: "::"
 
   preprocess:
-    - method: filter_by_rating  
-      parameters:
-        min: 3  #inclusive
-        max: 11 #inclusive
-    - method: binarize
-      parameters: 
-        threshold: 4
     - method: filter_kcore
       parameters:
-        core: 5
-        iterations: 3
-        target: user # user or rating
+        k: 20
+        iterations: 1
+        target: user
 
   split:
     seed: 42
     test:
-      method: random_by_ratio 
-      level: global 
-      p: 0.2
-    validation:
-      method: random_by_ratio 
-      level: global 
-      p: 0.2
+      method: k_fold
+      k: 2
+      level: 'user'
+
 
   models:
     - name: deepwalk_based
       config:
+        save_weights: True
       parameters:
         walk_len: 10
-        n_walks: 5
+        p: 1.0
+        q: 1.0
+        n_walks: 50
         embedding_size: 64
-        epochs: 2
+        epochs: 1
+  
+  evaluation:
+    k: 5
+    relevance_threshold: 3
+    metrics: [MAP, nDCG]
+
+  report:
+    file: 'experiment_results/ml100k_enriched/run1.csv'
 ```
 
 See the [config_files/](/config_files/) directory for more examples.
