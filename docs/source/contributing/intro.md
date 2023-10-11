@@ -48,6 +48,7 @@ This project was designed to support further contributions, whether adding new s
         ```
     * Go to Github and make a Pull Request. 
 
+## More details
 
 Checkout in more details on how to contribute to each part of the project:
 * [Adding new Dataset](./add_dataset.md) (Data Integration)
