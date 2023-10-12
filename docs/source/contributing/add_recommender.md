@@ -33,6 +33,6 @@ To support a new RS model into the Data Integration step follow these steps:
 
 5. Add the model into the documentation
     * In the file `docs/source/getting_started/support.md` and **Models** section, add the model into the list.
-    * Inform the model name, a reference and model summary (main components of the architecture).
+    * Inform the model name, a reference, model summary (main components of the architecture) and parameters.
 
 6. Make a Pull Request on Github.

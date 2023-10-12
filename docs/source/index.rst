@@ -26,6 +26,7 @@ This project have two main components:
    getting_started/intro
    getting_started/quick_start
    getting_started/support
+   getting_started/config
 
 .. toctree::
    :maxdepth: 2

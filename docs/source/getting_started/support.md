@@ -14,7 +14,15 @@ Currently the supported datasets are:
 
 Currently the supported Recommender System models are:
 
-* **deepwalk_based**: Node embedding based model (Node2Vec) + cosine similarity
+- **deepwalk_based**: Node embedding based model (Node2Vec) + cosine similarity.
+  - Reference: X
+  - Main parameters
+    - `walk_len`: random walk length.
+    - `n_walks`: number of random walks for each node.
+    - `p`: likelihood of returning to the previous node, promoting more exploration of local structures.
+    - `q`: likelihood of moving away from the previous node, promoting more exploration of different parts of the graph.
+    - `embedding_size`: embedding size.
+    - `window_size`: Word2Vec window size.
 
 ## Pre-processing Methods
 
