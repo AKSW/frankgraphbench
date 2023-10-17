@@ -1,6 +1,8 @@
 # Knowledge-Graph-aware-Recommender-Systems-with-DBpedia
 Repository containing Data Integration between DBpedia and some standard Recommender Systems datasets and framework for reproducible experiments. For more info, check [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and project progress with weekly (as possible) [updates](https://github.com/AlvaroJoseLopes/Knowledge-Graph-aware-Recommender-Systems-with-DBpedia/wiki). 
 
+Check the [docs](https://knowledge-graph-aware-recommender-systems-with-dbpedia.readthedocs.io/en/latest/index.html) for more information.
+
 # Data Integration Usage
 Install the require packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
 
@@ -133,5 +135,3 @@ experiment:
 ```
 
 See the [config_files/](/config_files/) directory for more examples.
-
-Notes: WIP
