@@ -1,4 +1,4 @@
-experiment:
+ experiment:
   dataset: 
     name: ml-100k
     item: # infos related to item dataset (mandatory, at least item_id)
@@ -63,34 +63,21 @@ experiment:
     #   method: fixed_timestamp 
     #   timestamp: 880000000
 
-
     test:
       method: k_fold
       k: 5
       level: 'user'
 
-
   models:
-    - name: deepwalk_based
+    - name: transE
       config:
         save_weights: True
       parameters:
-        walk_len: 10
-        p: 1.0
-        q: 1.0
-        n_walks: 50
-        embedding_size: 64
-        epochs: 1
-    - name: deepwalk_based
-      config:
-        save_weights: True
-      parameters:
-        walk_len: 10
-        p: 0.8
-        q: 0.6
-        n_walks: 50
-        embedding_size: 64
-        epochs: 1
+        embedding_dim: 50
+        scoring_fct_norm: 1
+        epochs: 50
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training       
   
   evaluation:
     k: 5
@@ -98,4 +85,4 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: 'experiment_results/ml100k_enriched/run1.csv'
+    file: 'experiment_results/ml100k_enriched/transE1.csv'

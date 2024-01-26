@@ -61,6 +61,20 @@ class Graph(nx.Graph):
         for user, items in self.rating_edges.items():
             for item in items:
                 yield (user, item)
+
+    def get_user_property_edges(self) -> Tuple[UserNode, PropertyNode]:
+        for node, edge in self.edges():
+            if isinstance(node, UserNode) and isinstance(edge, PropertyNode):
+                yield (node, edge)
+            elif isinstance(node, PropertyNode) and isinstance(edge, UserNode):
+                yield (edge, node)
+    
+    def get_item_property_edges(self) -> Tuple[ItemNode, PropertyNode]:
+        for node, edge in self.edges():
+            if isinstance(node, ItemNode) and isinstance(edge, PropertyNode):
+                yield (node, edge)
+            elif isinstance(node, PropertyNode) and isinstance(edge, ItemNode):
+                yield (edge, node)
     
     def get_ratings_with_labels(self):
         ratings = defaultdict(list)
@@ -69,6 +83,54 @@ class Graph(nx.Graph):
             ratings[u].append((v, data['rating']))
 
         return ratings
+    
+    def get_all_triples(self):
+        triples_return = {"head": [], "relation": [], "tail": []}
+        
+        # ratings triples
+        ratings = self.get_ratings_with_labels()
+        desc = f'Generating ratings triples'
+        n_total = len(ratings.keys())
+        for user, ratings in tqdm(ratings.items(), total=n_total, desc=desc):
+            ratings.sort(key=lambda x: x[1], reverse=True)
+            for rating in ratings:
+                triples_return["head"].append(user.__str__())
+                triples_return["relation"].append(f"rating{rating[1]}")
+                triples_return["tail"].append(rating[0].__str__())
+
+        # user property triples
+        user_properties = self.get_user_property_edges()
+        desc = f'Generating user properties triples'
+        for user, user_property in tqdm(user_properties, desc=desc):
+            triples_return["head"].append(user.__str__())
+            triples_return["relation"].append("is")
+            triples_return["tail"].append(user_property.__str__())
+
+        # item property triples
+        item_properties = self.get_item_property_edges()
+        desc = f'Generating item properties triples'
+        for item, item_property in tqdm(item_properties, desc=desc):
+            triples_return["head"].append(item.__str__())
+            triples_return["relation"].append("has")
+            triples_return["tail"].append(item_property.__str__())
+        
+        return pd.DataFrame(triples_return)
+    
+    def get_ratings_triples(self):
+        triples_return = {"head": [], "relation": [], "tail": []}
+        
+        # ratings triples
+        ratings = self.get_ratings_with_labels()
+        desc = f'Generating ratings triples'
+        n_total = len(ratings.keys())
+        for user, ratings in tqdm(ratings.items(), total=n_total, desc=desc):
+            ratings.sort(key=lambda x: x[1], reverse=True)
+            for rating in ratings:
+                triples_return["head"].append(user.__str__())
+                triples_return["relation"].append(f"rating{rating[1]}")
+                triples_return["tail"].append(rating[0].__str__())
+        
+        return pd.DataFrame(triples_return)
     
     def get_user_rated_items(self, user : UserNode) -> Set[ItemNode]:
         return self.rating_edges[user]
