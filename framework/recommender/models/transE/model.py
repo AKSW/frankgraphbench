@@ -7,7 +7,7 @@ from pykeen.triples import TriplesFactory
 from pykeen.datasets import Dataset
 from sklearn.neighbors import NearestNeighbors
 
-from tqdm import tqdm
+from copy import deepcopy
 
 import pandas as pd
 import numpy as np
@@ -70,17 +70,42 @@ class TransE(Recommender):
         :return dict of recommendations for each user
             of type {user1: [item1, item2]}
         """
-        users = list(self.G_train.get_user_nodes())
-        items = list(self.G_train.get_item_nodes())
+        users_iter = self.G_train.get_user_nodes()
+        items_iter = self.G_train.get_item_nodes()
 
-        users_indices = [self._entity_to_id[user.__str__()] for user in users]
+        users = list(users_iter)
+        items = list(items_iter)
+        
+        users_indices, users_no_embedding = [], []
+        for user in users_iter:
+            try:
+                users_indices.append(self._entity_to_id[user.__str__()])
+            except:
+                users_no_embedding.append(user)
+                users.remove(user)
+                continue
         users_indices = torch.LongTensor(users_indices)
 
-        items_indices = [self._entity_to_id[item.__str__()] for item in items]
+        items_indices, items_no_embedding = [], []
+        for item in items_iter:
+            try:
+                items_indices.append(self._entity_to_id[item.__str__()])
+            except:
+                items_no_embedding.append(item)
+                items.remove(item)
+                continue
         items_indices = torch.LongTensor(items_indices)
 
         users_embeddings = self._model.entity_representations[0](indices=users_indices).detach().numpy()
         items_embeddings = self._model.entity_representations[0](indices=items_indices).detach().numpy()
+
+        if len(users_no_embedding) > 0:
+            users_embeddings = np.concatenate((users_embeddings, np.zeros((len(users_no_embedding), self.embedding_dim), dtype=users_embeddings.dtype)), axis=0) 
+            users = users + users_no_embedding
+        
+        if len(items_no_embedding) > 0:
+            items_embeddings = np.concatenate((items_embeddings, np.zeros((len(items_no_embedding), self.embedding_dim), dtype=items_embeddings.dtype)), axis=0)
+            items = items + items_no_embedding
 
         n_neighbors = self._get_n_neighbors(users, items, k)
         knn = NearestNeighbors(n_neighbors=n_neighbors, metric='cosine')
