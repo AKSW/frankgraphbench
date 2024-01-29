@@ -6,5 +6,9 @@ model2class = {
     'transE': {
         'submodule': 'transE.model',
         'class': 'TransE'
+    },
+    'transH': {
+        'submodule': 'transH.model',
+        'class': 'TransH'
     }
 }
