@@ -173,7 +173,7 @@ item_id,URI
 172,
 173,http://dbpedia.org/resource/The_Princess_Bride_(film)
 174,
-175,"http://dbpedia.org/resource/Brazil:_Cinema,_Sex_and_the_Generals"
+175,http://dbpedia.org/resource/Brazil_(1985_film)
 176,
 177,"http://dbpedia.org/resource/The_Good,_the_Bad_and_the_Ugly"
 178,http://dbpedia.org/resource/12_Angry_Men_(1957_film)
@@ -209,7 +209,7 @@ item_id,URI
 208,http://dbpedia.org/resource/Young_Frankenstein
 209,http://dbpedia.org/resource/This_Is_Spinal_Tap
 210,http://dbpedia.org/resource/Indiana_Jones_and_the_Last_Crusade
-211,http://dbpedia.org/resource/M*A*S*H_(film)
+211,http://dbpedia.org/resource/Hmone_Shwe_Yee
 212,http://dbpedia.org/resource/The_Unbearable_Lightness_of_Being_(film)
 213,
 214,http://dbpedia.org/resource/Pink_Floyd_–_The_Wall
@@ -261,7 +261,7 @@ item_id,URI
 260,http://dbpedia.org/resource/Event_Horizon_(film)
 261,http://dbpedia.org/resource/Air_Bud
 262,http://dbpedia.org/resource/In_the_Company_of_Men
-263,http://dbpedia.org/resource/Steel_Sharks
+263,http://dbpedia.org/resource/Steel_(1997_film)
 264,http://dbpedia.org/resource/Mimic_(film)
 265,http://dbpedia.org/resource/The_Hunt_for_Red_October_(film)
 266,http://dbpedia.org/resource/Kull_the_Conqueror
@@ -280,7 +280,7 @@ item_id,URI
 280,http://dbpedia.org/resource/Up_Close_&_Personal_(film)
 281,http://dbpedia.org/resource/The_River_Wild
 282,http://dbpedia.org/resource/A_Time_to_Kill_(1996_film)
-283,http://dbpedia.org/resource/Emma_(1996_theatrical_film)
+283,http://dbpedia.org/resource/Emma_(1996_TV_film)
 284,http://dbpedia.org/resource/Tin_Cup
 285,http://dbpedia.org/resource/Secrets_&_Lies_(film)
 286,http://dbpedia.org/resource/The_English_Patient_(film)
@@ -399,14 +399,14 @@ item_id,URI
 399,http://dbpedia.org/resource/The_Three_Musketeers_(1993_film)
 400,http://dbpedia.org/resource/The_Little_Rascals_(film)
 401,http://dbpedia.org/resource/The_Brady_Bunch_Movie
-402,http://dbpedia.org/resource/Ghost_Dad
+402,http://dbpedia.org/resource/Ghost_(1990_film)
 403,http://dbpedia.org/resource/Batman_(1989_film)
 404,http://dbpedia.org/resource/Pinocchio_(1940_film)
 405,http://dbpedia.org/resource/Mission:_Impossible_(film)
 406,http://dbpedia.org/resource/Thinner_(film)
 407,http://dbpedia.org/resource/Spy_Hard
 408,http://dbpedia.org/resource/A_Close_Shave
-409,http://dbpedia.org/resource/Jack_Frusciante_Left_the_Band
+409,http://dbpedia.org/resource/Jack_(1996_film)
 410,http://dbpedia.org/resource/Kingpin_(1996_film)
 411,http://dbpedia.org/resource/The_Nutty_Professor_(1996_film)
 412,http://dbpedia.org/resource/A_Very_Brady_Sequel
@@ -644,7 +644,7 @@ item_id,URI
 644,http://dbpedia.org/resource/The_Thin_Blue_Line_(1988_film)
 645,http://dbpedia.org/resource/Paris_Is_Burning_(film)
 646,
-647,http://dbpedia.org/resource/Rangam
+647,http://dbpedia.org/resource/Ran_(film)
 648,http://dbpedia.org/resource/The_Quiet_Man
 649,http://dbpedia.org/resource/Once_Upon_a_Time_in_America
 650,http://dbpedia.org/resource/The_Seventh_Seal
@@ -653,7 +653,7 @@ item_id,URI
 653,http://dbpedia.org/resource/Touch_of_Evil
 654,http://dbpedia.org/resource/Chinatown_(1974_film)
 655,http://dbpedia.org/resource/Stand_by_Me_(film)
-656,http://dbpedia.org/resource/My_Sin
+656,http://dbpedia.org/resource/Men_Like_These
 657,http://dbpedia.org/resource/The_Manchurian_Candidate_(1962_film)
 658,http://dbpedia.org/resource/Pump_Up_the_Volume_(film)
 659,http://dbpedia.org/resource/Arsenic_and_Old_Lace_(film)
@@ -675,7 +675,7 @@ item_id,URI
 675,http://dbpedia.org/resource/Nosferatu
 676,http://dbpedia.org/resource/The_Crucible_(1996_film)
 677,http://dbpedia.org/resource/Fire_on_the_Mountain_(1996_film)
-678,http://dbpedia.org/resource/Volcano:_Fire_on_the_Mountain
+678,http://dbpedia.org/resource/Volcano_(1997_film)
 679,
 680,http://dbpedia.org/resource/Kull_the_Conqueror
 681,http://dbpedia.org/resource/Wishmaster_(film)
@@ -795,7 +795,7 @@ item_id,URI
 795,http://dbpedia.org/resource/Richie_Rich_(film)
 796,http://dbpedia.org/resource/Speechless_(1994_film)
 797,http://dbpedia.org/resource/Timecop
-798,http://dbpedia.org/resource/The_Nature_of_the_Beast_(1995_film)
+798,http://dbpedia.org/resource/Bad_Company_(1995_film)
 799,http://dbpedia.org/resource/Boys_Life_(film)
 800,http://dbpedia.org/resource/In_the_Mouth_of_Madness
 801,http://dbpedia.org/resource/The_Air_Up_There
@@ -807,7 +807,7 @@ item_id,URI
 807,http://dbpedia.org/resource/Poetic_Justice_(film)
 808,http://dbpedia.org/resource/The_Program_(1993_film)
 809,
-810,http://dbpedia.org/resource/The_Shadow_of_Hate
+810,http://dbpedia.org/resource/The_Shadow_(1994_film)
 811,http://dbpedia.org/resource/Thirty_Two_Short_Films_About_Glenn_Gould
 812,http://dbpedia.org/resource/Andre_(film)
 813,http://dbpedia.org/resource/The_Celluloid_Closet
@@ -867,7 +867,7 @@ item_id,URI
 867,http://dbpedia.org/resource/The_Whole_Wide_World
 868,
 869,http://dbpedia.org/resource/Fools_Rush_In_(1997_film)
-870,http://dbpedia.org/resource/Touch_Me_(film)
+870,http://dbpedia.org/resource/Touch_(1997_film)
 871,http://dbpedia.org/resource/Vegas_Vacation
 872,http://dbpedia.org/resource/Love_Jones_(film)
 873,http://dbpedia.org/resource/Picture_Perfect_(1997_film)
@@ -888,7 +888,7 @@ item_id,URI
 888,http://dbpedia.org/resource/One_Night_Stand_(1997_film)
 889,http://dbpedia.org/resource/The_Tango_Lesson
 890,http://dbpedia.org/resource/Mortal_Kombat:_Annihilation
-891,http://dbpedia.org/resource/Bent_Familia
+891,http://dbpedia.org/resource/Bent_(1997_film)
 892,http://dbpedia.org/resource/Flubber_(film)
 893,http://dbpedia.org/resource/For_Richer_or_Poorer
 894,http://dbpedia.org/resource/Home_Alone_3
@@ -955,7 +955,7 @@ item_id,URI
 955,http://dbpedia.org/resource/Before_Sunrise
 956,http://dbpedia.org/resource/Nobody's_Fool_(1994_film)
 957,http://dbpedia.org/resource/Pushing_Hands_(film)
-958,http://dbpedia.org/resource/To_Live_and_Die_in_Tsimshatsui
+958,http://dbpedia.org/resource/To_Live_(1994_film)
 959,http://dbpedia.org/resource/Dazed_and_Confused_(film)
 960,http://dbpedia.org/resource/Naked_(1993_film)
 961,
@@ -1166,7 +1166,7 @@ item_id,URI
 1166,http://dbpedia.org/resource/Love_and_Human_Remains
 1167,http://dbpedia.org/resource/The_Sum_of_Us_(film)
 1168,
-1169,http://dbpedia.org/resource/Fresh_Kill
+1169,http://dbpedia.org/resource/Fresh_(1994_film)
 1170,http://dbpedia.org/resource/Spanking_the_Monkey
 1171,http://dbpedia.org/resource/Wild_Reeds
 1172,http://dbpedia.org/resource/The_Women_(1939_film)
@@ -1202,7 +1202,7 @@ item_id,URI
 1202,
 1203,http://dbpedia.org/resource/Top_Hat
 1204,http://dbpedia.org/resource/To_Be_or_Not_to_Be_(1942_film)
-1205,http://dbpedia.org/resource/The_Secret_Agent_Club
+1205,http://dbpedia.org/resource/The_Secret_Agent_(1996_film)
 1206,http://dbpedia.org/resource/Amos_&_Andrew
 1207,http://dbpedia.org/resource/Jade_(film)
 1208,http://dbpedia.org/resource/Kiss_of_Death_(1995_film)
@@ -1234,14 +1234,14 @@ item_id,URI
 1234,http://dbpedia.org/resource/Chairman_of_the_Board_(film)
 1235,
 1236,
-1237,http://dbpedia.org/resource/Twisted_Desire
+1237,http://dbpedia.org/resource/Twisted_(1996_film)
 1238,http://dbpedia.org/resource/Full_Speed_(1996_film)
 1239,http://dbpedia.org/resource/Cutthroat_Island
 1240,http://dbpedia.org/resource/Ghost_in_the_Shell_(1995_film)
-1241,http://dbpedia.org/resource/The_Angel_of_Pennsylvania_Avenue
+1241,http://dbpedia.org/resource/The_Van_(1996_film)
 1242,http://dbpedia.org/resource/The_Old_Lady_Who_Walked_in_the_Sea
 1243,
-1244,http://dbpedia.org/resource/Metroland_(film)
+1244,http://dbpedia.org/resource/Metro_(1997_film)
 1245,http://dbpedia.org/resource/Gridlock'd
 1246,http://dbpedia.org/resource/Bushwhacked_(film)
 1247,http://dbpedia.org/resource/Bad_Girls_(1994_film)
@@ -1284,7 +1284,7 @@ item_id,URI
 1284,http://dbpedia.org/resource/Before_and_After_(film)
 1285,http://dbpedia.org/resource/Princess_Caraboo_(film)
 1286,http://dbpedia.org/resource/Shall_We_Dance_(1937_film)
-1287,http://dbpedia.org/resource/Ed's_Next_Move
+1287,http://dbpedia.org/resource/Ed_(film)
 1288,http://dbpedia.org/resource/Denise_Calls_Up
 1289,http://dbpedia.org/resource/Jack_and_Sarah
 1290,http://dbpedia.org/resource/Country_Life_(film)
@@ -1523,7 +1523,7 @@ item_id,URI
 1523,http://dbpedia.org/resource/A_Good_Man_in_Africa
 1524,
 1525,http://dbpedia.org/resource/The_Object_of_My_Affection
-1526,http://dbpedia.org/resource/Witness_to_War:_Dr._Charlie_Clements
+1526,http://dbpedia.org/resource/Witness_(1985_film)
 1527,http://dbpedia.org/resource/Senseless
 1528,http://dbpedia.org/resource/Nowhere_(film)
 1529,http://dbpedia.org/resource/Underground_(1995_film)
@@ -1532,7 +1532,7 @@ item_id,URI
 1532,http://dbpedia.org/resource/Foreign_Student
 1533,http://dbpedia.org/resource/I_Don't_Want_to_Talk_About_It_(film)
 1534,http://dbpedia.org/resource/Twin_Town
-1535,http://dbpedia.org/resource/Snowbound:_The_Jim_and_Jennifer_Stolpa_Story
+1535,http://dbpedia.org/resource/Hell_(1994_film)
 1536,http://dbpedia.org/resource/Vive_L'Amour
 1537,http://dbpedia.org/resource/Cosi_(film)
 1538,http://dbpedia.org/resource/All_Over_Me_(film)
@@ -1606,7 +1606,7 @@ item_id,URI
 1606,http://dbpedia.org/resource/Deceiver_(film)
 1607,
 1608,http://dbpedia.org/resource/Buddy_(1997_film)
-1609,http://dbpedia.org/resource/Schizophreniac:_The_Whore_Mangler
+1609,http://dbpedia.org/resource/Same_Old_Song
 1610,
 1611,http://dbpedia.org/resource/Intimate_Relations_(1996_film)
 1612,http://dbpedia.org/resource/The_Leading_Man
@@ -1652,7 +1652,7 @@ item_id,URI
 1652,http://dbpedia.org/resource/Temptress_Moon
 1653,http://dbpedia.org/resource/Entertaining_Angels:_The_Dorothy_Day_Story
 1654,http://dbpedia.org/resource/Chairman_of_the_Board_(film)
-1655,http://dbpedia.org/resource/The_Favourite_Son
+1655,http://dbpedia.org/resource/The_Favor_(1994_film)
 1656,
 1657,http://dbpedia.org/resource/Target_(1995_film)
 1658,

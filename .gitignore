@@ -8,6 +8,8 @@ datasets/*/processed/*.csv
 !datasets/*/processed/map.csv
 !datasets/*/processed/enriched.csv
 
+*.DS_Store
+*.tool-versions
 *.out 
 notes.txt
 
