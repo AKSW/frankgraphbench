@@ -73,7 +73,7 @@
       config:
         save_weights: True
       parameters:
-        embedding_dim: 50
+        embedding_dim: 150
         scoring_fct_norm: 2
         epochs: 5
         seed: 42
