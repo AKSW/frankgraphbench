@@ -93,9 +93,9 @@ experiment:
         epochs: 1
   
   evaluation:
-    k: 5
+    k: 10
     relevance_threshold: 0
     metrics: [MAP, nDCG]
 
   report:
-    file: 'experiment_results/ml100k_enriched/run1.csv'
+    file: 'experiment_results/ml100k_enriched/runk10.csv'

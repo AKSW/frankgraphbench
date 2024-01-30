@@ -69,12 +69,12 @@
       level: 'user'
 
   models:
-    - name: transE
+    - name: transH
       config:
         save_weights: True
       parameters:
         embedding_dim: 150
-        scoring_fct_norm: 1
+        scoring_fct_norm: 2
         epochs: 5
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training       
@@ -85,4 +85,4 @@
     metrics: [MAP, nDCG]
 
   report:
-    file: 'experiment_results/ml100k_enriched/transEratings.csv'
+    file: 'experiment_results/ml100k_enriched/transHratings.csv'
