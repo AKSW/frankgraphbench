@@ -22,5 +22,9 @@ model2class = {
     'rotatE': {
         'submodule': 'rotatE.model',
         'class': 'RotatE'
+    },
+    'tuckER': {
+        'submodule': 'tuckER.model',
+        'class': 'TuckER'
     }
 }
