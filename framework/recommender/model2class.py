@@ -26,5 +26,9 @@ model2class = {
     'tuckER': {
         'submodule': 'tuckER.model',
         'class': 'TuckER'
+    },
+    'distMult': {
+        'submodule': 'distMult.model',
+        'class': 'DistMult'
     }
 }
