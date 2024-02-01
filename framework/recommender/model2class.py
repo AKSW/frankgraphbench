@@ -30,5 +30,9 @@ model2class = {
     'distMult': {
         'submodule': 'distMult.model',
         'class': 'DistMult'
+    },
+    'rESCAL': {
+        'submodule': 'rESCAL.model',
+        'class': 'RESCAL'
     }
 }
