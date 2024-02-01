@@ -14,5 +14,17 @@ model2class = {
     'transR': {
         'submodule': 'transR.model',
         'class': 'TransR'
+    },
+    'transD': {
+        'submodule': 'transD.model',
+        'class': 'TransD'
+    },
+    'rotatE': {
+        'submodule': 'rotatE.model',
+        'class': 'RotatE'
+    },
+    'tuckER': {
+        'submodule': 'tuckER.model',
+        'class': 'TuckER'
     }
 }
