@@ -34,5 +34,9 @@ model2class = {
     'rESCAL': {
         'submodule': 'rESCAL.model',
         'class': 'RESCAL'
+    },
+    'complEx': {
+        'submodule': 'complEx.model',
+        'class': 'ComplEx'
     }
 }
