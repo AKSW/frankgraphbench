@@ -26,5 +26,17 @@ model2class = {
     'tuckER': {
         'submodule': 'tuckER.model',
         'class': 'TuckER'
+    },
+    'distMult': {
+        'submodule': 'distMult.model',
+        'class': 'DistMult'
+    },
+    'rESCAL': {
+        'submodule': 'rESCAL.model',
+        'class': 'RESCAL'
+    },
+    'complEx': {
+        'submodule': 'complEx.model',
+        'class': 'ComplEx'
     }
 }
