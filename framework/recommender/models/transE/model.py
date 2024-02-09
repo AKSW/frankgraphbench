@@ -52,7 +52,7 @@ class TransE(Recommender):
 
     def name(self):
         text = "TransE based model + cosine similarity"
-        text += f";embedding_dim={self.embedding_dim}"
+        text += f";embedding_dim={self.embedding_dim};epochs={self.epochs};seed={self.seed};triples={self.triples}"
         return text
 
     def train(self, G_train, ratings_train):

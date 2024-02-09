@@ -86,3 +86,5 @@
 
   report:
     file: 'experiment_results/ml100k_enriched/transEratings.csv'
+    execution_times:
+      file: 'experiment_results/ml100k_enriched/transEtimesratings.csv'
