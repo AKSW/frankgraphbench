@@ -58,3 +58,41 @@ class Reporter:
             results_processed[model] = report
 
         return results_processed
+    
+class ExecutionTimesReporter:
+    def __init__(self, output_file):
+        self.filename = output_file
+
+    def report(self, results):
+        """
+        Creates the .csv file with experiment results
+        """
+        results = self.__process(results)
+        df = pd.DataFrame.from_dict(results, orient='index')
+        df['model'] = df.index
+        df = df.set_index('model')
+
+        self.__to_csv(df)
+        
+    def __to_csv(self, df):
+        folder = os.path.dirname(self.filename)
+        if not os.path.isdir(folder):
+            os.makedirs(folder)
+        df.to_csv(self.filename)
+
+    def __process(self, results) -> t.Dict[str, float]:
+        """
+        returns 
+            {model_name: {fold-1_execution_time: value, fold-2_execution_time: value, ..., execution_time_mean:value,execution_time_std}}
+        """
+        results_processed = {}
+        for model, execution_times in results.items():
+            report = {}
+            for fold, execution_time in enumerate(execution_times):
+                report[f'fold-{fold+1}_execution_time'] = execution_time
+            report['execution_time_mean'] = np.array(execution_times).mean(axis=0)
+            report['execution_time_std'] = np.array(execution_times).std(axis=0)
+            
+            results_processed[model] = report
+        
+        return results_processed
