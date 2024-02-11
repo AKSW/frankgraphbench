@@ -1,4 +1,4 @@
-item_id,URI
+item_id::string,URI::string
 1,http://dbpedia.org/resource/Toy_Story
 2,http://dbpedia.org/resource/Jumanji
 3,http://dbpedia.org/resource/Grumpier_Old_Men
