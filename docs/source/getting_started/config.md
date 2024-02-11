@@ -123,9 +123,6 @@ Let's break down the main directives for the dataset:
   - `enrich_path`: filepath of the standardized `user.csv`. (mandatory)
   - `remove_unmatched`: boolean to specify if nodes unmatched with DBpedia should be removed. (mandatory)
   - `properties`: list of properties to enrich the dataset (mandatory)
-    - `type`: column name (type) of the property (mandatory)
-    - `grouped`: boolean that indicates if the property was grouped and concatenated into a single string. Used for multiples property values of the same property type for a given resource. (mandatory)
-    - `sep`: separator used to concatenate a list of property values. (optional)
 
 ## preprocess
 
