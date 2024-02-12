@@ -1,16 +1,16 @@
 experiment:
-  dataset: 
+  dataset:
     name: lastfm
-    item: 
-      path: datasets/lastfm/processed/item.csv 
-      extra_features: [name] 
-    user: 
-      path: datasets/lastfm/processed/user.csv 
-    ratings: 
-      path: datasets/lastfm/processed/rating.csv 
+    item:
+      path: datasets/lastfm/processed/item.csv
+      extra_features: [name]
+    user:
+      path: datasets/lastfm/processed/user.csv
+    ratings:
+      path: datasets/lastfm/processed/rating.csv
       timestamp: False
     social:
-      path: datasets/lastfm/processed/social.csv 
+      path: datasets/lastfm/processed/social.csv
     # enrich:
     #   map_path: datasets/last_fm/processed/map.csv
     #   enrich_path: datasets/last_fm/processed/enriched.csv
@@ -25,11 +25,11 @@ experiment:
     #       sep: "::"
 
   preprocess:
-    # - method: filter_by_rating  
+    # - method: filter_by_rating
     #   parameters:
     #     threshold: 20
     # - method: binarize
-    #   parameters: 
+    #   parameters:
     #     threshold: 4
     - method: filter_kcore
       parameters:
@@ -40,36 +40,35 @@ experiment:
   split:
     seed: 42
     # test:
-    #   method: random_by_ratio 
-    #   level: global 
+    #   method: random_by_ratio
+    #   level: global
     #   p: 0.2
     # validation:
-    #   method: random_by_ratio 
-    #   level: global 
+    #   method: random_by_ratio
+    #   level: global
     #   p: 0.2
 
     # test:
-    #   method: timestamp_by_ratio 
-    #   level: user 
+    #   method: timestamp_by_ratio
+    #   level: user
     #   p: 0.1
     # validation:
-    #   level: user 
-    #   method: timestamp_by_ratio 
+    #   level: user
+    #   method: timestamp_by_ratio
     #   p: 0.2
 
     # test:
-    #   method: fixed_timestamp 
-    #   # type: global_level 
+    #   method: fixed_timestamp
+    #   # type: global_level
     #   timestamp: 890000000
     # validation:
-    #   method: fixed_timestamp 
+    #   method: fixed_timestamp
     #   timestamp: 880000000
-
 
     test:
       method: k_fold
       k: 2
-      level: 'user'
+      level: "user"
 
   models:
     - name: deepwalk_based
@@ -91,11 +90,10 @@ experiment:
         embedding_size: 64
         epochs: 1
 
-
   evaluation:
     k: 5
     relevance_threshold: 3
     metrics: [MAP, nDCG]
 
   report:
-    file: 'experiment_results/last_fm/run1_with_social_links.csv'
+    file: "experiment_results/last_fm/run1_with_social_links.csv"
