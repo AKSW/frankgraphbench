@@ -1,2 +1,2 @@
 model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
-TransE based model + cosine similarity;embedding_dim=150;epochs=5;seed=42;triples=ratings,28.320152044296265,24.72044801712036,24.84178900718689,25.479876041412354,25.291220903396606,25.730697202682496,1.3245443175885148
+TransE based model + cosine similarity;embedding_dim=150;epochs=5;seed=42;triples=ratings,34.827630043029785,25.619800090789795,26.625685453414917,27.86835265159607,27.105534553527832,28.40940055847168,3.290895910178028
