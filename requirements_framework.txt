@@ -14,5 +14,7 @@ smart-open
 threadpoolctl
 tqdm
 tzdata
-torch==2.1.2
 pykeen
+torch==2.1.2
+py-cpuinfo
+gputil
