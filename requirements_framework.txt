@@ -16,3 +16,5 @@ tqdm
 tzdata
 pykeen
 torch==2.1.2
+py-cpuinfo
+gputil

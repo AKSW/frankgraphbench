@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import typing as t
 import os
+import cpuinfo
+import psutil
+import GPUtil
 
 class Reporter:
     def __init__(self, output_file, eval_metrics):
@@ -83,7 +86,7 @@ class ExecutionTimesReporter:
     def __process(self, results) -> t.Dict[str, float]:
         """
         returns 
-            {model_name: {fold-1_execution_time: value, fold-2_execution_time: value, ..., execution_time_mean:value,execution_time_std}}
+            {model_name (machine_specs): {fold-1_execution_time: value, fold-2_execution_time: value, ..., execution_time_mean:value,execution_time_std}}
         """
         results_processed = {}
         for model, execution_times in results.items():
@@ -93,6 +96,6 @@ class ExecutionTimesReporter:
             report['execution_time_mean'] = np.array(execution_times).mean(axis=0)
             report['execution_time_std'] = np.array(execution_times).std(axis=0)
             
-            results_processed[model] = report
+            results_processed[f'{model} (CPU: {cpuinfo.get_cpu_info()["brand_raw"]}; RAM: {round(psutil.virtual_memory().total/(1024**3))}GB; GPUs: {[gpu.name for gpu in GPUtil.getGPUs()]})'] = report
         
         return results_processed

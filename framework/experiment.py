@@ -12,6 +12,9 @@ from .reporter.report import ExecutionTimesReporter
 
 import numpy as np
 import time
+import cpuinfo
+import psutil
+import GPUtil
 
 def _load_model_class(name):
     # relative path from root
@@ -97,7 +100,7 @@ def run(config_path):
     print('')
     print(f'Execution times final result')
     for model, execution_times in model_execution_times.items():
-        print(f'{model}')
+        print(f'model: {model}; CPU: {cpuinfo.get_cpu_info()["brand_raw"]}; RAM: {round(psutil.virtual_memory().total/(1024**3))}GB; GPUs: {[gpu.name for gpu in GPUtil.getGPUs()]}')
         execution_times_mean = np.array(execution_times).mean(axis=0)
         execution_times_std = np.array(execution_times).std(axis=0)
         print(f'\tmean: {execution_times_mean}s +- {execution_times_std}s')    
