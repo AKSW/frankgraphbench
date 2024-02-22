@@ -139,6 +139,7 @@ class LastFM(Dataset):
         df_map = pd.DataFrame({"item_id": df_item["item_id"]})
         df_map.set_index("item_id")
         df_map["URI"] = df_map["item_id"].apply(lambda id: URI_mapping.get(id))
+        df_map = df_map.rename(self.map_fields, axis=1)
 
         return df_map
 
