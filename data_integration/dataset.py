@@ -235,7 +235,7 @@ class Dataset:
 
             # print mapping statistics
             n_items = df_map.shape[0]
-            n_unmatched = df_map["URI"].isna().sum()
+            n_unmatched = df_map[self.map_fields["URI"]].isna().sum()
             print(
                 f"{n_unmatched} items weren't matched, corresponding to {n_unmatched/n_items*100:.2f}% of a total of {n_items}."
             )

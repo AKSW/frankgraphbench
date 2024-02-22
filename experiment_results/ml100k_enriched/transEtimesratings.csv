@@ -1,2 +1,2 @@
 model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
-TransE based model + cosine similarity;embedding_dim=150;epochs=5;seed=42;triples=ratings (CPU: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz; RAM: 8GB; GPUs: []),28.25550675392151,24.6733820438385,25.067631006240845,27.009753227233887,26.10839080810547,26.22293276786804,1.3037939186361922
+TransE based model + cosine similarity;embedding_dim=150;epochs=5;seed=42;triples=ratings (CPU: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz; RAM: 8GB; GPUs: []),41.623225927352905,39.888176918029785,40.695070028305054,38.430870056152344,41.46424913406372,40.42031841278076,1.1707557921114904
