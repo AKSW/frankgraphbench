@@ -1,2 +1,2 @@
 model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
-TransE based model + cosine similarity;embedding_dim=150;epochs=5;seed=42;triples=ratings (CPU: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz; RAM: 8GB; GPUs: []),41.623225927352905,39.888176918029785,40.695070028305054,38.430870056152344,41.46424913406372,40.42031841278076,1.1707557921114904
+TransE based model + cosine similarity;embedding_dim=150;epochs=5;seed=42;triples=ratings (CPU: AMD Ryzen 5 7600 6-Core Processor; RAM: 31GB; GPUs: ['NVIDIA GeForce RTX 4060']),24.422051429748535,21.913716554641724,24.03167986869812,24.48151683807373,24.84687566757202,23.939168071746828,1.0452046576636174
