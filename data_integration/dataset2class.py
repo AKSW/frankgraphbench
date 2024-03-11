@@ -18,5 +18,9 @@ dataset2class = {
     'steam': {
         'submodule': 'datasets.steam',
         'class': 'Steam'
+    },
+    'yelp': {
+        'submodule': 'datasets.yelp',
+        'class': 'Yelp'
     }
 }
