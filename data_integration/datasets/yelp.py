@@ -90,7 +90,7 @@ class Yelp(Dataset):
         for index, row in df['categories'].dropna().items():
             for category in row.split(self.categories_separator):
                 categories[index].append(category)
-        pd.Series(categories).apply(lambda x: self.string_list_separator.join(x))
+        df['categories'] = pd.Series(categories).apply(lambda x: self.string_list_separator.join(x))
 
         df = df.rename(self.item_fields, axis=1)
         df = df[self.item_fields.values()]
@@ -110,7 +110,7 @@ class Yelp(Dataset):
         for index, row in df['elite'].dropna().items():
             for elite in row.split(self.elites_separator):
                 elites[index].append(elite)
-        pd.Series(elites).apply(lambda x: self.string_list_separator.join(x))
+        df['elite'] = pd.Series(elites).apply(lambda x: self.string_list_separator.join(x))
 
         df = df.rename(self.user_fields, axis=1)
         df = df[self.user_fields.values()]
@@ -149,7 +149,6 @@ class Yelp(Dataset):
             for friend in friends_list:
                 social["user_id"].append(user_df['user_id'].iloc[index])
                 social["friend_id"].append(friend)
-        pd.DataFrame(social)
         
         df = pd.DataFrame(social)
         df = df.rename(self.social_fields, axis=1)
