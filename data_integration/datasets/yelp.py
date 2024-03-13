@@ -72,7 +72,7 @@ class Yelp(Dataset):
         filename = os.path.join(self.input_path, "yelp_academic_dataset_business.json")
 
         print(filename)
-        file = open(filename)
+        file = open(filename, encoding="utf8")
         data = []
         for line in file:
             data.append(json.loads(line))
@@ -99,7 +99,7 @@ class Yelp(Dataset):
     def load_user_data(self) -> pd.DataFrame:
         filename = os.path.join(self.input_path, "yelp_academic_dataset_user.json")
 
-        file = open(filename)
+        file = open(filename, encoding="utf8")
         data = []
         for line in file:
             data.append(json.loads(line))
@@ -119,7 +119,7 @@ class Yelp(Dataset):
     def load_rating_data(self) -> pd.DataFrame:
         filename = os.path.join(self.input_path, "yelp_academic_dataset_review.json")
 
-        file = open(filename)
+        file = open(filename, encoding="utf8")
         data = []
         for line in file:
             data.append(json.loads(line))
@@ -132,7 +132,7 @@ class Yelp(Dataset):
     def load_social_data(self) -> pd.DataFrame:
         filename = os.path.join(self.input_path, "yelp_academic_dataset_user.json")
 
-        file = open(filename)
+        file = open(filename, encoding="utf8")
         data = []
         for line in file:
             data.append(json.loads(line))
