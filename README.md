@@ -1,10 +1,10 @@
 # Knowledge-Graph-aware-Recommender-Systems-with-DBpedia
-Repository containing Data Integration between DBpedia and some standard Recommender Systems datasets and framework for reproducible experiments. For more info, check [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and project progress with weekly (as possible) [updates](https://github.com/AlvaroJoseLopes/Knowledge-Graph-aware-Recommender-Systems-with-DBpedia/wiki). 
+Repository containing Data Integration between DBpedia and some standard Recommender Systems datasets and framework for reproducible experiments. For more info, check [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023){:target="_blank"} and project progress with weekly (as possible) [updates](https://github.com/AlvaroJoseLopes/Knowledge-Graph-aware-Recommender-Systems-with-DBpedia/wiki){:target="_blank"}. 
 
-Check the [docs](https://knowledge-graph-aware-recommender-systems-with-dbpedia.readthedocs.io/en/latest/index.html) for more information.
+Check the [docs](https://knowledge-graph-aware-recommender-systems-with-dbpedia.readthedocs.io/en/latest/index.html){:target="_blank"} for more information.
 
 # Data Integration Usage
-Install the require packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
+Install the require packages using python [virtualenv](https://docs.python.org/3/library/venv.html){:target="_blank"}, using:
 
 ```shell
 python3 -m venv venv_data_integration/
