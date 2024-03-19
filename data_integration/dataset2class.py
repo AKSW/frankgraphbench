@@ -22,5 +22,9 @@ dataset2class = {
     'yelp': {
         'submodule': 'datasets.yelp',
         'class': 'Yelp'
+    },
+    'douban-movie': {
+        'submodule': 'datasets.douban-movie',
+        'class': 'DoubanMovie'
     }
 }
