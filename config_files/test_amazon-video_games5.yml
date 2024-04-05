@@ -6,6 +6,7 @@ experiment:
       extra_features: [name, features, price, also_buy, also_view, brand, categories]
     user:
       path: datasets/amazon-video_games-5/processed/user.csv
+      extra_features: [name]
     ratings:
       path: datasets/amazon-video_games-5/processed/rating.csv
       timestamp: False
