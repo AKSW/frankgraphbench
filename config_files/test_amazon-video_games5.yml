@@ -58,15 +58,15 @@ experiment:
       level: "user"
 
   models:
-    - name: deepwalk_based
+    - name: transE
       config:
+        save_weights: True
       parameters:
-        walk_len: 10
-        p: 1.0
-        q: 1.0
-        n_walks: 50
-        embedding_size: 64
-        epochs: 1
+        embedding_dim: 150
+        scoring_fct_norm: 1
+        epochs: 5
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
 
   evaluation:
     k: 5
@@ -74,4 +74,4 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/amazon/run1_videogames5.csv"
+    file: "experiment_results/amazon/run1_videogames5_transE.csv"

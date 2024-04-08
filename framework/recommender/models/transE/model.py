@@ -30,6 +30,7 @@ class TransE(Recommender):
         regularizer_kwargs=None,
         epochs: int = 5,
         seed: int = 42,
+        evaluation_fallback: bool = True,
         all_recs: bool = False,
         triples: str = "all",
     ):
@@ -44,6 +45,7 @@ class TransE(Recommender):
         self.regularizer_kwargs = regularizer_kwargs
         self.epochs = epochs
         self.seed = seed
+        self.evaluation_fallback = evaluation_fallback
         self.all_recs = all_recs
         self.triples = triples
         self._triples = None
@@ -188,6 +190,7 @@ class TransE(Recommender):
             ),
             epochs=self.epochs,
             random_seed=self.seed,
+            evaluation_fallback=self.evaluation_fallback,
         )
         self._model = result.model
 
