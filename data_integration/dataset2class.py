@@ -26,5 +26,9 @@ dataset2class = {
     'douban-movie': {
         'submodule': 'datasets.douban-movie',
         'class': 'DoubanMovie'
+    },
+    'amazon-video_games-5': {
+        'submodule': 'datasets.amazon',
+        'class': 'AmazonVideoGames5'
     }
 }

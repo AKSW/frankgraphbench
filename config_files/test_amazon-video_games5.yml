@@ -1,0 +1,77 @@
+experiment:
+  dataset:
+    name: amazon-video_games-5
+    item:
+      path: datasets/amazon-video_games-5/processed/item.csv
+      extra_features: [name, features, price, also_buy, also_view, brand, categories]
+    user:
+      path: datasets/amazon-video_games-5/processed/user.csv
+      extra_features: [name]
+    ratings:
+      path: datasets/amazon-video_games-5/processed/rating.csv
+      timestamp: False
+
+  preprocess:
+    # - method: filter_by_rating
+    #   parameters:
+    #     threshold: 20
+    # - method: binarize
+    #   parameters:
+    #     threshold: 4
+    - method: filter_kcore
+      parameters:
+        k: 5
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+    # test:
+    #   method: random_by_ratio
+    #   level: global
+    #   p: 0.2
+    # validation:
+    #   method: random_by_ratio
+    #   level: global
+    #   p: 0.2
+
+    # test:
+    #   method: timestamp_by_ratio
+    #   level: user
+    #   p: 0.1
+    # validation:
+    #   level: user
+    #   method: timestamp_by_ratio
+    #   p: 0.2
+
+    # test:
+    #   method: fixed_timestamp
+    #   # type: global_level
+    #   timestamp: 890000000
+    # validation:
+    #   method: fixed_timestamp
+    #   timestamp: 880000000
+
+    test:
+      method: k_fold
+      k: 2
+      level: "user"
+
+  models:
+    - name: transE
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        scoring_fct_norm: 1
+        epochs: 5
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
+
+  evaluation:
+    k: 5
+    relevance_threshold: 0
+    metrics: [MAP, nDCG]
+
+  report:
+    file: "experiment_results/amazon/run1_videogames5_transE.csv"
