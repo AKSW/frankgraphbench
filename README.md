@@ -1,10 +1,14 @@
 # FranKGraphBench: Knowledge Graph Aware Recommender Systems Framework for Benchmarking
-Repository firstly created for Data Integration between DBpedia and some standard Recommender Systems datasets and framework for reproducible experiments. For more info, check [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and project progress with weekly (as possible) [updates](https://github.com/AKSW/frankgraphbench/wiki). 
+
+The FranKGraphBench is a benchmark for Recommender Systems.
+It contains the major knowledge graphs and Recommender Systems to speed up the development and facilitate the benchmarking of new methods. 
+
+* Repository was first created for Data Integration between DBpedia and some standard Recommender Systems datasets and framework for reproducible experiments. For more info, check [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and project progress with weekly (as possible) [updates](https://github.com/AKSW/frankgraphbench/wiki). 
 
 Check the [docs](https://knowledge-graph-aware-recommender-systems-with-dbpedia.readthedocs.io/en/latest/index.html) for more information.
 
 # Data Integration Usage
-Install the require packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
+Install the required packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
 
 ```shell
 python3 -m venv venv_data_integration/
@@ -27,7 +31,7 @@ python3 data_integration.py [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [
 
 Arguments:
 - **-h:** Shows the help message.
-- **-d:** Name of a supported dataset. Will be the same name of the folder created by the bash script provided for the dataset. For now, check `data_integration/dataset2class.py` to see the supported ones.
+- **-d:** Name of a supported dataset. It will be the same name of the folder created by the bash script provided for the dataset. For now, check `data_integration/dataset2class.py` to see the supported ones.
 - **-i:** Input path where the full dataset is placed.
 - **-o:** Output path where the integrated dataset will be placed.
 - **-ci:** Use this flag if you want to convert item data.
