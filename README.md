@@ -3,11 +3,9 @@
 The FranKGraphBench is a benchmark for Recommender Systems.
 It contains the major knowledge graphs and Recommender Systems to speed up the development and facilitate the benchmarking of new methods. 
 
-<sub><sup>
-* This repository was first created for Data Integration between DBpedia and some standard Recommender Systems datasets and framework for reproducible experiments. For more info, check [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and project progress with weekly (as possible) [updates](https://github.com/AKSW/frankgraphbench/wiki). 
-</sup></sub>
-
 Check the [docs](https://knowledge-graph-aware-recommender-systems-with-dbpedia.readthedocs.io/en/latest/index.html) for more information.
+
+* This repository was first created for Data Integration between DBpedia and some standard Recommender Systems datasets and a framework for reproducible experiments. For more info, check the [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and the project progress with weekly (as possible) [updates](https://github.com/AKSW/frankgraphbench/wiki).
 
 # Data Integration Usage
 Install the required packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
