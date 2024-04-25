@@ -97,43 +97,15 @@ class TransE(Recommender):
                 continue
         items_indices = torch.LongTensor(items_indices)
 
-        users_embeddings = (
-            self._model.entity_representations[0](indices=users_indices)
-            .detach()
-            .cpu()
-            .numpy()
-        )
-        items_embeddings = (
-            self._model.entity_representations[0](indices=items_indices)
-            .detach()
-            .cpu()
-            .numpy()
-        )
+        users_embeddings = (self._model.entity_representations[0](indices=users_indices).detach().cpu().numpy())
+        items_embeddings = (self._model.entity_representations[0](indices=items_indices).detach().cpu().numpy())
 
         if len(users_no_embedding) > 0:
-            users_embeddings = np.concatenate(
-                (
-                    users_embeddings,
-                    np.zeros(
-                        (len(users_no_embedding), self.embedding_dim),
-                        dtype=users_embeddings.dtype,
-                    ),
-                ),
-                axis=0,
-            )
+            users_embeddings = np.concatenate((users_embeddings, np.zeros((len(users_no_embedding), self.embedding_dim), dtype=users_embeddings.dtype)), axis=0)
             users = users + users_no_embedding
 
         if len(items_no_embedding) > 0:
-            items_embeddings = np.concatenate(
-                (
-                    items_embeddings,
-                    np.zeros(
-                        (len(items_no_embedding), self.embedding_dim),
-                        dtype=items_embeddings.dtype,
-                    ),
-                ),
-                axis=0,
-            )
+            items_embeddings = np.concatenate((items_embeddings, np.zeros((len(items_no_embedding), self.embedding_dim), dtype=items_embeddings.dtype)), axis=0)
             items = items + items_no_embedding
 
         n_neighbors = self._get_n_neighbors(users, items, k)

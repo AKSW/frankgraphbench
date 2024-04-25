@@ -1,0 +1,2 @@
+model,fold-1_MAP@5,fold-1_nDCG@5,fold-2_MAP@5,fold-2_nDCG@5,MAP@5_mean,MAP@5_std,nDCG@5_mean,nDCG@5_std
+EPHEN based model + cosine similarity;embedding_model=sentence-transformers/distiluse-base-multilingual-cased-v2;embed_with=abstract;iterations=30;mi=0.5.,0.008140685754683633,0.011103884958871876,0.00687168610816543,0.008783307840715937,0.0075061859314245315,0.0006344998232591017,0.009943596399793905,0.0011602885590779695
