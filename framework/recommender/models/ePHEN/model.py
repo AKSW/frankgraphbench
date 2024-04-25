@@ -1,12 +1,15 @@
 from framework.dataloader.graph.node import UserNode, ItemNode
 from ...recommender import Recommender
 
+from ...model2class import model2class
+
 from sklearn.neighbors import NearestNeighbors
 from sentence_transformers import SentenceTransformer
 
 import numpy as np
 import pandas as pd
 import random
+import importlib
 
 from tqdm import tqdm
 from copy import deepcopy
@@ -38,6 +41,7 @@ class EPHEN(Recommender):
         self.mi = mi
         self.seed = seed
         self.all_recs = all_recs
+        self._embedding = {}
 
     def name(self):
         text = "EPHEN based model + cosine similarity"
@@ -46,6 +50,7 @@ class EPHEN(Recommender):
 
     def train(self, G_train, ratings_train):
         self.G_train = G_train
+        self.ratings_train = ratings_train
         self.fit()
 
     def get_recommendations(self, k: int = 5):
@@ -111,9 +116,18 @@ class EPHEN(Recommender):
             self.init_embeddings[property] = model.encode(property.id)
 
     def _generate_graph_init_embeddings(self):
-        pass
+        module_name = f'framework.recommender.models.{model2class[self.embedding_model]["submodule"]}'
+        class_name = model2class[self.embedding_model]['class']
 
-    def _regularization(self, dim: int = 512):
+        model = getattr(importlib.import_module(module_name), class_name)
+        model = model(self.embedding_model_kwargs['config'], **self.embedding_model_kwargs['parameters'])
+
+        model.train(self.G_train, self.ratings_train)
+
+        self.init_embeddings = model._embedding
+
+    def _regularization(self):
+        dim = len(self.init_embeddings[list(self.init_embeddings.keys())[0]])
         self._embedding = deepcopy(self.init_embeddings)
         for node in self.G_train.nodes():
             if node not in self._embedding:
@@ -145,4 +159,3 @@ class EPHEN(Recommender):
             iteration = iteration + 1
             message = f"Iteration {iteration} | Energy = {energy}"
             pbar.set_description(message)
-        

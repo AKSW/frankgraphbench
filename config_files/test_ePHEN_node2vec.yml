@@ -63,16 +63,24 @@ experiment:
       level: "user"
 
   models:
-    - name: deepwalk_based
+    - name: ePHEN
       config:
         save_weights: True
       parameters:
-        walk_len: 10
-        p: 1.0
-        q: 1.0
-        n_walks: 50
-        embedding_size: 64
-        epochs: 1
+        embedding_model: deepwalk_based
+        embedding_model_kwargs:
+          config:
+            save_weights: True
+          parameters:
+            walk_len: 10
+            p: 1.0
+            q: 1.0
+            n_walks: 50
+            embedding_size: 64
+            epochs: 1
+        embed_with: graph
+        iterations: 15
+        mi: 0.5
 
   evaluation:
     k: 5
@@ -80,4 +88,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/ml100k_enriched/runk10.csv"
+    file: "experiment_results/ml100k_enriched/ephen_node2vec.csv"
+    execution_times:
+      file: "experiment_results/ml100k_enriched/ephen_node2vec_times.csv"

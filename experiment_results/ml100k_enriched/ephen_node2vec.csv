@@ -1,0 +1,2 @@
+model,fold-1_MAP@5,fold-1_nDCG@5,fold-2_MAP@5,fold-2_nDCG@5,MAP@5_mean,MAP@5_std,nDCG@5_mean,nDCG@5_std
+EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embed_with=graph;iterations=15;mi=0.5.,0.3083704489218805,0.3366085509177191,0.31644043831742663,0.3415085922745286,0.31240544361965356,0.0040349946977730755,0.33905857159612385,0.002450020678404774
