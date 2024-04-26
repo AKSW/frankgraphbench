@@ -67,7 +67,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 200
+        embedding_dim: 100
         epochs: 5
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training
