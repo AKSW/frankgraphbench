@@ -59,7 +59,7 @@ experiment:
 
     test:
       method: k_fold
-      k: 5
+      k: 2
       level: "user"
 
   models:

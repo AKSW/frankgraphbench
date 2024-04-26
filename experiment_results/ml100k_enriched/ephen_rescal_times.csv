@@ -1,0 +1,2 @@
+model,fold-1_execution_time,fold-2_execution_time,execution_time_mean,execution_time_std
+EPHEN based model + cosine similarity;embedding_model=rESCAL;embed_with=graph;iterations=30;mi=0.5. (CPU: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz; RAM: 8GB; GPUs: []),85.00423789024353,82.31183290481567,83.6580353975296,1.3462024927139282

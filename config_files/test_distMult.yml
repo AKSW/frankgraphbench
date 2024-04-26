@@ -73,7 +73,7 @@ experiment:
         triples: all # only (ratings) or (all) triples for training
 
   evaluation:
-    k: 5
+    k: 2
     relevance_threshold: 0
     metrics: [MAP, nDCG]
 

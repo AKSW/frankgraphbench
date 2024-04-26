@@ -38,5 +38,9 @@ model2class = {
     'complEx': {
         'submodule': 'complEx.model',
         'class': 'ComplEx'
+    },
+    'ePHEN': {
+        'submodule': 'ePHEN.model',
+        'class': 'EPHEN'
     }
 }

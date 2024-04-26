@@ -73,19 +73,9 @@ experiment:
         n_walks: 50
         embedding_size: 64
         epochs: 1
-    - name: deepwalk_based
-      config:
-        save_weights: True
-      parameters:
-        walk_len: 10
-        p: 0.8
-        q: 0.6
-        n_walks: 50
-        embedding_size: 64
-        epochs: 1
 
   evaluation:
-    k: 10
+    k: 5
     relevance_threshold: 0
     metrics: [MAP, nDCG]
 

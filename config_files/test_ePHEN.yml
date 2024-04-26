@@ -14,7 +14,7 @@ experiment:
       map_path: datasets/ml-100k/processed/map.csv
       enrich_path: datasets/ml-100k/processed/enriched.csv
       remove_unmatched: False
-      properties: [subject, director]
+      properties: [subject, director, abstract]
 
   preprocess:
     # - method: filter_by_rating
@@ -59,18 +59,18 @@ experiment:
 
     test:
       method: k_fold
-      k: 5
+      k: 2
       level: "user"
 
   models:
-    - name: complEx
+    - name: ePHEN
       config:
         save_weights: True
       parameters:
-        embedding_dim: 100
-        epochs: 5
-        seed: 42
-        triples: ratings # only (ratings) or (all) triples for training
+        embedding_model: "sentence-transformers/distiluse-base-multilingual-cased-v2"
+        embed_with: abstract
+        iterations: 30
+        mi: 0.5
 
   evaluation:
     k: 5
@@ -78,4 +78,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/ml100k_enriched/complExratings.csv"
+    file: "experiment_results/ml100k_enriched/ephen.csv"
+    execution_times:
+      file: "experiment_results/ml100k_enriched/ephen_times.csv"

@@ -59,18 +59,26 @@ experiment:
 
     test:
       method: k_fold
-      k: 5
+      k: 2
       level: "user"
 
   models:
-    - name: complEx
+    - name: ePHEN
       config:
         save_weights: True
       parameters:
-        embedding_dim: 100
-        epochs: 5
-        seed: 42
-        triples: ratings # only (ratings) or (all) triples for training
+        embedding_model: tuckER
+        embedding_model_kwargs:
+          config:
+            save_weights: True
+          parameters:
+            embedding_dim: 200
+            epochs: 5
+            seed: 42
+            triples: all
+        embed_with: graph
+        iterations: 30
+        mi: 0.5
 
   evaluation:
     k: 5
@@ -78,4 +86,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/ml100k_enriched/complExratings.csv"
+    file: "experiment_results/ml100k_enriched/ephen_transr.csv"
+    execution_times:
+      file: "experiment_results/ml100k_enriched/ephen_transr_times.csv"

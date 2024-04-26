@@ -49,12 +49,11 @@ class TransE(Recommender):
         self.all_recs = all_recs
         self.triples = triples
         self._triples = None
-        self._model = None
-        self._entity_to_id = None
+        self._embedding = {}
 
     def name(self):
         text = "TransE based model + cosine similarity"
-        text += f";embedding_dim={self.embedding_dim};epochs={self.epochs};seed={self.seed};triples={self.triples}"
+        text += f";embedding_dim={self.embedding_dim};scoring_fct_norm={self.scoring_fct_norm};entity_initializer={self.entity_initializer};relation_initializer={self.relation_initializer};relation_constrainer={self.relation_constrainer};regularizer={self.regularizer};epochs={self.epochs};seed={self.seed};triples={self.triples}"
         return text
 
     def train(self, G_train, ratings_train):
@@ -71,70 +70,12 @@ class TransE(Recommender):
         :return dict of recommendations for each user
             of type {user1: [item1, item2]}
         """
-        users_iter = self.G_train.get_user_nodes()
-        items_iter = self.G_train.get_item_nodes()
 
-        users = list(users_iter)
-        items = list(items_iter)
+        users = list(self.G_train.get_user_nodes())
+        items = list(self.G_train.get_item_nodes())
 
-        users_indices, users_no_embedding = [], []
-        for user in users_iter:
-            try:
-                users_indices.append(self._entity_to_id[user.__str__()])
-            except:
-                users_no_embedding.append(user)
-                users.remove(user)
-                continue
-        users_indices = torch.LongTensor(users_indices)
-
-        items_indices, items_no_embedding = [], []
-        for item in items_iter:
-            try:
-                items_indices.append(self._entity_to_id[item.__str__()])
-            except:
-                items_no_embedding.append(item)
-                items.remove(item)
-                continue
-        items_indices = torch.LongTensor(items_indices)
-
-        users_embeddings = (
-            self._model.entity_representations[0](indices=users_indices)
-            .detach()
-            .cpu()
-            .numpy()
-        )
-        items_embeddings = (
-            self._model.entity_representations[0](indices=items_indices)
-            .detach()
-            .cpu()
-            .numpy()
-        )
-
-        if len(users_no_embedding) > 0:
-            users_embeddings = np.concatenate(
-                (
-                    users_embeddings,
-                    np.zeros(
-                        (len(users_no_embedding), self.embedding_dim),
-                        dtype=users_embeddings.dtype,
-                    ),
-                ),
-                axis=0,
-            )
-            users = users + users_no_embedding
-
-        if len(items_no_embedding) > 0:
-            items_embeddings = np.concatenate(
-                (
-                    items_embeddings,
-                    np.zeros(
-                        (len(items_no_embedding), self.embedding_dim),
-                        dtype=items_embeddings.dtype,
-                    ),
-                ),
-                axis=0,
-            )
-            items = items + items_no_embedding
+        users_embeddings = np.array([self._embedding[user] for user in users])
+        items_embeddings = np.array([self._embedding[item] for item in items])
 
         n_neighbors = self._get_n_neighbors(users, items, k)
         knn = NearestNeighbors(n_neighbors=n_neighbors, metric="cosine")
@@ -173,7 +114,7 @@ class TransE(Recommender):
         )
 
         dataset = Dataset.from_tf(triples, ratios=[0.95, 0.05, 0.0])
-        self._entity_to_id = dataset.entity_to_id
+        entity_to_id = dataset.entity_to_id
 
         result = pipeline(
             dataset=dataset,
@@ -192,7 +133,51 @@ class TransE(Recommender):
             random_seed=self.seed,
             evaluation_fallback=self.evaluation_fallback,
         )
-        self._model = result.model
+        model = result.model
+
+        users_iter = self.G_train.get_user_nodes()
+        items_iter = self.G_train.get_item_nodes()
+
+        users = list(users_iter)
+        items = list(items_iter)
+
+        # deal with entities that might have not been embedded
+        users_indices, users_no_embedding = [], []
+        for user in users_iter:
+            try:
+                users_indices.append(entity_to_id[user.__str__()])
+            except:
+                users_no_embedding.append(user)
+                users.remove(user)
+                continue
+        users_indices = torch.LongTensor(users_indices)
+
+        items_indices, items_no_embedding = [], []
+        for item in items_iter:
+            try:
+                items_indices.append(entity_to_id[item.__str__()])
+            except:
+                items_no_embedding.append(item)
+                items.remove(item)
+                continue
+        items_indices = torch.LongTensor(items_indices)
+
+        users_embeddings = (model.entity_representations[0](indices=users_indices).detach().cpu().numpy())
+        items_embeddings = (model.entity_representations[0](indices=items_indices).detach().cpu().numpy())
+
+        if len(users_no_embedding) > 0:
+            users_embeddings = np.concatenate((users_embeddings, np.zeros((len(users_no_embedding), self.embedding_dim), dtype=users_embeddings.dtype)), axis=0)
+            users = users + users_no_embedding
+
+        if len(items_no_embedding) > 0:
+            items_embeddings = np.concatenate((items_embeddings, np.zeros((len(items_no_embedding), self.embedding_dim), dtype=items_embeddings.dtype)), axis=0)
+            items = items + items_no_embedding
+
+        for index, user in enumerate(users):
+            self._embedding[user] = users_embeddings[index]
+
+        for index, item in enumerate(items):
+            self._embedding[item] = items_embeddings[index]
 
     def _get_n_neighbors(self, users, items, top_k):
         n_neighbors = 0
