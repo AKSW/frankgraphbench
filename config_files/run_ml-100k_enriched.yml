@@ -14,7 +14,7 @@ experiment:
       map_path: datasets/ml-100k/processed/map.csv
       enrich_path: datasets/ml-100k/processed/enriched.csv
       remove_unmatched: False
-      properties: [subject, director]
+      properties: [subject, director, abstract]
 
   preprocess:
     # - method: filter_by_rating
