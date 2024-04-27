@@ -23,8 +23,8 @@ class TransH(Recommender):
         embedding_dim: int = 50,
         scoring_fct_norm: int = 1,
         entity_initializer = None,
-        entity_regularizer = None,
-        entity_regularizer_kwargs = None,
+        regularizer = None,
+        regularizer_kwargs = None,
         relation_initializer = None,
         relation_regularizer = None,
         relation_regularizer_kwargs = None,
@@ -37,8 +37,8 @@ class TransH(Recommender):
         self.embedding_dim = embedding_dim
         self.scoring_fct_norm = scoring_fct_norm
         self.entity_initializer = entity_initializer
-        self.entity_regularizer = entity_regularizer
-        self.entity_regularizer_kwargs = entity_regularizer_kwargs
+        self.regularizer = regularizer
+        self.regularizer_kwargs = regularizer_kwargs
         self.relation_initializer = relation_initializer
         self.relation_regularizer = relation_regularizer
         self.relation_regularizer_kwargs = relation_regularizer_kwargs
@@ -120,8 +120,8 @@ class TransH(Recommender):
                 embedding_dim=self.embedding_dim,
                 scoring_fct_norm=self.scoring_fct_norm,
                 entity_initializer=self.entity_initializer,
-                entity_regularizer=self.entity_regularizer,
-                entity_regularizer_kwargs=self.entity_regularizer_kwargs,
+                regularizer=self.regularizer,
+                regularizer_kwargs=self.regularizer_kwargs,
                 relation_initializer=self.relation_initializer,
                 relation_regularizer=self.relation_regularizer,
                 relation_regularizer_kwargs=self.relation_regularizer_kwargs,
