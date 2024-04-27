@@ -1,2 +1,0 @@
-model,fold-1_execution_time,fold-2_execution_time,execution_time_mean,execution_time_std
-EPHEN based model + cosine similarity;embedding_model=sentence-transformers/distiluse-base-multilingual-cased-v2;embed_with=abstract;iterations=30;mi=0.5. (CPU: Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz; RAM: 8GB; GPUs: []),256.5957570075989,253.15587091445923,254.87581396102905,1.7199430465698242
