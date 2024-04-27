@@ -51,7 +51,7 @@ class TransH(Recommender):
 
     def name(self):
         text = "TransH based model + cosine similarity"
-        text += f";embedding_dim={self.embedding_dim};scoring_fct_norm={self.scoring_fct_norm};entity_initializer={self.entity_initializer};entity_regularizer={self.entity_regularizer};relation_initializer={self.relation_initializer};relation_regularizer={self.relation_regularizer};epochs={self.epochs};seed={self.seed};triples={self.triples}"
+        text += f";embedding_dim={self.embedding_dim};scoring_fct_norm={self.scoring_fct_norm};entity_initializer={self.entity_initializer};regularizer={self.regularizer};relation_initializer={self.relation_initializer};relation_regularizer={self.relation_regularizer};epochs={self.epochs};seed={self.seed};triples={self.triples}"
         return text
 
     def train(self, G_train, ratings_train):
