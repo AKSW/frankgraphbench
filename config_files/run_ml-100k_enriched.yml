@@ -87,7 +87,7 @@ experiment:
         save_weights: True
       parameters:
         embedding_dim: 100
-        epochs: 5
+        epochs: 25
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training
     - name: distMult
@@ -95,7 +95,7 @@ experiment:
         save_weights: True
       parameters:
         embedding_dim: 50
-        epochs: 5
+        epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
     - name: rESCAL
@@ -103,7 +103,7 @@ experiment:
         save_weights: True
       parameters:
         embedding_dim: 50
-        epochs: 5
+        epochs: 25
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training
     - name: rotatE
@@ -111,7 +111,7 @@ experiment:
         save_weights: True
       parameters:
         embedding_dim: 200
-        epochs: 5
+        epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
     - name: transD
@@ -119,7 +119,7 @@ experiment:
         save_weights: True
       parameters:
         embedding_dim: 150
-        epochs: 5
+        epochs: 25
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training
     - name: transE
@@ -128,7 +128,7 @@ experiment:
       parameters:
         embedding_dim: 150
         scoring_fct_norm: 1
-        epochs: 5
+        epochs: 25
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training
     - name: transH
@@ -137,7 +137,7 @@ experiment:
       parameters:
         embedding_dim: 150
         scoring_fct_norm: 2
-        epochs: 5
+        epochs: 25
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training
     - name: transR
@@ -147,7 +147,7 @@ experiment:
         embedding_dim: 150
         relation_dim: 90
         scoring_fct_norm: 2
-        epochs: 5
+        epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
     - name: tuckER
@@ -155,7 +155,7 @@ experiment:
         save_weights: True
       parameters:
         embedding_dim: 200
-        epochs: 5
+        epochs: 25
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training
     - name: ePHEN
@@ -212,7 +212,7 @@ experiment:
             save_weights: True
           parameters:
             embedding_dim: 100
-            epochs: 5
+            epochs: 25
             seed: 42
             triples: ratings # only (ratings) or (all) triples for training
         embed_with: graph
@@ -228,7 +228,7 @@ experiment:
             save_weights: True
           parameters:
             embedding_dim: 50
-            epochs: 5
+            epochs: 25
             seed: 42
             triples: all # only (ratings) or (all) triples for training
         embed_with: graph
@@ -244,7 +244,7 @@ experiment:
             save_weights: True
           parameters:
             embedding_dim: 50
-            epochs: 5
+            epochs: 25
             seed: 42
             triples: ratings # only (ratings) or (all) triples for training
         embed_with: graph
@@ -260,7 +260,7 @@ experiment:
             save_weights: True
           parameters:
             embedding_dim: 200
-            epochs: 5
+            epochs: 25
             seed: 42
             triples: all # only (ratings) or (all) triples for training
         embed_with: graph
@@ -276,7 +276,7 @@ experiment:
             save_weights: True
           parameters:
             embedding_dim: 150
-            epochs: 5
+            epochs: 25
             seed: 42
             triples: ratings # only (ratings) or (all) triples for training
         embed_with: graph
@@ -293,7 +293,7 @@ experiment:
           parameters:
             embedding_dim: 150
             scoring_fct_norm: 1
-            epochs: 5
+            epochs: 25
             seed: 42
             triples: ratings # only (ratings) or (all) triples for training
         embed_with: graph
@@ -310,7 +310,7 @@ experiment:
           parameters:
             embedding_dim: 150
             scoring_fct_norm: 2
-            epochs: 5
+            epochs: 25
             seed: 42
             triples: ratings # only (ratings) or (all) triples for training
         embed_with: graph
@@ -328,7 +328,7 @@ experiment:
             embedding_dim: 150
             relation_dim: 90
             scoring_fct_norm: 2
-            epochs: 5
+            epochs: 25
             seed: 42
             triples: all # only (ratings) or (all) triples for training
         embed_with: graph
@@ -344,7 +344,7 @@ experiment:
             save_weights: True
           parameters:
             embedding_dim: 200
-            epochs: 5
+            epochs: 25
             seed: 42
             triples: ratings # only (ratings) or (all) triples for training
         embed_with: graph
