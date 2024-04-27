@@ -48,7 +48,7 @@ class TransD(Recommender):
         self._embedding = {}
 
     def name(self):
-        text = "TransR based model + cosine similarity"
+        text = "TransD based model + cosine similarity"
         text += f";embedding_dim={self.embedding_dim};relation_dim={self.relation_dim};entity_initializer={self.entity_initializer};entity_constrainer={self.entity_constrainer};relation_initializer={self.relation_initializer};relation_constrainer={self.relation_constrainer};epochs={self.epochs};seed={self.seed};triples={self.triples}"
         return text
 
