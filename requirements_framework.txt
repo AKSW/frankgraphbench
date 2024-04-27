@@ -1,4 +1,3 @@
-graph-walker @ git+https://github.com/AlvaroJoseLopes/graph-walker
 gensim
 joblib
 networkx
@@ -20,3 +19,4 @@ py-cpuinfo
 gputil
 psutil
 sentence-transformers
+graph-walker @ git+https://github.com/AlvaroJoseLopes/graph-walker
