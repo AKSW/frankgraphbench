@@ -29,6 +29,7 @@ class TransR(Recommender):
         relation_constrainer=None,
         epochs: int = 5,
         seed: int = 42,
+        evaluation_fallback: bool = True,
         all_recs: bool = False,
         triples: str = "all",
     ):
@@ -42,6 +43,7 @@ class TransR(Recommender):
         self.relation_constrainer = relation_constrainer
         self.epochs = epochs
         self.seed = seed
+        self.evaluation_fallback = evaluation_fallback
         self.all_recs = all_recs
         self.triples = triples
         self._triples = None
@@ -125,6 +127,7 @@ class TransR(Recommender):
             ),
             epochs=self.epochs,
             random_seed=self.seed,
+            evaluation_fallback = self.evaluation_fallback,
         )
         model = result.model
 

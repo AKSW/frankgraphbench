@@ -27,6 +27,7 @@ class RESCAL(Recommender):
         regularizer_kwargs=None,
         epochs: int = 5,
         seed: int = 42,
+        evaluation_fallback: bool = True,
         all_recs: bool = False,
         triples: str = "all",
     ):
@@ -38,6 +39,7 @@ class RESCAL(Recommender):
         self.regularizer_kwargs = regularizer_kwargs
         self.epochs = epochs
         self.seed = seed
+        self.evaluation_fallback = evaluation_fallback
         self.all_recs = all_recs
         self.triples = triples
         self._triples = None
@@ -117,8 +119,9 @@ class RESCAL(Recommender):
                 regularizer=self.regularizer,
                 regularizer_kwargs=self.regularizer_kwargs,
             ),
-            epochs=self.epochs,
-            random_seed=self.seed,
+            epochs = self.epochs,
+            random_seed = self.seed,
+            evaluation_fallback = self.evaluation_fallback,
         )
         model = result.model
 

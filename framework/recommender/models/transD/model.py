@@ -29,6 +29,7 @@ class TransD(Recommender):
         relation_constrainer=None,
         epochs: int = 5,
         seed: int = 42,
+        evaluation_fallback: bool = True,
         all_recs: bool = False,
         triples: str = "all",
     ):
@@ -42,6 +43,7 @@ class TransD(Recommender):
         self.relation_constrainer = relation_constrainer
         self.epochs = epochs
         self.seed = seed
+        self.evaluation_fallback = evaluation_fallback
         self.all_recs = all_recs
         self.triples = triples
         self._triples = None
@@ -123,8 +125,9 @@ class TransD(Recommender):
                 relation_initializer=self.relation_initializer,
                 relation_constrainer=self.relation_constrainer,
             ),
-            epochs=self.epochs,
-            random_seed=self.seed,
+            epochs = self.epochs,
+            random_seed = self.seed,
+            evaluation_fallback = self.evaluation_fallback,
         )
         model = result.model
 

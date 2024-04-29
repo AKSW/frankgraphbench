@@ -32,6 +32,7 @@ class TuckER(Recommender):
         core_tensor_initializer_kwargs=None,
         epochs: int = 5,
         seed: int = 42,
+        evaluation_fallback: bool = True,
         all_recs: bool = False,
         triples: str = "all",
     ):
@@ -48,6 +49,7 @@ class TuckER(Recommender):
         self.core_tensor_initializer_kwargs = core_tensor_initializer_kwargs
         self.epochs = epochs
         self.seed = seed
+        self.evaluation_fallback = evaluation_fallback
         self.all_recs = all_recs
         self.triples = triples
         self._triples = None
