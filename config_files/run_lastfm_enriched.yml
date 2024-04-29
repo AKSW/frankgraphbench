@@ -162,7 +162,7 @@ experiment:
         save_weights: True
       parameters:
         embedding_model: "sentence-transformers/distiluse-base-multilingual-cased-v2"
-        embed_with: abstract
+        embed_with: name
         iterations: 30
         mi: 0.5
     - name: ePHEN
