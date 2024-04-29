@@ -155,14 +155,14 @@ experiment:
         epochs: 25
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: "sentence-transformers/distiluse-base-multilingual-cased-v2"
-        embed_with: abstract
-        iterations: 30
-        mi: 0.5
+    # - name: ePHEN
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_model: "sentence-transformers/distiluse-base-multilingual-cased-v2"
+    #     embed_with: abstract
+    #     iterations: 30
+    #     mi: 0.5
     - name: ePHEN
       config:
         save_weights: True
