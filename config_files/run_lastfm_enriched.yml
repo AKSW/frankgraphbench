@@ -8,7 +8,7 @@ experiment:
       path: datasets/lastfm/processed/user.csv
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/lastfm/processed/rating.csv
-      timestamp: True
+      timestamp: False
     enrich:
       map_path: datasets/lastfm/processed/map.csv
       enrich_path: datasets/lastfm/processed/enriched.csv
