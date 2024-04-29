@@ -13,18 +13,18 @@ experiment:
     social:
       path: datasets/yelp/processed/social.csv
 
-  preprocess:
-    # - method: filter_by_rating
-    #   parameters:
-    #     threshold: 20
-    # - method: binarize
-    #   parameters:
-    #     threshold: 4
-    - method: filter_kcore
-      parameters:
-        k: 5
-        iterations: 1
-        target: user # user or rating
+  # preprocess:
+  #   # - method: filter_by_rating
+  #   #   parameters:
+  #   #     threshold: 20
+  #   # - method: binarize
+  #   #   parameters:
+  #   #     threshold: 4
+  #   - method: filter_kcore
+  #     parameters:
+  #       k: 5
+  #       iterations: 1
+  #       target: user # user or rating
 
   split:
     seed: 42
