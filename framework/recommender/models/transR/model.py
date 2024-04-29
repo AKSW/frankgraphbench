@@ -125,8 +125,8 @@ class TransR(Recommender):
                 relation_initializer=self.relation_initializer,
                 relation_constrainer=self.relation_constrainer,
             ),
-            epochs=self.epochs,
-            random_seed=self.seed,
+            epochs = self.epochs,
+            random_seed = self.seed,
             evaluation_fallback = self.evaluation_fallback,
         )
         model = result.model

@@ -134,8 +134,9 @@ class TuckER(Recommender):
                 core_tensor_initializer=self.core_tensor_initializer,
                 core_tensor_initializer_kwargs=self.core_tensor_initializer_kwargs,
             ),
-            epochs=self.epochs,
-            random_seed=self.seed,
+            epochs = self.epochs,
+            random_seed = self.seed,
+            evaluation_fallback = self.evaluation_fallback,
         )
         model = result.model
 
