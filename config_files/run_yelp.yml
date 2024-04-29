@@ -1,20 +1,17 @@
 experiment:
   dataset:
-    name: ml-100k
+    name: yelp
     item: # infos related to item dataset (mandatory, at least item_id)
-      path: datasets/ml-100k/processed/item.csv
-      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
+      path: datasets/yelp/processed/item.csv
+      extra_features: [name, city, state, stars, attributes, categories] # features(columns) beside item_id to be used
     user: # mandatory (at least user_id)
-      path: datasets/ml-100k/processed/user.csv
-      extra_features: [gender, occupation] # features beside user_id
+      path: datasets/yelp/processed/user.csv
+      extra_features: [name, review_count, useful_count, funny_count, cool_count, fans_count, average_stars] # features beside user_id
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/ml-100k/processed/rating.csv
-      timestamp: True
-    enrich:
-      map_path: datasets/ml-100k/processed/map.csv
-      enrich_path: datasets/ml-100k/processed/enriched.csv
-      remove_unmatched: False
-      properties: [subject, director, abstract]
+      timestamp: False
+    social:
+      path: datasets/yelp/processed/social.csv
 
   preprocess:
     # - method: filter_by_rating
@@ -357,6 +354,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/ml-100kcsv"
+    file: "experiment_results/yelp.csv"
     execution_times:
-      file: "experiment_results/ml-100k_times.csv"
+      file: "experiment_results/yelp_times.csv"
