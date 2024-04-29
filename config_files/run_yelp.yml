@@ -8,7 +8,7 @@ experiment:
       path: datasets/yelp/processed/user.csv
       extra_features: [name, review_count, useful_count, funny_count, cool_count, fans_count, average_stars] # features beside user_id
     ratings: # mandatory (at least [user_id, item_id, rating])
-      path: datasets/ml-100k/processed/rating.csv
+      path: datasets/yelp/processed/rating.csv
       timestamp: False
     social:
       path: datasets/yelp/processed/social.csv
@@ -22,7 +22,7 @@ experiment:
     #     threshold: 4
     - method: filter_kcore
       parameters:
-        k: 1
+        k: 20
         iterations: 1
         target: user # user or rating
 
