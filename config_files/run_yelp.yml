@@ -22,7 +22,7 @@ experiment:
     #     threshold: 4
     - method: filter_kcore
       parameters:
-        k: 20
+        k: 5
         iterations: 1
         target: user # user or rating
 
