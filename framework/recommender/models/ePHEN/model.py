@@ -45,7 +45,7 @@ class EPHEN(Recommender):
 
     def name(self):
         text = "EPHEN based model + cosine similarity"
-        text += f";embedding_model={self.embedding_model};embed_with={self.embed_with};iterations={self.iterations};mi={self.mi}."
+        text += f";embedding_model={self.embedding_model};embedding_model_kwargs={self.embedding_model_kwargs};embed_with={self.embed_with};iterations={self.iterations};mi={self.mi}."
         return text
 
     def train(self, G_train, ratings_train):
