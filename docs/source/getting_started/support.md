@@ -12,7 +12,6 @@ Currently the supported datasets are:
 |[Douban-Movie-Short-Comments-Dataset](https://www.kaggle.com/datasets/utmhikari/doubanmovieshortcomments/data)|---|28|douban-movie|
 |[Yelp-Dataset](https://www.yelp.com/dataset/download)|---|150348|yelp|
 |[Amazon-Video-Games-5](https://nijianmo.github.io/amazon/index.html)|---|21106|amazon-video_games-5|
-|---------|---------------|---|-----|
 
 ## Models
 
@@ -48,6 +47,26 @@ Currently the supported Recommender System models are:
     - `epochs`: number of training iterations.
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+### transR
+- TransR graph embedding + cosine similarity.
+  - Reference: Yankai Lin, Zhiyuan Liu, Maosong Sun, Yang Liu, and Xuan Zhu. 2015. Learning entity and relation embeddings for knowledge graph completion. In Proceedings of the AAAI conference on artificial intelligence, Vol. 29.
+  - Main parameters
+    - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
+    - `relation_dim`: the relation embedding dimension, usually equal or smaller than `embedding_dim`.
+    - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
+    - `epochs`: number of training iterations.
+    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+### transD
+- TransD graph embedding + cosine similarity.
+  - Reference: Guoliang Ji, Shizhu He, Liheng Xu, Kang Liu, and Jun Zhao. 2015. Knowledge graph embedding via dynamic mapping matrix. In Proceedings of the 53rd annual meeting of the association for computational linguistics and the 7th international joint conference on natural language processing (volume 1: Long papers). 687–696.
+  - Main parameters
+    - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
+    - `relation_dim`: the relation embedding dimension, usually equal or smaller than `embedding_dim`.
+    - `epochs`: number of training iterations.
+    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+
 
 ## Pre-processing Methods
 

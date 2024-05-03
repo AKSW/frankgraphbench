@@ -6,8 +6,8 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Knowledge-Graph-aware-Recommender-Systems-with-DBpedia'
-copyright = '2023, Alvaro Jose Lopes'
+project = 'FranKGraphbench'
+copyright = '2024, Alvaro Jose Lopes'
 author = 'Alvaro Jose Lopes'
 release = '0.1'
 
