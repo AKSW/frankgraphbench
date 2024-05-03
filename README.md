@@ -1,7 +1,7 @@
 # FranKGraphBench: Knowledge Graph Aware Recommender Systems Framework for Benchmarking
 
-The FranKGraphBench is a benchmark for Recommender Systems.
-It contains the major knowledge graphs and Recommender Systems to speed up the development and facilitate the benchmarking of new methods. 
+The FranKGraphBench is a framework to allow KG Aware RSs to be benchmarked in a reproducible and easy to implement manner. 
+It was first created on Google Summer of Code 2023 for Data Integration between DBpedia and some standard RS datasets in a reproducible framework.
 
 Check the [docs](https://frankgraphbench.readthedocs.io/en/latest/index.html) for more information.
 
@@ -56,7 +56,10 @@ Check [Makefile](Makefile) for more examples.
 |---------|---------------|---|
 |[MovieLens-100k](https://grouplens.org/datasets/movielens/100k/)|1462|1681|
 |[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3356|3883|
-|[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/)|11815|17632| 
+|[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/)|11815|17632|
+|[Douban-Movie-Short-Comments-Dataset](https://www.kaggle.com/datasets/utmhikari/doubanmovieshortcomments/data)|---|28|douban-movie|
+|[Yelp-Dataset](https://www.yelp.com/dataset/download)|---|150348|yelp|
+|[Amazon-Video-Games-5](https://nijianmo.github.io/amazon/index.html)|---|21106|amazon-video_games-5|
 
 # Framework for reproducible experiments usage
 Install the require packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
