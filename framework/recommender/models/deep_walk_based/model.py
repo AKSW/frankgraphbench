@@ -147,7 +147,3 @@ class DeepWalkBased(Recommender):
             n_neighbors = min(max_recs + top_k, len(items))
         
         return n_neighbors
-
-
-           
-    

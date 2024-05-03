@@ -12,20 +12,42 @@ Currently the supported datasets are:
 |[Douban-Movie-Short-Comments-Dataset](https://www.kaggle.com/datasets/utmhikari/doubanmovieshortcomments/data)|---|28|douban-movie|
 |[Yelp-Dataset](https://www.yelp.com/dataset/download)|---|150348|yelp|
 |[Amazon-Video-Games-5](https://nijianmo.github.io/amazon/index.html)|---|21106|amazon-video_games-5|
+|---------|---------------|---|-----|
 
 ## Models
 
 Currently the supported Recommender System models are:
 
-- **deepwalk_based**: Node embedding based model (Node2Vec) + cosine similarity.
-  - Reference: X
+### deepwalk_based
+- Node embedding based model (Node2Vec) + cosine similarity. (DeepWalk equivalent model can be run by setting the parameters `p` and `q` to `1.0`)
+  - References: 
+    - DeepWalk: Bryan Perozzi, Rami Al-Rfou, and Steven Skiena. 2014. Deepwalk: Online learning of social representations. In Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining. 701–710.
+    - node2vec: Aditya Grover and Jure Leskovec. 2016. node2vec: Scalable feature learning for networks. In Proceedings of the 22nd ACM SIGKDD international conference on Knowledge discovery and data mining. 855–864.
   - Main parameters
-    - `walk_len`: random walk length.
+    - `walk_len`: random walk length that determines how many nodes will be explore in a single walk.
     - `n_walks`: number of random walks for each node.
     - `p`: likelihood of returning to the previous node, promoting more exploration of local structures.
     - `q`: likelihood of moving away from the previous node, promoting more exploration of different parts of the graph.
-    - `embedding_size`: embedding size.
-    - `window_size`: Word2Vec window size.
+    - `embedding_size`: embedding size, usually between 64 and 128. 
+    - `window_size`: word2vec window size, where it determines how many of the "words" within the walk length will impact the skipgram model calculation. Usually is a smaller value than the walk length.
+### transE
+- TransE graph embedding + cosine similarity.
+  - Reference: Antoine Bordes, Nicolas Usunier, Alberto Garcia-Duran, Jason Weston, and Oksana Yakhnenko. 2013. Translating embeddings for modeling multi-relational data. Advances in neural information processing systems 26 (2013).
+  - Main parameters
+    - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
+    - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
+    - `epochs`: number of training iterations.
+    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+### transH
+- TransH graph embedding + cosine similarity.
+  - Reference: Zhen Wang, Jianwen Zhang, Jianlin Feng, and Zheng Chen. 2014. Knowledge graph embedding by translating on hyperplanes. In Proceedings of the AAAI conference on artificial intelligence, Vol. 28.
+  - Main parameters
+    - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
+    - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
+    - `epochs`: number of training iterations.
+    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
 
 ## Pre-processing Methods
 
