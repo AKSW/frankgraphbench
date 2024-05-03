@@ -67,6 +67,19 @@ Currently the supported Recommender System models are:
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
 
+### tuckER
+- TuckER graph embedding + cosine similarity.
+  - Reference: Ivana Balažević, Carl Allen, and Timothy M Hospedales. 2019. Tucker: Tensor factorization for knowledge graph completion. arXiv preprint arXiv:1901.09590 (2019).
+    - `embedding_dim`: the entity embedding dimension.
+    - `relation_dim`: the relation embedding dimension, usually equal or smaller than `embedding_dim`.
+    - `dropout_0`: the first dropout, `cf.formula`.
+    - `dropout_1`: the second dropout, `cf.formula`.
+    - `dropout_2`: the third dropout, `cf.formula`.
+    - `apply_batch_normalization`: wheter to apply batch normalization (`bool`).
+    - `epochs`: number of training iterations.
+    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+
 
 ## Pre-processing Methods
 
