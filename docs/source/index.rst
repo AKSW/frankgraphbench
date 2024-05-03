@@ -3,11 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Knowledge-Graph-aware-Recommender-Systems-with-DBpedia's documentation!
+Welcome to FranKGraphbench's documentation!
 ==================================================================================
 
 This project is an outcome of `Google Summer of Code 2023 <https://summerofcode.withgoogle.com/programs/2023/projects/3NTZTLYb>`_
-project at DBpedia, named Knowledge Graph aware Recommender Systems with DBpedia.
+project at DBpedia, named FranKGraphBench: Knowledge Graph Aware Recommender Systems Framework for Benchmarking.
 
 This project have two main components:
 
