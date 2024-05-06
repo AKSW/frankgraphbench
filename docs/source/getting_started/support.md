@@ -37,7 +37,7 @@ Currently the supported Recommender System models are:
     - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
     - `epochs`: number of training iterations.
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
-    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 ### transH
 - TransH graph embedding + cosine similarity.
   - Reference: Zhen Wang, Jianwen Zhang, Jianlin Feng, and Zheng Chen. 2014. Knowledge graph embedding by translating on hyperplanes. In Proceedings of the AAAI conference on artificial intelligence, Vol. 28.
@@ -46,7 +46,7 @@ Currently the supported Recommender System models are:
     - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
     - `epochs`: number of training iterations.
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
-    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 ### transR
 - TransR graph embedding + cosine similarity.
   - Reference: Yankai Lin, Zhiyuan Liu, Maosong Sun, Yang Liu, and Xuan Zhu. 2015. Learning entity and relation embeddings for knowledge graph completion. In Proceedings of the AAAI conference on artificial intelligence, Vol. 29.
@@ -56,7 +56,7 @@ Currently the supported Recommender System models are:
     - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
     - `epochs`: number of training iterations.
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
-    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 ### transD
 - TransD graph embedding + cosine similarity.
   - Reference: Guoliang Ji, Shizhu He, Liheng Xu, Kang Liu, and Jun Zhao. 2015. Knowledge graph embedding via dynamic mapping matrix. In Proceedings of the 53rd annual meeting of the association for computational linguistics and the 7th international joint conference on natural language processing (volume 1: Long papers). 687–696.
@@ -65,11 +65,12 @@ Currently the supported Recommender System models are:
     - `relation_dim`: the relation embedding dimension, usually equal or smaller than `embedding_dim`.
     - `epochs`: number of training iterations.
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
-    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### tuckER
 - TuckER graph embedding + cosine similarity.
   - Reference: Ivana Balažević, Carl Allen, and Timothy M Hospedales. 2019. Tucker: Tensor factorization for knowledge graph completion. arXiv preprint arXiv:1901.09590 (2019).
+  - Main parameters
     - `embedding_dim`: the entity embedding dimension.
     - `relation_dim`: the relation embedding dimension, usually equal or smaller than `embedding_dim`.
     - `dropout_0`: the first dropout, `cf.formula`.
@@ -78,7 +79,35 @@ Currently the supported Recommender System models are:
     - `apply_batch_normalization`: wheter to apply batch normalization (`bool`).
     - `epochs`: number of training iterations.
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
-    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `all` or `ratings`.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
+
+### rESCAL
+- RESCAL graph embedding + cosine similarity.
+  - Reference: Maximilian Nickel, Volker Tresp, Hans-Peter Kriegel, et al. 2011. A three-way model for collective learning on multi-relational data. In Icml, Vol. 11. 3104482–3104584.
+  - Main parameters
+    - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
+    - `epochs`: number of training iterations.
+    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
+
+### complEx
+- ComplEx graph embedding + cosine similarity.
+  - Reference: Théo Trouillon, Johannes Welbl, Sebastian Riedel, Éric Gaussier, and Guillaume Bouchard. 2016. Complex embeddings for simple link prediction. In International conference on machine learning. PMLR, 2071–2080.
+  - Main parameters
+    - `embedding_dim`: the entity embedding dimension.
+    - `epochs`: number of training iterations.
+    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
+
+### ePHEN
+- EPHEN embedding propagation + start embedding model + cosine similarity.
+  - Reference: Paulo do Carmo and Ricardo Marcacini. 2021. Embedding propagation over heterogeneous event networks for link prediction. In 2021 IEEE International Conference on Big Data (Big Data). 4812–4821. https://doi.org/10.1109/BigData52589.2021.9671645
+  - Main parameters
+    - `embedding_model`: the start embedding model name, either a hugginface sentence transformer model or a previously implemented graph embedding model.
+    - `embedding_model_kwargs`: arguments for the starting embedding model.
+    - `embed_with`: either the `column_name` for the item property that contains text data, or `"graph"` when using a previously implemented graph embedding model.
+    - `iterations`: the number of iterations for the regularization propagation.
+    - `mi`: the mi factor number that dictates how much of the start embedding will affect the final embedding, values fluctuate between `0` and `1`.
 
 
 ## Pre-processing Methods

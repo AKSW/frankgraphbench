@@ -30,7 +30,6 @@ class EPHEN(Recommender):
         embed_with: str = "movie_title", # 'graph' for graph embedding model or column for text embedding model
         iterations: int = 30,
         mi: float = 0.85,
-        seed: int = 42,
         all_recs: bool = False,
     ):
         super().__init__(config)
@@ -39,7 +38,6 @@ class EPHEN(Recommender):
         self.embed_with = embed_with
         self.iterations = iterations
         self.mi = mi
-        self.seed = seed
         self.all_recs = all_recs
         self._embedding = {}
 
