@@ -101,7 +101,7 @@ Currently the supported Recommender System models are:
 
 ### ePHEN
 - EPHEN embedding propagation + start embedding model + cosine similarity.
-  - Reference: Paulo do Carmo and Ricardo Marcacini. 2021. Embedding propagation over heterogeneous event networks for link prediction. In 2021 IEEE International Conference on Big Data (Big Data). 4812–4821. [https://doi.org/10.1109/BigData52589.2021.9671645](https://doi.org/10.1109/BigData52589.2021.9671645)
+  - Reference: Paulo do Carmo and Ricardo Marcacini. 2021. Embedding propagation over heterogeneous event networks for link prediction. In 2021 IEEE International Conference on Big Data (Big Data). 4812–4821.
   - Main parameters
     - `embedding_model`: the start embedding model name, either a hugginface sentence transformer model or a previously implemented graph embedding model.
     - `embedding_model_kwargs`: arguments for the starting embedding model.
