@@ -357,6 +357,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/ml-100k.csv"
+    file: "experiment_results/ml-100k-enriched.csv"
     execution_times:
-      file: "experiment_results/ml-100k_times.csv"
+      file: "experiment_results/ml-100k-enriched_times.csv"
