@@ -33,6 +33,7 @@ Experiment ran using the MovieLens-100k dataset with the follwing presented mode
 |EPHEN based model + cosine similarity;embedding_model=tuckER;embedding_model_kwargs={'embedding_dim': 200, 'epochs': 25, 'seed': 42, 'triples': 'ratings'};embed_with=graph;iterations=30;mi=0.5|.0041 ± .0007|.0063 ± .0010|
 
 - Summarized execution time results from `experiment_results/ml-100k-enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+
 | Model | Execution Time (s) |
 |---------|----------------------|
 |Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|24.75 ± 1.211|
