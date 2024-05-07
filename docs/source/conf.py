@@ -7,8 +7,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'FranKGraphbench'
-copyright = '2024, Alvaro Jose Lopes'
-author = 'Alvaro Jose Lopes'
+copyright = '2024, Alvaro Jose Lopes and Paulo do Carmo'
+author = 'Alvaro Jose Lopes and Paulo do Carmo'
 release = '0.1'
 
 # -- General configuration ---------------------------------------------------
