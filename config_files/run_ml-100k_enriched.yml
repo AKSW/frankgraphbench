@@ -162,7 +162,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_model: "sentence-transformers/distiluse-base-multilingual-cased-v2"
+        embedding_model: sentence-transformers/distiluse-base-multilingual-cased-v2
         embed_with: abstract
         iterations: 30
         mi: 0.5
@@ -170,7 +170,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_model: "sentence-transformers/msmarco-bert-base-dot-v5"
+        embedding_model: sentence-transformers/msmarco-bert-base-dot-v5
         embed_with: abstract
         iterations: 30
         mi: 0.5
@@ -178,7 +178,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_model: "sentence-transformers/all-roberta-large-v1"
+        embedding_model: sentence-transformers/all-roberta-large-v1
         embed_with: abstract
         iterations: 30
         mi: 0.5
@@ -186,7 +186,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_model: "sentence-transformers/all-mpnet-base-v2"
+        embedding_model: sentence-transformers/all-mpnet-base-v2
         embed_with: abstract
         iterations: 30
         mi: 0.5
