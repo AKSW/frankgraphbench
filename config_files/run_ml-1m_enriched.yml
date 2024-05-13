@@ -82,46 +82,6 @@ experiment:
         n_walks: 50
         embedding_size: 64
         epochs: 1
-    - name: complEx
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 100
-        epochs: 25
-        seed: 42
-        triples: ratings # only (ratings) or (all) triples for training
-    - name: distMult
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 50
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: rESCAL
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 50
-        epochs: 25
-        seed: 42
-        triples: ratings # only (ratings) or (all) triples for training
-    - name: rotatE
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 200
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: transD
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 150
-        epochs: 25
-        seed: 42
-        triples: ratings # only (ratings) or (all) triples for training
     - name: transE
       config:
         save_weights: True
@@ -150,6 +110,14 @@ experiment:
         epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
+    - name: transD
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        epochs: 25
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
     - name: tuckER
       config:
         save_weights: True
@@ -158,11 +126,67 @@ experiment:
         epochs: 25
         seed: 42
         triples: ratings # only (ratings) or (all) triples for training
+    - name: rESCAL
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 50
+        epochs: 25
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
+    - name: distMult
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 50
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: complEx
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 100
+        epochs: 25
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
+    - name: rotatE
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 200
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
     - name: ePHEN
       config:
         save_weights: True
       parameters:
         embedding_model: "sentence-transformers/distiluse-base-multilingual-cased-v2"
+        embed_with: abstract
+        iterations: 30
+        mi: 0.5
+    - name: ePHEN
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: "sentence-transformers/msmarco-bert-base-dot-v5"
+        embed_with: abstract
+        iterations: 30
+        mi: 0.5
+    - name: ePHEN
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: "sentence-transformers/all-roberta-large-v1"
+        embed_with: abstract
+        iterations: 30
+        mi: 0.5
+    - name: ePHEN
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: "sentence-transformers/all-mpnet-base-v2"
         embed_with: abstract
         iterations: 30
         mi: 0.5
@@ -181,172 +205,6 @@ experiment:
             n_walks: 50
             embedding_size: 64
             epochs: 1
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: deepwalk_based
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            walk_len: 10
-            p: 0.8
-            q: 0.6
-            n_walks: 50
-            embedding_size: 64
-            epochs: 1
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: complEx
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            embedding_dim: 100
-            epochs: 25
-            seed: 42
-            triples: ratings # only (ratings) or (all) triples for training
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: distMult
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            embedding_dim: 50
-            epochs: 25
-            seed: 42
-            triples: all # only (ratings) or (all) triples for training
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: rESCAL
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            embedding_dim: 50
-            epochs: 25
-            seed: 42
-            triples: ratings # only (ratings) or (all) triples for training
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: rotatE
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            embedding_dim: 200
-            epochs: 25
-            seed: 42
-            triples: all # only (ratings) or (all) triples for training
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: transD
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            embedding_dim: 150
-            epochs: 25
-            seed: 42
-            triples: ratings # only (ratings) or (all) triples for training
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: transE
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            embedding_dim: 150
-            scoring_fct_norm: 1
-            epochs: 25
-            seed: 42
-            triples: ratings # only (ratings) or (all) triples for training
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: transH
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            embedding_dim: 150
-            scoring_fct_norm: 2
-            epochs: 25
-            seed: 42
-            triples: ratings # only (ratings) or (all) triples for training
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: transR
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            embedding_dim: 150
-            relation_dim: 90
-            scoring_fct_norm: 2
-            epochs: 25
-            seed: 42
-            triples: all # only (ratings) or (all) triples for training
-        embed_with: graph
-        iterations: 30
-        mi: 0.5
-    - name: ePHEN
-      config:
-        save_weights: True
-      parameters:
-        embedding_model: tuckER
-        embedding_model_kwargs:
-          config:
-            save_weights: True
-          parameters:
-            embedding_dim: 200
-            epochs: 25
-            seed: 42
-            triples: ratings # only (ratings) or (all) triples for training
         embed_with: graph
         iterations: 30
         mi: 0.5
