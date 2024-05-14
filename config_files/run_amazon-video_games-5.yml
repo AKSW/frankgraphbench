@@ -1,0 +1,191 @@
+experiment:
+  dataset:
+    name: amazon-video_games-5
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/amazon-video_games-5/processed/item.csv
+      extra_features: [name, features, price, also_buy, also_view, brand, categories, description] # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/amazon-video_games-5/processed/user.csv
+      extra_features: [name] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/amazon-video_games-5/processed/rating.csv
+      timestamp: True
+
+  preprocess:
+    # - method: filter_by_rating
+    #   parameters:
+    #     threshold: 20
+    # - method: binarize
+    #   parameters:
+    #     threshold: 4
+    - method: filter_kcore
+      parameters:
+        k: 5
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+    # test:
+    #   method: random_by_ratio
+    #   level: global
+    #   p: 0.2
+    # validation:
+    #   method: random_by_ratio
+    #   level: global
+    #   p: 0.2
+
+    # test:
+    #   method: timestamp_by_ratio
+    #   level: user
+    #   p: 0.1
+    # validation:
+    #   level: user
+    #   method: timestamp_by_ratio
+    #   p: 0.2
+
+    # test:
+    #   method: fixed_timestamp
+    #   # type: global_level
+    #   timestamp: 890000000
+    # validation:
+    #   method: fixed_timestamp
+    #   timestamp: 880000000
+
+    test:
+      method: k_fold
+      k: 5
+      level: "user"
+
+  models:
+    - name: deepwalk_based
+      config:
+        save_weights: True
+      parameters:
+        walk_len: 10
+        p: 1.0
+        q: 1.0
+        n_walks: 50
+        embedding_size: 64
+        epochs: 1
+    - name: deepwalk_based
+      config:
+      parameters:
+        walk_len: 10
+        p: 0.8
+        q: 0.6
+        n_walks: 50
+        embedding_size: 64
+        epochs: 1
+    - name: transE
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        scoring_fct_norm: 1
+        epochs: 25
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
+    - name: transH
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        scoring_fct_norm: 2
+        epochs: 25
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
+    - name: transR
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        relation_dim: 90
+        scoring_fct_norm: 2
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: transD
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        epochs: 25
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
+    - name: tuckER
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 200
+        epochs: 25
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
+    - name: rESCAL
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 50
+        epochs: 25
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
+    - name: distMult
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 50
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: complEx
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 100
+        epochs: 25
+        seed: 42
+        triples: ratings # only (ratings) or (all) triples for training
+    - name: rotatE
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 200
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: ePHEN
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: "sentence-transformers/all-roberta-large-v1"
+        embed_with: description
+        iterations: 30
+        mi: 0.5
+    - name: ePHEN
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: deepwalk_based
+        embedding_model_kwargs:
+          config:
+            save_weights: True
+          parameters:
+            walk_len: 10
+            p: 1.0
+            q: 1.0
+            n_walks: 50
+            embedding_size: 64
+            epochs: 1
+        embed_with: graph
+        iterations: 30
+        mi: 0.5
+
+  evaluation:
+    k: 5
+    relevance_threshold: 0
+    metrics: [MAP, nDCG]
+
+  report:
+    file: "experiment_results/amazon-video_games-5.csv"
+    execution_times:
+      file: "experiment_results/amazon-video_games-5_times.csv"
