@@ -199,3 +199,43 @@ Experiment ran using the Douban Movie dataset with the follwing presented models
 |RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|51.02 ± 1.804|
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|47.73 ± .6584|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|41.90 ± .5456|
+
+## amazon-video_games-5
+
+Experiment ran using the Douban Movie dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_amazon-video_games-5.yml`: 
+
+- Summarized results from `experiment_results/amazon-video_games-5.csv`:
+
+| Model | MAP@5 | nDCG@5 |
+|---------|---------|-----------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.0280 ± .0004|.0367 ± .0006|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.0278 ± .0005|.0366 ± .0006|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0001 ± .0000|.0002 ± .0000|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0000 ± .0000|.0001 ± .0000|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0001 ± .0000|.0001 ± .0000|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0001 ± .0000|.0001 ± .0000|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0001 ± .0000|.0001 ± .0000|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0001 ± .0000|.0001 ± .0000|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0001 ± .0000|.0002 ± .0000|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0001 ± .0000|.0002 ± .0000|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0001 ± .0000|.0002 ± .0000|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0002 ± .0001|.0003 ± .0001|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0280 ± .0008|.0367 ± .0007|
+
+- Summarized execution time results from `experiment_results/amazon-video_games-5.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+
+| Model | Execution Time (s) |
+|---------|----------------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|740.5 ± 18.09|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|736.7 ± 19.41|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|570.4 ± 46.34|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|862.5 ± 56.28|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|11119 ± 119.3|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|1192. ± 69.81|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|2375. ± 95.82|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|473.3 ± 42.67|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|2966. ± 58.25|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|726.1 ± 57.64|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|18211 ± 164.9|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|2763. ± 65.41|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|1964. ± 24.11|
