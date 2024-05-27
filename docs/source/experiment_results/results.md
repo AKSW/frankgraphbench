@@ -120,6 +120,46 @@ Experiment ran using the Douban Movie dataset with the follwing presented models
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|629.6 ± 30.63|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|348.0 ± 6.012|
 
+## yelp
+
+Experiment ran using the Yelp Challenge dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_yelp.yml`: 
+
+- Summarized results from `experiment_results/yelp.csv`:
+
+| Model | MAP@10 | nDCG@10 |
+|---------|---------|-----------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.01689 ± .00017|.03860 ± .00036|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.01688 ± .00029|.03852 ± .00078|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.00001 ± .00000|.00004 ± .00000|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.00010 ± .00001|.00026 ± .00003|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.00000 ± .00000|.00001 ± .00000|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.00001 ± .00000|.00003 ± .00000|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.00001 ± .00000|.00002 ± .00001|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.00006 ± .00001|.00017 ± .00002|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.00001 ± .00000|.00002 ± .00000|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.00002 ± .00000|.00007 ± .00001|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.00001 ± .00000|.00004 ± .00001|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.00001 ± .00000|.00004 ± .00001|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.01683 ± .00015|.03858 ± .00059|
+
+- Summarized execution time results from `experiment_results/yelp_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+
+| Model | Execution Time (s) |
+|---------|----------------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|1307.4 ± 333.51|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|1417.7 ± 555.66|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|6423.5 ± 1493.2|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|9996.2 ± 2948.8|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|28568. ± 7317.5|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|13663. ± 3201.2|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|15845. ± 140.81|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|3734.3 ± 163.13|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|7292.4 ± 215.27|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|6905.9 ± 406.81|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|41117. ± 231.11|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|8067.5 ± 75.832|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|4243.7 ± 139.98|
+
 ## douban-movie
 
 Experiment ran using the Douban Movie dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_douban-movie.yml`: 
