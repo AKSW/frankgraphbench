@@ -6,10 +6,10 @@ with open("README.md", "r") as fh:
 
 setup(
     name="FranKGraphBench",
-    version="0.0.3-alpha",
+    version="0.0.4-alpha",
     author="Paulo do Carmo and Alvaro Lopes",
     author_email='paulo.carmo@htwk-leipzig.de',
-    url='https://github.com/AKSW/frankgraphbench/tree/master/',
+    url='https://github.com/AKSW/frankgraphbench/tree/main/',
     description="pip install package for frankgraphbench.",
     long_description=long_description,
     long_description_content_type="text/markdown",

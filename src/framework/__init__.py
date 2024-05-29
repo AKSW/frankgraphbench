@@ -1,7 +1,7 @@
 import argparse
 from framework.experiment import run
 
-__version__ = "0.0.3-alpha"
+__version__ = "0.0.4-alpha"
 __author__ = "Paulo do Carmo and Alvaro Lopes"
 
 def framework():
