@@ -191,6 +191,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/ml-1m-enriched.csv"
+    file: "experiment_results/ml-1m_enriched.csv"
     execution_times:
-      file: "experiment_results/ml-1m-enriched_times.csv"
+      file: "experiment_results/ml-1m_enriched_times.csv"

@@ -1,10 +1,10 @@
 # Results
 Here we present the average and standard deviation results of previously ran experiments, and we point to the corresponding `.yml` configuration file so that users can consistently reproduce said experiment.
 
-## ml-100k-enriched
+## ml-100k_enriched
 Experiment ran using the MovieLens-100k dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k_enriched.yml`: 
 
-- Summarized results from `experiment_results/ml-100k-enriched.csv`:
+- Summarized results from `experiment_results/ml-100k_enriched.csv`:
 
 | Model | MAP@5 | nDCG@5 |
 |---------|---------|-----------|
@@ -22,7 +22,7 @@ Experiment ran using the MovieLens-100k dataset with the follwing presented mode
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0141 ± .0006|.0252 ± .0005|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1812 ± .0078|.2338 ± .0076|
 
-- Summarized execution time results from `experiment_results/ml-100k-enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/ml-100k_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
@@ -40,11 +40,11 @@ Experiment ran using the MovieLens-100k dataset with the follwing presented mode
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|177.4 ± 1.292|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|96.80 ± 1.006|
 
-## ml-1m-enriched
+## ml-1m_enriched
 
 Experiment ran using the MovieLens-1m dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_ml-1m_enriched.yml`: 
 
-- Summarized results from `experiment_results/ml-1m-enriched.csv`:
+- Summarized results from `experiment_results/ml-1m_enriched.csv`:
 
 | Model | MAP@5 | nDCG@5 |
 |---------|---------|-----------|
@@ -62,7 +62,7 @@ Experiment ran using the MovieLens-1m dataset with the follwing presented models
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0020 ± .0002|.0030 ± .0001|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1622 ± .0040|.2013 ± .0036|
 
-- Summarized execution time results from `experiment_results/ml-1m-enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/ml-1m_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
@@ -80,11 +80,11 @@ Experiment ran using the MovieLens-1m dataset with the follwing presented models
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|749.3 ± 6.818|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|549.0 ± 10.42|
 
-## lastfm
+## lastfm_enriched
 
 Experiment ran using the Douban Movie dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm-enriched.yml`:
 
-- Summarized results from `experiment_results/lastfm-enriched.csv`:
+- Summarized results from `experiment_results/lastfm_enriched.csv`:
 
 | Model | MAP@5 | nDCG@5 |
 |---------|---------|-----------|
@@ -102,7 +102,7 @@ Experiment ran using the Douban Movie dataset with the follwing presented models
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0021 ± .0011|.0023 ± .0013|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1383 ± .0017|.1903 ± .0026|
 
-- Summarized execution time results from `experiment_results/lastfm-enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/lastfm_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|

@@ -192,6 +192,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/lastfm.csv"
+    file: "experiment_results/lastfm_enriched.csv"
     execution_times:
-      file: "experiment_results/lastfm_times.csv"
+      file: "experiment_results/lastfm_enriched_times.csv"
