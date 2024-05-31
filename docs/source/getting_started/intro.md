@@ -9,4 +9,4 @@ This project have two main components:
 - **Framework**: for running reproducible experiments on enriched and non-enriched datasets through a `.yml`  configuration file.
 
 
-![project pipeline](../imgs/pipeline.png)
+![project pipeline](../imgs/framework.svg)
