@@ -1,8 +1,49 @@
 # Results
 Here we present the average and standard deviation results of the current benchmark version. We also point to the corresponding `.yml` configuration file used for each configuration so that users can consistently reproduce experiments or build new configurations based on one of them.
 
+## ml-100k
+
+Experiment ran using the MovieLens-100k dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k.yml`: 
+
+- Summarized results from `experiment_results/ml-100k.csv`:
+
+| Model | MAP@5 | nDCG@5 |
+|---------|---------|-----------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1198 ± .0041|.1642 ± .0047|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1176 ± .0031|.1622 ± .0031|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0045 ± .0007|.0068 ± .0012|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0011 ± .0004|.0016 ± .0004|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0041 ± .0006|.0063 ± .0006|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0058 ± .0010|.0097 ± .0016|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0041 ± .0004|.0065 ± .0008|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0081 ± .0009|.0128 ± .0015|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0066 ± .0004|.0106 ± .0008|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0066 ± .0004|.0106 ± .0007|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0061 ± .0007|.0093 ± .0013|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0108 ± .0011|.0155 ± .0013|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1203 ± .0065|.1648 ± .0072|
+
+- Summarized execution time results from `experiment_results/ml-100k_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+
+| Model | Execution Time (s) |
+|---------|----------------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|7.819 ± .4210|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|7.527 ± .3735|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|40.57 ± .6235|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|67.11 ± 2.103|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|79.04 ± 1.977|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|74.56 ± 1.877|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|378.6 ± 3.069|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|58.44 ± 2.144|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|40.39 ± 1.722|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|44.13 ± 1.502|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|48.31 ± 1.420|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|85.05 ± .3143|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|50.65 ± .3341|
+
 ## ml-100k_enriched
-Experiment ran using the MovieLens-100k dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k_enriched.yml`: 
+
+Experiment ran using the MovieLens-100k dataset with: DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k_enriched.yml`: 
 
 - Summarized results from `experiment_results/ml-100k_enriched.csv`:
 
