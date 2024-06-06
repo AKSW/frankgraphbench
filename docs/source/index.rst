@@ -43,9 +43,9 @@ This project have two main components:
 
 .. toctree::
    :maxdepth: 2
-   :caption: Experiment Results:
+   :caption: Benchmark Results:
 
-   experiment_results/results
+   benchmark_results/results
 
 Indices and tables
 ==================
