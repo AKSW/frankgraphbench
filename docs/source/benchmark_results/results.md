@@ -161,9 +161,49 @@ Experiment ran using the MovieLens-1m dataset with: DBpedia enrichement and the 
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|749.3 ± 6.818|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|549.0 ± 10.42|
 
+## lastfm
+
+Experiment ran using the Lastfm dataset with and the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm.yml`:
+
+- Summarized results from `experiment_results/lastfm.csv`:
+
+| Model | MAP@5 | nDCG@5 |
+|---------|---------|-----------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1171 ± .0034|.1628 ± .0054|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1178 ± .0018|.1621 ± .0027|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0003 ± .0001|.0003 ± .0001|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0002 ± .0001|.0002 ± .0002|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0002 ± .0001|.0003 ± .0002|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0002 ± .0001|.0003 ± .0001|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0002 ± .0001|.0004 ± .0001|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0002 ± .0001|.0004 ± .0002|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0003 ± .0002|.0003 ± .0002|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0003 ± .0001|.0004 ± .0001|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0003 ± .0001|.0003 ± .0002|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0001 ± .0000|.0001 ± .0000|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1174 ± .0021|.1624 ± .0043|
+
+- Summarized execution time results from `experiment_results/lastfm_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+
+| Model | Execution Time (s) |
+|---------|----------------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|65.50 ± 1.855|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|63.40 ± 3.157|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|60.20 ± 1.085|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|90.59 ± 2.066|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|453.1 ± 4.384|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|113.7 ± 2.467|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|384.5 ± 2.255|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|108.8 ± 2.364|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|55.70 ± 2.296|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|66.67 ± 2.371|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|155.3 ± 1.722|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|438.8 ± .7641|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|143.9 ± 2.147|
+
 ## lastfm_enriched
 
-Experiment ran using the Douban Movie dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm-enriched.yml`:
+Experiment ran using the Lastfm dataset with: DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm-enriched.yml`:
 
 - Summarized results from `experiment_results/lastfm_enriched.csv`:
 
@@ -203,7 +243,7 @@ Experiment ran using the Douban Movie dataset with the follwing presented models
 
 ## yelp
 
-Experiment ran using the Yelp Challenge dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_yelp.yml`: 
+Experiment ran using the Yelp Challenge dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_yelp.yml`: 
 
 - Summarized results from `experiment_results/yelp.csv`:
 
@@ -243,7 +283,7 @@ Experiment ran using the Yelp Challenge dataset with the follwing presented mode
 
 ## douban-movie
 
-Experiment ran using the Douban Movie dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_douban-movie.yml`: 
+Experiment ran using the Douban Movie dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_douban-movie.yml`: 
 
 - Summarized results from `experiment_results/douban-movie.csv`:
 
@@ -283,7 +323,7 @@ Experiment ran using the Douban Movie dataset with the follwing presented models
 
 ## amazon-video_games-5
 
-Experiment ran using the Douban Movie dataset with the follwing presented models and their configurations. The complete configuration can be found in `config_files/run_amazon-video_games-5.yml`: 
+Experiment ran using the Amazon Video-Games core-5 dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_amazon-video_games-5.yml`: 
 
 - Summarized results from `experiment_results/amazon-video_games-5.csv`:
 
