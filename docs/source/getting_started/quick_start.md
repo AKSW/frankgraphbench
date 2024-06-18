@@ -65,7 +65,7 @@ bash ml-1m.sh   # Downloaded at `datasets/ml-1m` folder
 Usage: 
 
 ```shell
-python3 data_integration.py [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-w]
+python3 src/data_integration.py [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-w]
 ```
 
 Arguments:
@@ -83,7 +83,7 @@ Arguments:
 Usage Example:
 
 ```shell
-python3 data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/processed' \
+python3 src/data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/processed' \
     -ci -cu -cr -map -w 8
 ```
 
@@ -185,7 +185,7 @@ pip3 install -r requirements_framework.txt
 Usage:
 
 ```shell
-python3 framework.py -c 'config_files/test.yml'
+python3 src/framework.py -c 'config_files/test.yml'
 ```
 Arguments:
 - **-c:** Experiment configuration file path.
@@ -272,7 +272,7 @@ After obtaining results from some experiments
 Usage:
 
 ```shell
-data_integration [-h] -c CHART -p PERFORMANCE_METRIC -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-w]
+chart_generation [-h] -c CHART -p PERFORMANCE_METRIC -f INPUT_FILES -i INPUT_PATH -o OUTPUT_PATH -n FILE_NAME
 ```
 Arguments:
 - **-h:** Shows the help message.
@@ -302,7 +302,7 @@ After obtaining results from some experiments
 Usage:
 
 ```shell
-data_integration [-h] -c CHART -p PERFORMANCE_METRIC -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-w]
+python3 src/chart_generation.py [-h] -c CHART -p PERFORMANCE_METRIC -f INPUT_FILES -i INPUT_PATH -o OUTPUT_PATH -n FILE_NAME
 ```
 Arguments:
 - **-h:** Shows the help message.
