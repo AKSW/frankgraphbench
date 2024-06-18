@@ -87,7 +87,7 @@ Arguments:
 Usage Example:
 
 ```shell
-python3 data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/processed' \
+python3 src/data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/processed' \
     -ci -cu -cr -map -w 8
 ```
 
@@ -201,7 +201,7 @@ pip3 install -r requirements_framework.txt
 ### Usage 
 
 ```shell
-python3 framework.py -c 'config_files/test.yml'
+python3 src/framework.py -c 'config_files/test.yml'
 ```
 Arguments:
 - **-c:** Experiment configuration file path.
@@ -270,3 +270,63 @@ experiment:
 ```
 
 See the [config_files/](/config_files/) directory for more examples.
+
+# Chart generation for results usage
+
+## pip
+
+We recommend using a python 3.8 virtual environment
+
+```shell
+pip install pybind11
+pip install frankgraphbench
+```
+
+After obtaining results from some experiments
+
+### Usage
+```shell
+data_integration [-h] -c CHART -p PERFORMANCE_METRIC -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-w]
+```
+Arguments:
+- **-h:** Shows the help message.
+- **-p:** Name of the performance metric within the file to use for chart generation.
+- **-f:** List of .csv files to use for generating the chart.
+- **-i:** Path where results data to generate chart is located in .csv files.
+- **-o:** Path where generated charts will be placed.
+- **-n:** Add a name (and file extension) to the chart that will be generated.
+
+Usage Example:
+
+```shell
+chart_generation -c 'cd-diagram' -p 'MAP@5' -f "['ml-100k.csv', 'ml-1m.csv', 'lastfm.csv', 'ml-100k_enriched.csv', 'ml-1m_enriched.csv', 'lastfm_enriched.csv']" -i 'experiment_results' -o 'charts' -n 'MAP@5.pdf'
+```
+
+## source
+
+Install the required packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
+
+```shell
+python3 -m venv venv_chart_generation/
+source venv_chart_generation/bin/activate
+pip3 install -r requirements_chart_generation.txt 
+```
+After obtaining results from some experiments
+
+### Usage
+```shell
+data_integration [-h] -c CHART -p PERFORMANCE_METRIC -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-w]
+```
+Arguments:
+- **-h:** Shows the help message.
+- **-p:** Name of the performance metric within the file to use for chart generation.
+- **-f:** List of .csv files to use for generating the chart.
+- **-i:** Path where results data to generate chart is located in .csv files.
+- **-o:** Path where generated charts will be placed.
+- **-n:** Add a name (and file extension) to the chart that will be generated.
+
+Usage Example:
+
+```shell
+python3 src/chart_generation.py -c 'cd-diagram' -p 'MAP@5' -f "['ml-100k.csv', 'ml-1m.csv', 'lastfm.csv', 'ml-100k_enriched.csv', 'ml-1m_enriched.csv', 'lastfm_enriched.csv']" -i 'experiment_results' -o 'charts' -n 'MAP@5.pdf'
+```
