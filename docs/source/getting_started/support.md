@@ -129,3 +129,11 @@ Currently the supported Splitting method are:
 Those are the already implemented metrics:
 * MAP@k
 * nDCG@k
+
+## Chart Generation
+
+Currently the supported charts are:
+
+| Chart |
+|-------|
+|[CD-Diagram](https://github.com/hfawaz/cd-diagram)|

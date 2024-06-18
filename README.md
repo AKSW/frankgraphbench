@@ -273,6 +273,8 @@ See the [config_files/](/config_files/) directory for more examples.
 
 # Chart generation for results usage
 
+Chart generation module based on: https://github.com/hfawaz/cd-diagram
+
 ## pip
 
 We recommend using a python 3.8 virtual environment
@@ -302,6 +304,12 @@ Usage Example:
 chart_generation -c 'cd-diagram' -p 'MAP@5' -f "['ml-100k.csv', 'ml-1m.csv', 'lastfm.csv', 'ml-100k_enriched.csv', 'ml-1m_enriched.csv', 'lastfm_enriched.csv']" -i 'experiment_results' -o 'charts' -n 'MAP@5.pdf'
 ```
 
+## Supported charts
+
+| Chart |
+|-------|
+|[CD-Diagram](https://github.com/hfawaz/cd-diagram)|
+
 ## source
 
 Install the required packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
@@ -330,3 +338,9 @@ Usage Example:
 ```shell
 python3 src/chart_generation.py -c 'cd-diagram' -p 'MAP@5' -f "['ml-100k.csv', 'ml-1m.csv', 'lastfm.csv', 'ml-100k_enriched.csv', 'ml-1m_enriched.csv', 'lastfm_enriched.csv']" -i 'experiment_results' -o 'charts' -n 'MAP@5.pdf'
 ```
+
+## Supported charts
+
+| Chart |
+|-------|
+|[CD-Diagram](https://github.com/hfawaz/cd-diagram)|
