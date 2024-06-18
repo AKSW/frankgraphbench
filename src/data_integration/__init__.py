@@ -3,7 +3,7 @@ import importlib
 
 from data_integration.dataset2class import dataset2class
 
-__version__ = "0.0.4-alpha"
+__version__ = "0.1.0"
 __author__ = "Paulo do Carmo and Alvaro Lopes"
 
 def get_dataset_class(dataset):
