@@ -10,12 +10,12 @@ class GMatching(Recommender):
     def __init__(
         self,
         config: dict,
-        embedding_model_name: str,
+        embedding_model: str,
         embedding_config: dict,
         embedding_kwargs: dict,
     ):
         super().__init__(config)
-        self.embedding_model_name = embedding_model_name
+        self.embedding_model = embedding_model
         self.embedding_kwargs = embedding_kwargs
         self.embedding_config = embedding_config
 
@@ -25,8 +25,8 @@ class GMatching(Recommender):
         return text
     
     def train(self, G_train, ratings_train):
-        module_name = f'framework.recommender.models.{model2class[self.embedding_model_name]["submodule"]}'
-        class_name = model2class[self.embedding_model_name]['class']
+        module_name = f'framework.recommender.models.{model2class[self.embedding_model]["submodule"]}'
+        class_name = model2class[self.embedding_model]['class']
 
         self._embedding_model = getattr(importlib.import_module(module_name), class_name)
         self._embedding_model = self._embedding_model(self.embedding_config, **self.embedding_kwargs)
