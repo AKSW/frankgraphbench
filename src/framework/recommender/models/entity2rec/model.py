@@ -3,6 +3,9 @@ from framework.dataloader.graph.graph import Graph
 from framework.dataloader.graph.node import ItemNode, UserNode
 
 from ...recommender import Recommender
+from ...model2class import model2class
+
+import importlib
 
 class Entity2Rec(Recommender):
     def __init__(
@@ -45,10 +48,30 @@ class Entity2Rec(Recommender):
         return text
     
     def train(self, G_train: Graph, ratings_train: Dict[UserNode, List[Tuple[ItemNode, float]]]):
-        return super().train(G_train, ratings_train)
+        self.G_train = G_train
+        self.ratings_train = ratings_train
+        self.fit()
     
     def get_recommendations(self, k: int = 5) -> Dict[UserNode, List[ItemNode]]:
         return super().get_recommendations(k)
     
     def fit(self):
+        self.entity2rec()
+
+    def entity2rec(self):
+        self.entity2vec()
+        self.entity2rel()
+
+    def entity2vec(self):
+        module_name = f'framework.recommender.models.{model2class[self.embedding_model]["submodule"]}'
+        class_name = model2class[self.embedding_model]['class']
+
+        model = getattr(importlib.import_module(module_name), class_name)
+        model = model(self.embedding_model_kwargs['config'], **self.embedding_model_kwargs['parameters'])
+
+        model.train(self.G_train, self.ratings_train)
+
+        self.init_embeddings = model._embedding
+
+    def entity2rel(self):
         pass
