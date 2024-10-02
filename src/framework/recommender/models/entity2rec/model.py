@@ -6,6 +6,8 @@ from ...recommender import Recommender
 from ...model2class import model2class
 
 import importlib
+import pandas as pd
+import networkx as nx
 
 class Entity2Rec(Recommender):
     def __init__(
@@ -41,15 +43,22 @@ class Entity2Rec(Recommender):
         self.iterations = iterations
         self.collab_only = collab_only
         self.content_only = content_only
+        self._triples = None
+        self._embedding = {}
+        self._subgraphs = {}
 
     def name(self):
         text = "Entity2Rec"
-        text += f";embedding_model={self.embedding_model};embedding_model_kwargs={self.embedding_model_kwargs};p={self.p};q={self.q};walk_length={self.walk_length};num_walks={self.num_walks};run_all={self.run_all};embedding_size={self.embedding_size};window_size={self.window_size};workers={self.workers};iterations={self.iterations};collab_only={self.collab_only};content_only={self.content_only}"
+        text += f";embedding_model={self.embedding_model};embedding_model_kwargs={self.embedding_model_kwargs};p={self.p};q={self.q};"
+        text += f"walk_length={self.walk_length};num_walks={self.num_walks};run_all={self.run_all};embedding_size={self.embedding_size};"
+        text += f"window_size={self.window_size};workers={self.workers};iterations={self.iterations};collab_only={self.collab_only};"
+        text += f"content_only={self.content_only}"
         return text
     
     def train(self, G_train: Graph, ratings_train: Dict[UserNode, List[Tuple[ItemNode, float]]]):
         self.G_train = G_train
         self.ratings_train = ratings_train
+        self._triples = G_train.get_all_triples(return_type="obj")
         self.fit()
     
     def get_recommendations(self, k: int = 5) -> Dict[UserNode, List[ItemNode]]:
@@ -69,9 +78,17 @@ class Entity2Rec(Recommender):
         model = getattr(importlib.import_module(module_name), class_name)
         model = model(self.embedding_model_kwargs['config'], **self.embedding_model_kwargs['parameters'])
 
-        model.train(self.G_train, self.ratings_train)
+        self._generate_subgraphs()
+        for index, value in self._subgraphs.items():
+            print(f'{index}: {value}')
 
-        self.init_embeddings = model._embedding
+        # model.train(self.G_train, self.ratings_train)
+        # self.init_embeddings = model._embedding
 
     def entity2rel(self):
         pass
+
+    def _generate_subgraphs(self):
+        for relation in self._triples['relation'].unique():
+            filter_temp = pd.concat([self._triples['head'][self._triples['relation'] == relation], self._triples['tail'][self._triples['relation'] == relation]])
+            self._subgraphs[relation] = nx.subgraph(self.G_train, filter_temp)
