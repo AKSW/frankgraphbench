@@ -27,6 +27,8 @@ class Entity2Rec(Recommender):
             iterations: int = 1, 
             p: float = 1.0, 
             q: float = 1.0,
+            relevance: float = 0.0,
+            relation_template: list = ['rating', 'is', 'has']
         ):
         super().__init__(config)
         self.feedback_file = feedback_file
@@ -43,9 +45,13 @@ class Entity2Rec(Recommender):
         self.iterations = iterations
         self.collab_only = collab_only
         self.content_only = content_only
+        self.relevance = relevance
+        self.relation_template = relation_template
         self._triples = None
-        self._embedding = {}
+        self._relations = []
         self._subgraphs = {}
+        self._subgraphs_embedding = {}
+
 
     def name(self):
         text = "Entity2Rec"
@@ -79,16 +85,20 @@ class Entity2Rec(Recommender):
         model = model(self.embedding_model_kwargs['config'], **self.embedding_model_kwargs['parameters'])
 
         self._generate_subgraphs()
-        for index, value in self._subgraphs.items():
-            print(f'{index}: {value}')
 
-        # model.train(self.G_train, self.ratings_train)
-        # self.init_embeddings = model._embedding
+        for relation in self._relations:
+            # ratings_train is not actually used in the node2vec model
+            print(f"{relation}: {self._subgraphs[relation]}")
+            model.train(self._subgraphs[relation], self.ratings_train)
+            self._subgraphs_embedding[relation] = model._embedding
 
     def entity2rel(self):
         pass
 
     def _generate_subgraphs(self):
-        for relation in self._triples['relation'].unique():
+        self._relations = self._triples['relation'].unique()
+        for relation in self._relations:
             filter_temp = pd.concat([self._triples['head'][self._triples['relation'] == relation], self._triples['tail'][self._triples['relation'] == relation]])
             self._subgraphs[relation] = nx.subgraph(self.G_train, filter_temp)
+
+        # joining rating properties according to collab, content, social properties, and relevant score demilimitations
