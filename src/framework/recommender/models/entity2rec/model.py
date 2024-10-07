@@ -88,7 +88,6 @@ class Entity2Rec(Recommender):
 
         for relation in self._relations:
             # ratings_train is not actually used in the node2vec model
-            print(f"{relation}: {self._subgraphs[relation]}")
             model.train(self._subgraphs[relation], self.ratings_train)
             self._subgraphs_embedding[relation] = model._embedding
 
@@ -97,8 +96,20 @@ class Entity2Rec(Recommender):
 
     def _generate_subgraphs(self):
         self._relations = self._triples['relation'].unique()
+        filter_temp = {}
         for relation in self._relations:
-            filter_temp = pd.concat([self._triples['head'][self._triples['relation'] == relation], self._triples['tail'][self._triples['relation'] == relation]])
-            self._subgraphs[relation] = nx.subgraph(self.G_train, filter_temp)
+            filter_temp[relation] = pd.concat([self._triples['head'][self._triples['relation'] == relation], self._triples['tail'][self._triples['relation'] == relation]])
 
-        # joining rating properties according to collab, content, social properties, and relevant score demilimitations
+        # joining rating properties according to collab, content, social properties, and relevant score delimitations
+        new_filter_temp = {}
+        for rel in self.relation_template:
+            new_filter_temp[rel] = pd.Series()
+            for relation in self._relations:
+                if rel in relation:
+                    new_filter_temp[rel] = pd.concat([new_filter_temp[rel], filter_temp[relation]])
+
+        for rel, df in new_filter_temp.items():
+            self._subgraphs[rel] = nx.subgraph(self.G_train, df)
+        
+        # make relations same as template
+        self._relations = self.relation_template
