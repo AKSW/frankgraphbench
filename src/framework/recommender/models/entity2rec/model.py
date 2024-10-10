@@ -9,6 +9,8 @@ import importlib
 import pandas as pd
 import networkx as nx
 
+from scipy.spatial.distance import cdist
+
 class Entity2Rec(Recommender):
     def __init__(
             self, 
@@ -28,7 +30,7 @@ class Entity2Rec(Recommender):
             p: float = 1.0, 
             q: float = 1.0,
             relevance: float = 0.0,
-            relation_template: list = ['rating', 'is', 'has']
+            relation_template: dict = {'collab': 'rating', 'social': 'is', 'content': 'has'}
         ):
         super().__init__(config)
         self.feedback_file = feedback_file
@@ -91,6 +93,8 @@ class Entity2Rec(Recommender):
             model.train(self._subgraphs[relation], self.ratings_train)
             self._subgraphs_embedding[relation] = model._embedding
 
+        self._collab_similarities()
+
     def entity2rel(self):
         pass
 
@@ -102,7 +106,7 @@ class Entity2Rec(Recommender):
 
         # joining rating properties according to collab, content, social properties, and relevant score delimitations
         new_filter_temp = {}
-        for rel in self.relation_template:
+        for rel in self.relation_template.values():
             new_filter_temp[rel] = pd.Series()
             for relation in self._relations:
                 if rel in relation:
@@ -112,4 +116,30 @@ class Entity2Rec(Recommender):
             self._subgraphs[rel] = nx.subgraph(self.G_train, df)
         
         # make relations same as template
-        self._relations = self.relation_template
+        self._relations = list(self.relation_template.values())
+
+    def _collab_similarities(self):
+        users, items = [], []
+        for node in self._subgraphs[self.relation_template['collab']].nodes():
+            node_str = str(node.__str__)
+            if "User" in node_str:
+                users.append(node)
+            elif "Item" in node_str:
+                items.append(node)
+        print(users, items)
+
+        # will run the actual model on the mac and try to rig it here
+
+    def _content_similarities(self):
+        pass
+
+    def _social_similarities(self):
+        pass
+
+    def __relatedness_score(self, relation, node1, node2):
+        try:
+            score = 1. - (cdist(self._subgraphs_embedding[relation][node1], self._subgraphs_embedding[relation][node2], 'cosine'))
+        except KeyError:
+            score = 0.
+
+        return score
