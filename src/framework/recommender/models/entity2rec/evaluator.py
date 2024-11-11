@@ -152,44 +152,28 @@ class Evaluator(object):
         }
 
     def get_candidates(self, user, data, num_negative_candidates=100):
-
         random.seed(1)
-
         rated_items_train = self.items_rated_by_user_train[user]
-
         unrated_items = [item for item in self.all_items if
                                item not in rated_items_train]
-
         unrated_items = sorted(unrated_items)
-
         if self.all_unrated_items:
-
             candidate_items = unrated_items
-
         else:
-
             candidate_items = self.all_items
 
         # candidate items for the training set
         if data == 'train':
-
             if self.implicit:  # sample negative items randomly
-
                 negative_candidates = list(random.sample(candidate_items, num_negative_candidates))
-
                 candidate_items = negative_candidates + rated_items_train
 
             else:  # use positive and negative feedback from the training set
-
                 items_rated_by_user = self.items_rated_by_user_train[user]
-
                 candidate_items = items_rated_by_user
 
-
         shuffle(candidate_items)  # relevant and non relevant items are shuffled
-
         candidate_items = sorted(candidate_items)  # sorting to ensure reproducibility
-
         return candidate_items
 
     def get_relevance(self, user, item, data):
@@ -305,29 +289,17 @@ class Evaluator(object):
         Titems = []
 
         for user in users_list:
-
             print(user)
-
             user_id = int(user.strip('user'))
-
             candidate_items = self.get_candidates(user, data)
-
             for item in candidate_items:
-
                 items_liked_by_user = self.items_liked_by_user_dict[user]
-
                 users_liking_the_item = self.users_liking_an_item_dict[item]
-
                 features = recommender.compute_user_item_features(user, item, items_liked_by_user, users_liking_the_item)
-
                 TX.append(features)
-
                 relevance = self.get_relevance(user, item, data)
-
                 Ty.append(relevance)
-
                 Tqids.append(user_id)
-
                 Titems.append(item)
 
         return np.asarray(TX), np.asarray(Ty), np.asarray(Tqids), np.asarray(Titems)
@@ -379,44 +351,26 @@ class Evaluator(object):
                 print('Strategy-----Metric-----Mean-----Var\n')
 
             with open(write_to_file, 'w') as file_write:
-
                 file_write.write('strategy,')
-
                 len_metrics = len(self.metrics.items())
-
                 for i, (metric_name, metric) in enumerate(self.metrics.items()):
-
                     if i < len_metrics - 1:
-
                         file_write.write('%s,' % metric_name)
-
                     else:
-
                         file_write.write('%s\n' % metric_name)
 
                 for strategy_name, preds in strategies.items():
-
                     file_write.write('%s,' % strategy_name)
-
                     for i, (metric_name, metric) in enumerate(self.metrics.items()):
-
                         if metric_name != 'fit':
-
                             score = metric.calc_mean(qids_test, y_test, preds, items=items_test)
-
                             var = metric.calc_mean_var(qids_test, y_test, preds, items=items_test)
-
                             scores[(strategy_name, metric_name)] = (score, var)
-
                             if verbose:
-
                                 print('%s-----%s-----%.4f+-%.4f\n' % (strategy_name, metric_name, score, var))
-
                             if i < len_metrics - 1:
-
                                 file_write.write('%.4f+-%.4f,' % (score, var))
                             else:
-
                                 file_write.write('%.4f+-%.4f\n' % (score, var))
 
         return scores

@@ -127,73 +127,43 @@ class Entity2Rec(Entity2Vec, Entity2Rel):
                 self.window_size))
 
     def collab_similarities(self, user, item):
-
         # collaborative properties
-
         collaborative_properties = [prop for prop in self.properties if prop.typology == "collaborative"]
-
         sims = []
-
         for prop in collaborative_properties:
-
             sims.append(self.relatedness_score(prop.name, user, item))
-
         return sims
 
     def content_similarities(self, user, item, items_liked_by_user):
-
         # content properties
-
         content_properties = [prop for prop in self.properties if prop.typology == "content"]
-
         sims = []
-
         if not items_liked_by_user:  # no past positive feedback
-
             sims = [0. for i in range(len(content_properties))]
 
         else:
-
             for prop in content_properties:  # append a list of property-specific scores
-
                 sims_prop = []
-
                 for past_item in items_liked_by_user:
-
                     sims_prop.append(self.relatedness_score(prop.name, past_item, item))
-
                 s = np.mean(sims_prop)
-
                 sims.append(s)
-
         return sims
 
     def social_similarities(self, user, item, users_liking_the_item):
-
         # social properties
-
         social_properties = [prop for prop in self.properties if prop.typology == "social"]
-
         sims = []
-
         if not users_liking_the_item:
-
             sims = [0. for i in range(len(social_properties))]
 
         else:
-
             for prop in social_properties:  # append a list of property-specific scores
-
                 sims_prop = []
-
                 for past_user in users_liking_the_item:
-
                     sims_prop.append(self.relatedness_score(prop.name, past_user, user))
-
                 s = np.mean(sims_prop)
-
                 sims.append(s)
-                
         return sims
 
     def _compute_scores(self, user, item, items_liked_by_user, users_liking_the_item):
