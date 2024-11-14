@@ -3,12 +3,12 @@ import codecs
 import json
 import numpy as np
 import joblib
-from entity2vec import Entity2Vec
-from entity2rel import Entity2Rel
-import pyltr
+from framework.recommender.models.entity2rec.entity2vec import Entity2Vec
+from framework.recommender.models.entity2rec.entity2rel import Entity2Rel
+import framework.recommender.models.entity2rec.pyltr as pyltr
 import sys
 sys.path.append('.')
-from metrics import precision_at_n, mrr, recall_at_n
+from framework.recommender.models.entity2rec.metrics import precision_at_n, mrr, recall_at_n
 from collections import defaultdict
 import heapq
 
@@ -37,7 +37,7 @@ class Property:
             self._typology = value
 
 
-class Entity2Rec(Entity2Vec, Entity2Rel):
+class Entity2RecD2K(Entity2Vec, Entity2Rel):
 
     name = 'Entity2Rec'
 
@@ -61,39 +61,10 @@ class Entity2Rec(Entity2Vec, Entity2Rel):
 
         self.dataset = dataset
 
-        self.properties = []
-
-        self._set_properties()
-
-        # run entity2vec to create the embeddings
-        if run_all:
-
-            print('Running entity2vec to generate property-specific embeddings...')
-
-            properties_names = []
-
-            for prop in self.properties:
-
-                properties_names.append(prop.name)
-
-            self.e2v_walks_learn(properties_names, dataset)  # run entity2vec
-
-        # reads the embedding files
-        self._set_embedding_files()
-
         # initialize model to None
         self.model = None 
 
-        # whether using only collab or content features
-
-        self.collab_only = collab_only
-
-        self.content_only = content_only
-
-        self.social_only = social_only
-
         # initialize cluster models
-
         self.models = {}
         self.user_to_cluster = None
 

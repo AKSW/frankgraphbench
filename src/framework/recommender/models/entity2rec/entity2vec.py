@@ -3,7 +3,7 @@ import json
 from os.path import isfile, join
 from os import makedirs
 import argparse
-from node2vec import Node2Vec
+from framework.recommender.models.entity2rec.node2vec import Node2Vec
 import time
 import shutil
 

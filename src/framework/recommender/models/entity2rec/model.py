@@ -1,6 +1,7 @@
 from typing import Dict, List, Tuple
 from framework.dataloader.graph.graph import Graph
 from framework.dataloader.graph.node import ItemNode, UserNode
+from framework.recommender.models.entity2rec.entity2rec import Entity2RecD2K
 
 from ...recommender import Recommender
 from ...model2class import model2class
@@ -34,6 +35,8 @@ class Entity2Rec(Recommender):
             p: float = 1.0, 
             q: float = 1.0,
             relevance: float = 0.0,
+            metric: str = "NDCG",
+            k: int = 5,
             relation_template: dict = {'collab': 'rating', 'social': 'is', 'content': 'has'},
         ):
         super().__init__(config)
@@ -53,6 +56,8 @@ class Entity2Rec(Recommender):
         self.content_only = content_only
         self.social_only = social_only
         self.relevance = relevance
+        self.metric = metric
+        self.k = k
         self.relation_template = relation_template
         self._triples = None
         self._relations = []
@@ -97,8 +102,16 @@ class Entity2Rec(Recommender):
             model.train(self._subgraphs[relation], self.ratings_train)
             self._subgraphs_embedding[relation] = model._embedding
 
-        TX, Ty, Tqdis, Titems = self._compute_features()
-        print(TX, Ty, Tqdis, Titems)
+        x_train, y_train, qids_train, items_train = self._compute_features()
+        
+        e2rec = Entity2RecD2K('for_init', run_all=self.run_all, p=self.p, q=self.q,
+                   feedback_file=self.feedback_file, walk_length=self.walk_length,
+                   num_walks=self.num_walks, dimensions=self.embedding_size, window_size=self.window_size,
+                   workers=self.workers, iterations=self.iterations, collab_only=self.collab_only,
+                   content_only=self.content_only, social_only=self.social_only)
+        
+        e2rec.fit(x_train, y_train, qids_train,
+            optimize=self.metric, N=self.k)
 
     def entity2rel(self):
         # needs to get an embedding that relates to a property

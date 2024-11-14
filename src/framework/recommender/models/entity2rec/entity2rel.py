@@ -1,6 +1,6 @@
 from __future__ import print_function
 from gensim.models.keyedvectors import KeyedVectors
-from sparql import Sparql
+from framework.recommender.models.entity2rec.sparql import Sparql
 import codecs
 import time
 
