@@ -309,30 +309,22 @@ class Evaluator(object):
                  baseline=False):
 
         if '/' in write_to_file:
-
             path_split = write_to_file.split('/')
-
             path = '.'
-
             for p in path_split[:-1]:
                 path = path + '/' + p
-
             try:
                 os.makedirs(path)
-
             except FileExistsError:
                 pass
 
         if not self.all_items:  # reading the features from file
-
             M = len(list(set(items_test)))
 
         else:
-
             M = len(self.all_items)
 
         self._define_metrics(M)
-
         scores = {}
 
         if baseline:

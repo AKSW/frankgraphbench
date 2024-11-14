@@ -223,32 +223,20 @@ class Entity2RecD2K(Entity2Vec, Entity2Rel):
             self.model.fit(x_train, y_train, qids_train)
 
     def predict(self, x_test, qids_test):
-
         if self.user_to_cluster:
-            
             preds = []
-            
             for i, line in enumerate(x_test):
-
                 qid = str(qids_test[i])
-
                 cluster = self.user_to_cluster[qid]
-
                 # retrieve the corresponding model of that cluster
                 model = self.models[cluster]
-
                 preds.append(model.predict(line.reshape(1, -1)))
-
             return preds
 
         else:
-
             if self.model:
-
                 return self.model.predict(x_test)
-
             else:
-
                 return list(map(lambda x: np.mean(x), x_test))
 
     def save_model(self, model_file):

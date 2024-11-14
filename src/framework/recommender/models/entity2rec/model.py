@@ -102,7 +102,7 @@ class Entity2Rec(Recommender):
             model.train(self._subgraphs[relation], self.ratings_train)
             self._subgraphs_embedding[relation] = model._embedding
 
-        x_train, y_train, qids_train, items_train = self._compute_features()
+        x_train, y_train, qids_train, items_train = self._compute_features('train')
         
         e2rec = Entity2RecD2K('for_init', run_all=self.run_all, p=self.p, q=self.q,
                    feedback_file=self.feedback_file, walk_length=self.walk_length,
@@ -112,6 +112,11 @@ class Entity2Rec(Recommender):
         
         e2rec.fit(x_train, y_train, qids_train,
             optimize=self.metric, N=self.k)
+        
+        x_test, y_test, qids_test, items_test = self._compute_features('test')
+
+        test_rec = e2rec.predict(x_test, qids_test)
+        print(test_rec)
 
     def entity2rel(self):
         # needs to get an embedding that relates to a property
@@ -137,13 +142,16 @@ class Entity2Rec(Recommender):
         # make relations same as template
         self._relations = list(self.relation_template.values())
 
-    def _compute_features(self, n_jobs=-1):
-        def process(users, return_dict, i):
+    def _compute_features(self, data, n_jobs=-1):
+        def process(data, users, return_dict, i):
             TX, Ty, Tqids, Titems = [], [], [], []
 
             desc = f"Computing features for user-item ratings (thread: {i})"
             for user in tqdm(users, desc=desc):
-                candidate_items = self.__get_candidate_items(user, train=True)
+                if data == 'train':
+                    candidate_items = self.__get_candidate_items(user, train=True)
+                else:
+                    candidate_items = self.__get_candidate_items(user)
                 for item in candidate_items:
                     items_liked_by_user = self.__items_liked_by_user(user)
                     users_liking_an_item = self.__users_liking_an_item(item)
@@ -155,7 +163,7 @@ class Entity2Rec(Recommender):
 
             return_dict[f"{i}"] = (TX, Ty, Tqids, Titems)
         
-        def split_processing(n_jobs, return_dict):
+        def split_processing(data, n_jobs, return_dict):
             users = list(self.G_train.get_user_nodes())
             split_size = round(len(users) / n_jobs)
             threads = []                                                                
@@ -166,7 +174,7 @@ class Entity2Rec(Recommender):
                 end = len(users) if i+1 == n_jobs else (i+1) * split_size                
                 # create the thread
                 threads.append(                                                         
-                    multiprocess.Process(target=process, args=(users[start:end], return_dict, i)))
+                    multiprocess.Process(target=process, args=(data, users[start:end], return_dict, i)))
                 threads[-1].start() # start the thread we just created                  
 
             # wait for all threads to finish                                            
@@ -179,7 +187,7 @@ class Entity2Rec(Recommender):
         return_dict = multiprocess.Manager().dict()
         TX, Ty, Tqids, Titems = [], [], [], []
 
-        split_processing(n_jobs, return_dict)
+        split_processing(data, n_jobs, return_dict)
         return_dict = dict(return_dict)
         for t in range(n_jobs):
             TX += return_dict[f"{t}"][0]
