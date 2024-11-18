@@ -251,12 +251,16 @@ class Entity2Rec(Recommender):
             content_scores.append(self.__relatedness_score('content', past_item, item))
         if content_scores:
             content_score = np.mean(content_scores)
+        else:
+            content_score = []
 
         social_scores = []
         for past_user in users_liking_an_item:
             social_scores.append(self.__relatedness_score('social', past_user, user))
         if social_scores:
             social_score = np.mean(social_scores)
+        else:
+            social_score = []
 
         return collaborative_score, content_score, social_score
         
