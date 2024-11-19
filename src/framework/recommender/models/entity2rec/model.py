@@ -12,7 +12,7 @@ import pandas as pd
 import networkx as nx
 import numpy as np
 
-from scipy.spatial.distance import cdist
+from scipy.spatial.distance import cosine
 from tqdm import tqdm
 
 class Entity2Rec(Recommender):
@@ -130,17 +130,17 @@ class Entity2Rec(Recommender):
 
         # joining rating properties according to collab, content, social properties, and relevant score delimitations
         new_filter_temp = {}
-        for rel in self.relation_template.values():
-            new_filter_temp[rel] = pd.Series()
+        for temp, rel in self.relation_template.items():
+            new_filter_temp[temp] = pd.Series()
             for relation in self._relations:
                 if rel in relation:
-                    new_filter_temp[rel] = pd.concat([new_filter_temp[rel], filter_temp[relation]])
+                    new_filter_temp[temp] = pd.concat([new_filter_temp[temp], filter_temp[relation]])
 
         for rel, df in new_filter_temp.items():
             self._subgraphs[rel] = nx.subgraph(self.G_train, df)
         
         # make relations same as template
-        self._relations = list(self.relation_template.values())
+        self._relations = list(self.relation_template.keys())
 
     def _compute_features(self, data, n_jobs=-1):
         def process(data, users, return_dict, i):
@@ -276,7 +276,7 @@ class Entity2Rec(Recommender):
 
     def __relatedness_score(self, relation, node1, node2):
         try:
-            score = 1. - (cdist(self._subgraphs_embedding[relation][node1], self._subgraphs_embedding[relation][node2], 'cosine'))
+            score = 1. - (cosine(self._subgraphs_embedding[relation][node1], self._subgraphs_embedding[relation][node2]))
         except KeyError:
             score = 0.
 
