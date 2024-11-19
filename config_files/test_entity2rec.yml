@@ -59,7 +59,7 @@ experiment:
 
     test:
       method: k_fold
-      k: 5
+      k: 20
       level: "user"
 
   models:
@@ -80,7 +80,7 @@ experiment:
             epochs: 1
 
   evaluation:
-    k: 2
+    k: 5
     relevance_threshold: 0
     metrics: [MAP, nDCG]
 

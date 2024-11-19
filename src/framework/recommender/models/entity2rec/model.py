@@ -156,10 +156,15 @@ class Entity2Rec(Recommender):
                     items_liked_by_user = self.__items_liked_by_user(user)
                     users_liking_an_item = self.__users_liking_an_item(item)
 
-                    TX.append(self.__compute_user_item_features(user, item, items_liked_by_user, users_liking_an_item))
-                    Ty.append(self.__get_relevance(user, item))
-                    Tqids.append(user)
-                    Titems.append(item)
+                    features = self.__compute_user_item_features(user, item, items_liked_by_user, users_liking_an_item)
+                    
+                    if features:
+                        TX.append(features)
+                        Ty.append(self.__get_relevance(user, item))
+                        Tqids.append(user)
+                        Titems.append(item)
+                    else:
+                        continue
 
             return_dict[f"{i}"] = (TX, Ty, Tqids, Titems)
         
@@ -198,9 +203,13 @@ class Entity2Rec(Recommender):
 
     def __get_relevance(self, user, item):
         ratings = self.G_train.get_ratings_with_labels()
-        for i, relevance in ratings[user]:
+        relevance = 0
+        for i, r in ratings[user]:
             if i == item:
-                return relevance
+                relevance = r
+                break
+        
+        return relevance
 
     def __get_candidate_items(self, user, train=False):
         items = list(self.G_train.get_item_nodes())
