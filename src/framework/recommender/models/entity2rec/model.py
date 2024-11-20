@@ -83,12 +83,12 @@ class Entity2Rec(Recommender):
         x_test, y_test, qids_test, items_test = self._compute_features('test')
         recs = self._e2rec.predict(x_test, qids_test)
 
-        group = pd.DataFrame([qids_test, items_test], columns=['users', 'items'])
+        group = pd.DataFrame({"qids": qids_test, "items": items_test})
         group = group.groupby(qids_test).count()
 
         print(group)
 
-        return super().get_recommendations(k)
+        return super().get_recommendations(k=k)
 
     
     def fit(self):
