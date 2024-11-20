@@ -63,6 +63,7 @@ class Entity2Rec(Recommender):
         self._relations = []
         self._subgraphs = {}
         self._subgraphs_embedding = {}
+        self._e2rec = None
 
     def name(self):
         text = "Entity2Rec"
@@ -79,14 +80,22 @@ class Entity2Rec(Recommender):
         self.fit()
     
     def get_recommendations(self, k: int = 5) -> Dict[UserNode, List[ItemNode]]:
+        x_test, y_test, qids_test, items_test = self._compute_features('test')
+        recs = self._e2rec.predict(x_test, qids_test)
+
+        group = pd.DataFrame([qids_test, items_test], columns=['users', 'items'])
+        group = group.groupby(qids_test).count()
+
+        print(group)
+
         return super().get_recommendations(k)
+
     
     def fit(self):
         self.entity2rec()
 
     def entity2rec(self):
         self.entity2vec()
-        self.entity2rel()
 
     def entity2vec(self):
         module_name = f'framework.recommender.models.{model2class[self.embedding_model]["submodule"]}'
@@ -104,23 +113,14 @@ class Entity2Rec(Recommender):
 
         x_train, y_train, qids_train, items_train = self._compute_features('train')
         
-        e2rec = Entity2RecD2K('for_init', run_all=self.run_all, p=self.p, q=self.q,
+        self._e2rec = Entity2RecD2K('for_init', run_all=self.run_all, p=self.p, q=self.q,
                    feedback_file=self.feedback_file, walk_length=self.walk_length,
                    num_walks=self.num_walks, dimensions=self.embedding_size, window_size=self.window_size,
                    workers=self.workers, iterations=self.iterations, collab_only=self.collab_only,
                    content_only=self.content_only, social_only=self.social_only)
         
-        e2rec.fit(x_train, y_train, qids_train,
+        self._e2rec.fit(x_train, y_train, qids_train,
             optimize=self.metric, N=self.k)
-        
-        x_test, y_test, qids_test, items_test = self._compute_features('test')
-
-        test_rec = e2rec.predict(x_test, qids_test)
-        print(test_rec)
-
-    def entity2rel(self):
-        # needs to get an embedding that relates to a property
-        pass
 
     def _generate_subgraphs(self):
         self._relations = self._triples['relation'].unique()
