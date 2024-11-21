@@ -190,6 +190,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/douban-movie.csv"
+    file: "experiment_results/douban-movie_enriched.csv"
     execution_times:
-      file: "experiment_results/douban-movie_times.csv"
+      file: "experiment_results/douban-movie_times_enriched.csv"
