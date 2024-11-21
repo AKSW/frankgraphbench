@@ -83,10 +83,14 @@ class Entity2Rec(Recommender):
         x_test, y_test, qids_test, items_test = self._compute_features('test')
         recs = self._e2rec.predict(x_test, qids_test)
 
-        group = pd.DataFrame({"qids": qids_test, "items": items_test})
-        group = group.groupby(qids_test).count()
-
-        print(group)
+        groups = {}
+        for idx, user in enumerate(qids_test):
+            if user in groups:
+                groups[user].append((items_test[idx], recs[idx]))
+            else:
+                groups[user] = [(items_test[idx], recs[idx])]
+        
+        print(groups)
 
         return super().get_recommendations(k=k)
 
