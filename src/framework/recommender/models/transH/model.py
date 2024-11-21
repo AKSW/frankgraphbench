@@ -38,8 +38,6 @@ class TransH(Recommender):
         self.embedding_dim = embedding_dim
         self.scoring_fct_norm = scoring_fct_norm
         self.entity_initializer = entity_initializer
-        self.regularizer = regularizer
-        self.regularizer_kwargs = regularizer_kwargs
         self.relation_initializer = relation_initializer
         self.relation_regularizer = relation_regularizer
         self.relation_regularizer_kwargs = relation_regularizer_kwargs
@@ -53,7 +51,7 @@ class TransH(Recommender):
 
     def name(self):
         text = "TransH based model + cosine similarity"
-        text += f";embedding_dim={self.embedding_dim};scoring_fct_norm={self.scoring_fct_norm};entity_initializer={self.entity_initializer};regularizer={self.regularizer};relation_initializer={self.relation_initializer};relation_regularizer={self.relation_regularizer};epochs={self.epochs};seed={self.seed};triples={self.triples}"
+        text += f";embedding_dim={self.embedding_dim};scoring_fct_norm={self.scoring_fct_norm};entity_initializer={self.entity_initializer};relation_initializer={self.relation_initializer};relation_regularizer={self.relation_regularizer};epochs={self.epochs};seed={self.seed};triples={self.triples}"
         return text
 
     def train(self, G_train, ratings_train):
@@ -122,8 +120,6 @@ class TransH(Recommender):
                 embedding_dim=self.embedding_dim,
                 scoring_fct_norm=self.scoring_fct_norm,
                 entity_initializer=self.entity_initializer,
-                regularizer=self.regularizer,
-                regularizer_kwargs=self.regularizer_kwargs,
                 relation_initializer=self.relation_initializer,
                 relation_regularizer=self.relation_regularizer,
                 relation_regularizer_kwargs=self.relation_regularizer_kwargs,
