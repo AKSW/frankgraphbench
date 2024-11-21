@@ -89,10 +89,12 @@ class Entity2Rec(Recommender):
                 groups[user].append((items_test[idx], recs[idx]))
             else:
                 groups[user] = [(items_test[idx], recs[idx])]
-        
-        print(groups)
 
-        return super().get_recommendations(k=k)
+        for user in groups.keys():
+            groups[user] = sorted(groups[user], key = lambda x: x[1], reverse=True)
+            groups[user] = [tuple_rec[0] for tuple_rec in groups[user]]
+        
+        return groups
 
     
     def fit(self):
