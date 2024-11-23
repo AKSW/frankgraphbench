@@ -30,7 +30,7 @@ class Entity2Rec(Recommender):
             social_only: bool = False,
             embedding_size: int = 64, 
             window_size: int = 3,
-            workers: int = 4, 
+            workers: int = -1, 
             iterations: int = 1, 
             p: float = 1.0, 
             q: float = 1.0,
@@ -80,7 +80,7 @@ class Entity2Rec(Recommender):
         self.fit()
     
     def get_recommendations(self, k: int = 5) -> Dict[UserNode, List[ItemNode]]:
-        x_test, y_test, qids_test, items_test = self._compute_features('test')
+        x_test, y_test, qids_test, items_test = self._compute_features('test', n_jobs=self.workers)
         recs = self._e2rec.predict(x_test, qids_test)
 
         groups = {}
@@ -117,7 +117,7 @@ class Entity2Rec(Recommender):
             model.train(self._subgraphs[relation], self.ratings_train)
             self._subgraphs_embedding[relation] = model._embedding
 
-        x_train, y_train, qids_train, items_train = self._compute_features('train')
+        x_train, y_train, qids_train, items_train = self._compute_features('train', n_jobs=self.workers)
         
         self._e2rec = Entity2RecD2K('for_init', run_all=self.run_all, p=self.p, q=self.q,
                    feedback_file=self.feedback_file, walk_length=self.walk_length,
