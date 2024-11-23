@@ -78,7 +78,7 @@ experiment:
             n_walks: 50
             embedding_size: 64
             epochs: 1
-            workers: 32
+        workers: 32
 
   evaluation:
     k: 5
