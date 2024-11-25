@@ -79,6 +79,8 @@ experiment:
             embedding_size: 64
             epochs: 1
         workers: 32
+        frac_negative_candidates: 0.1
+        seed: 42
 
   evaluation:
     k: 5
@@ -86,4 +88,4 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/ml100k_enriched/e2rec_ratings.csv"
+    file: "experiment_results/ml100k_enriched/e2rec_ratings_negative0.1.csv"

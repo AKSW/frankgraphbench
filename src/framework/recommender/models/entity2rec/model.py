@@ -22,18 +22,14 @@ class Entity2Rec(Recommender):
             feedback_file: str = None, 
             embedding_model: str = "deepwalk_based",
             embedding_model_kwargs: dict = None,
-            walk_length: int = 100,
-            num_walks: int = 50, 
             run_all: bool = False, 
             collab_only: bool = False,
             content_only: bool = False,
             social_only: bool = False,
-            embedding_size: int = 64, 
-            window_size: int = 3,
-            workers: int = -1, 
+            workers: int = -1,
+            frac_negative_candidates: float = 0.1,
+            seed: int = 42,
             iterations: int = 1, 
-            p: float = 1.0, 
-            q: float = 1.0,
             relevance: float = 0.0,
             metric: str = "NDCG",
             k: int = 5,
@@ -43,14 +39,10 @@ class Entity2Rec(Recommender):
         self.feedback_file = feedback_file
         self.embedding_model = embedding_model
         self.embedding_model_kwargs = embedding_model_kwargs
-        self.p = p
-        self.q = q
-        self.walk_length = walk_length
-        self.num_walks = num_walks
         self.run_all = run_all
-        self.embedding_size = embedding_size 
-        self.window_size = window_size
         self.workers = workers
+        self.frac_negative_candidates = frac_negative_candidates
+        self.seed = seed
         self.iterations = iterations
         self.collab_only = collab_only
         self.content_only = content_only
@@ -67,10 +59,8 @@ class Entity2Rec(Recommender):
 
     def name(self):
         text = "Entity2Rec"
-        text += f";embedding_model={self.embedding_model};embedding_model_kwargs={self.embedding_model_kwargs};p={self.p};q={self.q};"
-        text += f"walk_length={self.walk_length};num_walks={self.num_walks};run_all={self.run_all};embedding_size={self.embedding_size};"
-        text += f"window_size={self.window_size};workers={self.workers};iterations={self.iterations};collab_only={self.collab_only};"
-        text += f"content_only={self.content_only}"
+        text += f";embedding_model={self.embedding_model};embedding_model_kwargs={self.embedding_model_kwargs};run_all={self.run_all};"
+        text += f"workers={self.workers};iterations={self.iterations};collab_only={self.collab_only};content_only={self.content_only}"
         return text
     
     def train(self, G_train: Graph, ratings_train: Dict[UserNode, List[Tuple[ItemNode, float]]]):
@@ -155,7 +145,7 @@ class Entity2Rec(Recommender):
             desc = f"Computing features for user-item ratings (thread: {i})"
             for user in tqdm(users, desc=desc):
                 if data == 'train':
-                    candidate_items = self.__get_candidate_items(user, train=True)
+                    candidate_items = self.__get_candidate_items(user, train=True, frac_negative_candidates=self.frac_negative_candidates)
                 else:
                     candidate_items = self.__get_candidate_items(user)
                 for item in candidate_items:
@@ -217,7 +207,7 @@ class Entity2Rec(Recommender):
         
         return relevance
 
-    def __get_candidate_items(self, user, train=False):
+    def __get_candidate_items(self, user, train=False, frac_negative_candidates=0.1):
         items = list(self.G_train.get_item_nodes())
 
         rated_items = []
@@ -228,7 +218,7 @@ class Entity2Rec(Recommender):
         unrated_items = [item for item in items if item not in rated_items]
 
         if train:
-            return rated_items
+            return pd.Series(rated_items + unrated_items[:len(unrated_items*frac_negative_candidates)]).sample(frac=1, random_state=self.seed).to_list()
         else:
             return unrated_items
 
