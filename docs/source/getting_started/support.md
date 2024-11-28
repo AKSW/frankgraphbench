@@ -109,6 +109,20 @@ Currently the supported Recommender System models are:
     - `iterations`: the number of iterations for the regularization propagation.
     - `mi`: the mi factor number that dictates how much of the start embedding will affect the final embedding, values fluctuate between `0` and `1`.
 
+### entity2rec
+- Entity2Rec recommendation model based on Node2Vec.
+  - Reference: Palumbo, Enrico, Giuseppe Rizzo, and Raphaël Troncy. 2017. Entity2rec: Learning user-item relatedness from knowledge graphs for top-n item recommendation. Proceedings of the eleventh ACM conference on recommender systems. 32-36.
+  - Main parameters
+    - `embedding_model`: the embedding model name of a previously implemented graph embedding model.
+    - `embedding_model_kwargs`: arguments for the embedding model.
+    - `collab_only`: using only collaboration filtering properties' embeddings for the recommendations.
+    - `content_only`: using only item content properties' embeddings for the recommendations.
+    - `social_only`: using only user social interaction properties' embeddings for the recommendations.
+    - `workers`: the number of threads to be used in creating candidates for recommendations. `-1` automatically inputs the number of cores as the amount of workers. number of physical cores is recommended in case the computer needs to be usable for other tasks.
+    - `frac_negative_candidates`: calculates a fraction from the amount of unrated items for a user to be used in the train data. Values between `0` and `1` with `0.1` recommended.
+    - `seed`: seed for fixing the sampling of negative and positive examples for training.
+    - `relevance`: the necessary relevance of an evaluation from a user to be counted as a recommendation.
+
 
 ## Pre-processing Methods
 
