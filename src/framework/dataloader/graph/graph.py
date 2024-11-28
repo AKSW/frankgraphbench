@@ -76,7 +76,7 @@ class Graph(nx.Graph):
 
         return ratings
 
-    def get_all_triples(self):
+    def get_all_triples(self, return_type='str'):
         triples_return = {"head": [], "relation": [], "tail": []}
 
         # ratings triples
@@ -86,25 +86,31 @@ class Graph(nx.Graph):
         for user, ratings in tqdm(ratings.items(), total=n_total, desc=desc):
             ratings.sort(key=lambda x: x[1], reverse=True)
             for rating in ratings:
-                triples_return["head"].append(user.__str__())
+                if return_type == "str": triples_return["head"].append(user.__str__()) 
+                else: triples_return["head"].append(user)
                 triples_return["relation"].append(f"rating{rating[1]}")
-                triples_return["tail"].append(rating[0].__str__())
+                if return_type == "str": triples_return["tail"].append(rating[0].__str__())
+                else: triples_return["tail"].append(rating[0])
 
         # user property triples
         user_properties = self.get_user_property_edges()
         desc = f"Generating user properties triples"
         for user, user_property in tqdm(user_properties, desc=desc):
-            triples_return["head"].append(user.__str__())
+            if return_type == "str": triples_return["head"].append(user.__str__())
+            else: triples_return["head"].append(user)
             triples_return["relation"].append("is")
-            triples_return["tail"].append(user_property.__str__())
+            if return_type == "str": triples_return["tail"].append(user_property.__str__())
+            else: triples_return["tail"].append(user_property)
 
         # item property triples
         item_properties = self.get_item_property_edges()
         desc = f"Generating item properties triples"
         for item, item_property in tqdm(item_properties, desc=desc):
-            triples_return["head"].append(item.__str__())
+            if return_type == "str": triples_return["head"].append(item.__str__())
+            else: triples_return["head"].append(item)
             triples_return["relation"].append("has")
-            triples_return["tail"].append(item_property.__str__())
+            if return_type == "str": triples_return["tail"].append(item_property.__str__())
+            else: triples_return["tail"].append(item_property)
 
         return pd.DataFrame(triples_return)
 

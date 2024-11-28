@@ -20,3 +20,5 @@ gputil
 psutil
 sentence-transformers
 graph-walker @ git+https://github.com/AlvaroJoseLopes/graph-walker
+SPARQLWrapper
+multiprocess

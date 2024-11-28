@@ -42,5 +42,9 @@ model2class = {
     'ePHEN': {
         'submodule': 'ePHEN.model',
         'class': 'EPHEN'
+    },
+    'entity2rec': {
+        'submodule': 'entity2rec.model',
+        'class': 'Entity2Rec'
     }
 }
