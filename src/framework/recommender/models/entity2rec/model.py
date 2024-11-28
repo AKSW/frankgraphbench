@@ -109,9 +109,7 @@ class Entity2Rec(Recommender):
 
         x_train, y_train, qids_train, items_train = self._compute_features('train', n_jobs=self.workers)
         
-        self._e2rec = Entity2RecD2K('for_init', run_all=self.run_all, p=self.p, q=self.q,
-                   feedback_file=self.feedback_file, walk_length=self.walk_length,
-                   num_walks=self.num_walks, dimensions=self.embedding_size, window_size=self.window_size,
+        self._e2rec = Entity2RecD2K('for_init', run_all=self.run_all, feedback_file=self.feedback_file, 
                    workers=self.workers, iterations=self.iterations, collab_only=self.collab_only,
                    content_only=self.content_only, social_only=self.social_only)
         
@@ -218,7 +216,7 @@ class Entity2Rec(Recommender):
         unrated_items = [item for item in items if item not in rated_items]
 
         if train:
-            return pd.Series(rated_items + unrated_items[:len(unrated_items*frac_negative_candidates)]).sample(frac=1, random_state=self.seed).to_list()
+            return pd.Series(rated_items + unrated_items[:round(len(unrated_items)*frac_negative_candidates)]).sample(frac=1, random_state=self.seed).to_list()
         else:
             return unrated_items
 
