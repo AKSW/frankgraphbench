@@ -14,7 +14,7 @@ experiment:
       map_path: datasets/ml-100k/processed/map.csv
       enrich_path: datasets/ml-100k/processed/enriched.csv
       remove_unmatched: False
-      properties: [subject, director]
+      properties: [subject, director, abstract]
 
   preprocess:
     # - method: filter_by_rating
@@ -79,7 +79,7 @@ experiment:
             embedding_size: 64
             epochs: 1
         workers: 32
-        frac_negative_candidates: 0.1
+        frac_negative_candidates: 0.2
         seed: 42
 
   evaluation:
@@ -88,4 +88,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/ml100k_enriched/e2rec_ratings_negative0.1.csv"
+    file: "experiment_results/e2rec_runs/ml-100k_e2rec_enriched.csv"
+    execution_times:
+      file: "experiment_results/e2rec_runs/ml-100k_e2rec_enriched_times.csv"
