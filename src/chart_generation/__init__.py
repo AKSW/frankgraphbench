@@ -3,7 +3,7 @@ import importlib
 
 from chart_generation.chart2class import chart2class
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Paulo do Carmo and Alvaro Lopes"
 
 def get_chart_class(dataset):
