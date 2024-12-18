@@ -1,4 +1,5 @@
 # FranKGraphBench: Knowledge Graph Aware Recommender Systems Framework for Benchmarking
+[![DOI](https://zenodo.org/badge/646290327.svg)](https://doi.org/10.5281/zenodo.14513776)
 
 The FranKGraphBench is a framework to allow KG Aware RSs to be benchmarked in a reproducible and easy to implement manner. 
 It was first created on Google Summer of Code 2023 for Data Integration between DBpedia and some standard RS datasets in a reproducible framework.
