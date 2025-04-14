@@ -41,6 +41,7 @@ Arguments:
 - **-cr:** Use this flag if you want to convert rating data.
 - **-cs:** Use this flag if you want to convert social link data.
 - **-map:** Use this flag if you want to map dataset items with DBpedia. At least the item data should be already converted.
+- **-enrich:** Use this flag if you want to enrich dataset with DBpedia.
 - **-w:** Choose the number of workers(threads) to be used for parallel queries.
 
 Usage Example:
@@ -83,6 +84,7 @@ Arguments:
 - **-cr:** Use this flag if you want to convert rating data.
 - **-cs:** Use this flag if you want to convert social link data.
 - **-map:** Use this flag if you want to map dataset items with DBpedia. At least the item data should be already converted.
+- **-enrich:** Use this flag if you want to enrich dataset with DBpedia.
 - **-w:** Choose the number of workers(threads) to be used for parallel queries.
 
 Usage Example:
