@@ -40,7 +40,17 @@ class DoubanMovie(Dataset):
             }
         """
         )
-
+        self.enrich_fields = {
+            "item_id": "item_id::string",
+            "abstract": "abstract::string",
+            "producer": "producer::string_list",
+            "distributor": "distributor::string_list",
+            "writer": "writer::string_list",
+            "cinematography": "cinematography::string_list",
+            "subject": "subject::string_list",
+            "starring": "starring::string_list",
+            "director": "director::string_list"
+        }
         self.enrich_query_template = Template(
             """
             PREFIX dct:  <http://purl.org/dc/terms/>
@@ -167,7 +177,8 @@ class DoubanMovie(Dataset):
             item_enriching[idx] = df.iloc[0]  # getting pd.Series
 
         df_enrich = pd.DataFrame.from_dict(item_enriching, orient="index")
-        df_enrich.index.name = "item_id::string"
+        df_enrich = df_enrich.rename(self.enrich_fields, axis=1)
+        df_enrich.index.name = self.enrich_fields["item_id"]
 
         return df_enrich
 

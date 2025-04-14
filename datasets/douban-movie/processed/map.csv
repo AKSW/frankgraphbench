@@ -5,16 +5,16 @@ item_id::string,URI::string
 3,http://dbpedia.org/resource/CZ12
 4,http://dbpedia.org/resource/Chronicles_of_the_Ghostly_Tribe
 5,
-6,"http://dbpedia.org/resource/Forever_Young,_Forever_Free"
+6,http://dbpedia.org/resource/Forever_Young_(1992_film)
 7,http://dbpedia.org/resource/Goodbye_Mr._Loser
 8,http://dbpedia.org/resource/Iron_Man_2
 9,http://dbpedia.org/resource/Journey_to_the_West:_Conquering_the_Demons
-10,http://dbpedia.org/resource/Journey_to_the_West:_The_Demons_Strike_Back
-11,http://dbpedia.org/resource/Uncovered_(film)
+10,
+11,http://dbpedia.org/resource/La_La_Land_(film)
 12,http://dbpedia.org/resource/Lost_in_Thailand
 13,
 14,http://dbpedia.org/resource/Operation_Mekong
-15,http://dbpedia.org/resource/Soulmate_(2013_film)
+15,http://dbpedia.org/resource/Soulmate_(film)
 16,http://dbpedia.org/resource/The_Elusive_Avengers
 17,http://dbpedia.org/resource/The_Continent_(film)
 18,http://dbpedia.org/resource/The_Ghouls
@@ -25,5 +25,5 @@ item_id::string,URI::string
 23,
 24,http://dbpedia.org/resource/Train_to_Busan
 25,http://dbpedia.org/resource/Transformers:_Age_of_Extinction
-26,http://dbpedia.org/resource/Your_Name_Is_Justine
+26,http://dbpedia.org/resource/Your_Name
 27,http://dbpedia.org/resource/Zootopia

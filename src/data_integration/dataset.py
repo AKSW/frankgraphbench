@@ -18,7 +18,7 @@ class Dataset:
         self.output_path = output_path
         self.n_workers = n_workers
 
-        self.sparql_endpoint = "http://dbpedia.org/sparql"
+        self.sparql_endpoint = "http://141.57.8.18:8896/sparql"
         self.timeout = 180
 
         # Output files
