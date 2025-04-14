@@ -24,7 +24,7 @@ bash ml-1m.sh   # Downloaded at `datasets/ml-1m` folder
 Usage:
 
 ```shell
-data_integration [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-w]
+data_integration [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-enrich] [-w]
 ```
 Arguments:
 - **-h:** Shows the help message.
@@ -36,13 +36,14 @@ Arguments:
 - **-cr:** Use this flag if you want to convert rating data.
 - **-cs:** Use this flag if you want to convert social link data.
 - **-map:** Use this flag if you want to map dataset items with DBpedia. At least the item data should be already converted.
+- **-enrich:** Use this flag if you want to enrich dataset with DBpedia.
 - **-w:** Choose the number of workers(threads) to be used for parallel queries.
 
 Usage Example:
 
 ```shell
 data_integration -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/processed' \
-    -ci -cu -cr -map -w 8
+    -ci -cu -cr -map -enrich -w 8
 ```
 
 #### source
@@ -65,7 +66,7 @@ bash ml-1m.sh   # Downloaded at `datasets/ml-1m` folder
 Usage: 
 
 ```shell
-python3 src/data_integration.py [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-w]
+python3 src/data_integration.py [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-enrich] [-w]
 ```
 
 Arguments:
@@ -78,13 +79,14 @@ Arguments:
 - **-cr:** Use this flag if you want to convert rating data.
 - **-cs:** Use this flag if you want to convert social link data.
 - **-map:** Use this flag if you want to map dataset items with DBpedia. At least the item data should be already converted.
+- **-enrich:** Use this flag if you want to enrich dataset with DBpedia.
 - **-w:** Choose the number of workers(threads) to be used for parallel queries.
 
 Usage Example:
 
 ```shell
 python3 src/data_integration.py -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/processed' \
-    -ci -cu -cr -map -w 8
+    -ci -cu -cr -map -enrich -w 8
 ```
 
 Check [Makefile](https://github.com/AlvaroJoseLopes/Knowledge-Graph-aware-Recommender-Systems-with-DBpedia/blob/main/Makefile) for more examples.
