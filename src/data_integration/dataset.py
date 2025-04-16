@@ -19,7 +19,7 @@ class Dataset:
         self.n_workers = n_workers
 
         self.sparql_endpoint = "http://141.57.8.18:8896/sparql"
-        self.timeout = 180
+        self.timeout = 1000
 
         # Output files
         self.item_filename = os.path.join(self.output_path, "item.csv")
