@@ -1,6 +1,7 @@
 import os
 import queue
 import string
+# import time
 import pandas as pd
 from string import Template
 from .datasets.worker import Worker
@@ -152,11 +153,11 @@ class Dataset:
                 response = self._query(query, return_type)
                 responses.append((idx, response))
                 pbar.update(n=1)
+                # time.sleep(2)
             except queue.Empty:
                 break
             except Exception as e:
-                print(f"Exception:")
-                print(e)
+                print(f"Exception: {e}")
 
         return responses
 

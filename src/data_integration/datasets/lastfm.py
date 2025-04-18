@@ -86,6 +86,7 @@ class LastFM(Dataset):
             PREFIX dct:  <http://purl.org/dc/terms/>
             PREFIX dbo:  <http://dbpedia.org/ontology/>
             PREFIX dbr:  <http://dbpedia.org/resource/>
+            PREFIX dbp:  <http://dbpedia.org/property/>
             PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             SELECT DISTINCT
@@ -184,8 +185,13 @@ class LastFM(Dataset):
             if df.shape[0] > 1:
                 print("At least one property has more than one value!")
                 print(df.value_counts(dropna=False))
-
-            item_enriching[idx] = df.iloc[0]  # getting pd.Series
+                
+            try:
+                item_enriching[idx] = df.iloc[0]  # getting pd.Series
+            except Exception as e:
+                print(f"Error at item {idx}: {e}")
+                print(df)
+                continue
 
         df_enrich = pd.DataFrame.from_dict(item_enriching, orient="index")
         df_enrich = df_enrich.rename(self.enrich_fields, axis=1)
