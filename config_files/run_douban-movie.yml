@@ -6,6 +6,7 @@ experiment:
       extra_features: [name_EN, name_CN] # features(columns) beside item_id to be used
     user: # mandatory (at least user_id)
       path: datasets/douban-movie/processed/user.csv
+      extra_features: [name]
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/douban-movie/processed/rating.csv
       timestamp: False
