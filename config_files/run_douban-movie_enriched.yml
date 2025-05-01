@@ -6,6 +6,7 @@ experiment:
       extra_features: [name_EN, name_CN] # features(columns) beside item_id to be used
     user: # mandatory (at least user_id)
       path: datasets/douban-movie/processed/user.csv
+      extra_features: [name]
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/douban-movie/processed/rating.csv
       timestamp: False
@@ -161,7 +162,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_model: "sentence-transformers/all-roberta-large-v1"
+        embedding_model: "sentence-transformers/all-mpnet-base-v2"
         embed_with: abstract
         iterations: 30
         mi: 0.5
@@ -183,13 +184,31 @@ experiment:
         embed_with: graph
         iterations: 30
         mi: 0.5
+    - name: entity2rec
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: deepwalk_based
+        embedding_model_kwargs:
+          config:
+            save_weights: True
+          parameters:
+            walk_len: 10
+            p: 1.0
+            q: 1.0
+            n_walks: 50
+            embedding_size: 64
+            epochs: 1
+        workers: 16
+        frac_negative_candidates: 0.2
+        seed: 42
 
   evaluation:
-    k: 5
+    k: 10
     relevance_threshold: 0
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/douban-movie_enriched.csv"
+    file: "experiment_results/fixed_db16_runs/douban-movie_enriched.csv"
     execution_times:
-      file: "experiment_results/douban-movie_times_enriched.csv"
+      file: "experiment_results/fixed_db16_runs/douban-movie_times_enriched.csv"
