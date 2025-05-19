@@ -5,174 +5,174 @@ Here we present the average and standard deviation results of the current benchm
 
 Experiment ran using the MovieLens-100k dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k.yml`: 
 
-- Summarized results from `experiment_results/ml-100k.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/ml-100k.csv`:
 
-| Model | MAP@5 | nDCG@5 |
-|---------|---------|-----------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1198 ± .0041|.1642 ± .0047|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1176 ± .0031|.1622 ± .0031|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0045 ± .0007|.0068 ± .0012|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0011 ± .0004|.0016 ± .0004|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0041 ± .0006|.0063 ± .0006|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0058 ± .0010|.0097 ± .0016|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0041 ± .0004|.0065 ± .0008|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0081 ± .0009|.0128 ± .0015|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0066 ± .0004|.0106 ± .0008|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0066 ± .0004|.0106 ± .0007|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0061 ± .0007|.0093 ± .0013|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0108 ± .0011|.0155 ± .0013|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1203 ± .0065|.1648 ± .0072|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.0082 ± .0017|.0129 ± .0026|
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.0993 ± .0034|.1766 ± .0043|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.0973 ± .0039|.1748 ± .0064|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0032 ± .0003|.0023 ± .0004|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0009 ± .0003|.0023 ± .0004|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0029 ± .0003|.0070 ± .0006|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0047 ± .0003|.0113 ± .0005|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0031 ± .0004|.0074 ± .0005|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0051 ± .0003|.0120 ± .0007|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0045 ± .0006|.0109 ± .0013|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0048 ± .0010|.0113 ± .0015|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0042 ± .0003|.0103 ± .0007|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|.0017 ± .0003|.0039 ± .0005|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0985 ± .0041|.1761 ± .0058|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.0069 ± .0004|.0158 ± .0006|
 
-- Summarized execution time results from `experiment_results/ml-100k_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-100k_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|7.819 ± .4210|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|7.527 ± .3735|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|40.57 ± .6235|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|67.11 ± 2.103|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|79.04 ± 1.977|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|74.56 ± 1.877|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|378.6 ± 3.069|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|58.44 ± 2.144|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|40.39 ± 1.722|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|44.13 ± 1.502|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|48.31 ± 1.420|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|85.05 ± .3143|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|50.65 ± .3341|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|73506 ± 5979.|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|8.178 ± .1823|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|7.370 ± .6110|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|40.99 ± .3187|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|66.84 ± 1.996|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|79.29 ± 2.058|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|75.79 ± 2.347|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|382.2 ± 2.905|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|57.97 ± 2.069|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|39.87 ± 1.691|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|44.04 ± 1.478|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|47.50 ± 1.706|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|66.40 ± .0470|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|50.83 ± .6383|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|74104 ± 3749.|
 
 ## ml-100k_enriched
 
 Experiment ran using the MovieLens-100k dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k_enriched.yml`: 
 
-- Summarized results from `experiment_results/ml-100k_enriched.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/ml-100k_enriched.csv`:
 
-| Model | MAP@5 | nDCG@5 |
-|---------|---------|-----------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1819 ± .0106|.2339 ± .0097|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1775 ± .0096|.2301 ± .0088|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0041 ± .0005|.0068 ± .0009|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0010 ± .0003|.0015 ± .0007|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0034 ± .0004|.0056 ± .0007|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0063 ± .0008|.0101 ± .0010|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0040 ± .0005|.0065 ± .0006|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0079 ± .0011|.0124 ± .0019|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0037 ± .0010|.0060 ± .0014|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0065 ± .0009|.0106 ± .0014|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0065 ± .0006|.0104 ± .0010|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0141 ± .0006|.0252 ± .0005|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1812 ± .0078|.2338 ± .0076|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.0076 ± .0010|.0120 ± .0019|
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1434 ± .0015|.2349 ± .0019|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1433 ± .0033|.2329 ± .0037|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0033 ± .0002|.0082 ± .0003|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0007 ± .0001|.0018 ± .0002|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0022 ± .0004|.0058 ± .0009|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0044 ± .0003|.0106 ± .0003|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0029 ± .0005|.0070 ± .0009|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0050 ± .0004|.0122 ± .0008|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0033 ± .0008|.0081 ± .0018|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0046 ± .0005|.0112 ± .0008|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0045 ± .0003|.0108 ± .0008|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0045 ± .0003|.0108 ± .0008|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1442 ± .0022|.2350 ± .0019|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.0056 ± .0013|.0136 ± .0028|
 
-- Summarized execution time results from `experiment_results/ml-100k_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-100k_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|26.31 ± 1.073|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|25.44 ± .7091|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|43.75 ± 1.923|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|72.83 ± 3.641|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|128.0 ± 2.616|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|79.85 ± 3.074|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|381.6 ± 3.547|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|60.83 ± 2.265|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|55.10 ± 2.484|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|46.26 ± 2.255|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|102.9 ± 1.780|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|177.4 ± 1.292|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|96.80 ± 1.006|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|68685 ± 10848|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|21.69 ± .2804|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|21.95 ± .6008|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|42.86 ± .8906|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|71.26 ± 1.692|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|113.8 ± 1.304|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|80.22 ± .9842|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|384.1 ± 2.356|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|62.31 ± .6928|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|52.90 ± 1.164|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|46.75 ± 1.562|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|86.69 ± 1.153|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|108.0 ± 1.952|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|85.93 ± .7969|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|75651 ± 2808.|
 
 ## ml-1m
 
 Experiment ran using the MovieLens-1m dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-1m.yml`: 
 
-- Summarized results from `experiment_results/ml-1m.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/ml-1m.csv`:
 
-| Model | MAP@5 | nDCG@5 |
-|---------|---------|-----------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1110 ± .0022|.1452 ± .0027|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1103 ± .0035|.1444 ± .0037|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0038 ± .0002|.0059 ± .0002|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0014 ± .0001|.0022 ± .0001|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0011 ± .0001|.0016 ± .0002|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0022 ± .0003|.0034 ± .0004|
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.0846 ± .0017|.1449 ± .0024|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.0846 ± .0010|.1454 ± .0011|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0026 ± .0001|.0063 ± .0003|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0009 ± .0001|.0021 ± .0001|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0007 ± .0001|.0016 ± .0002|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0014 ± .0001|.0036 ± .0003|
 |TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0002 ± .0001|.0003 ± .0001|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0075 ± .0004|.0116 ± .0006|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0012 ± .0005|.0019 ± .0005|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0014 ± .0006|.0023 ± .0009|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0036 ± .0003|.0057 ± .0004|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0050 ± .0006|.0073 ± .0017|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1098 ± .0016|.1438 ± .0026|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0050 ± .0001|.0115 ± .0001|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0010 ± .0002|.0025 ± .0005|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0012 ± .0004|.0030 ± .0010|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0025 ± .0001|.0062 ± .0004|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|.0028 ± .0002|.0062 ± .0004|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0843 ± .0011|.1445 ± .0017|
 
-- Summarized execution time results from `experiment_results/ml-1m_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-1m_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|29.20 ± 1.310|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|32.17 ± 1.990|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|417.9 ± 19.26|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|704.0 ± 12.20|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|861.2 ± 16.92|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|848.3 ± 17.31|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|3864. ± 20.52|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|588.4 ± 17.11|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|397.9 ± 16.00|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|465.11 ± 17.73|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|689.4 ± 19.46|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|551.1 ± 6.458|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|450.4 ± 6.674|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|31.10 ± .2524|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|33.11 ± 2.733|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|423.6 ± 17.24|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|715.0 ± 15.18|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|864.0 ± 16.52|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|858.0 ± 16.76|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|3888. ± 29.29|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|588.1 ± 22.05|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|398.2 ± 19.76|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|472.00 ± 20.89|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|693.2 ± 21.37|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|499.3 ± 8.566|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|451.9 ± 6.538|
 
 ## ml-1m_enriched
 
 Experiment ran using the MovieLens-1m dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-1m_enriched.yml`: 
 
-- Summarized results from `experiment_results/ml-1m_enriched.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/ml-1m_enriched.csv`:
 
-| Model | MAP@5 | nDCG@5 |
-|---------|---------|-----------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1625 ± .0021|.2014 ± .0026|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1624 ± .0038|.2016 ± .0040|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0041 ± .0002|.0063 ± .0002|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0014 ± .0002|.0021 ± .0004|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0008 ± .0001|.0012 ± .0001|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0021 ± .0002|.0033 ± .0002|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0003 ± .0001|.0003 ± .0001|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0076 ± .0004|.0116 ± .0007|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0020 ± .0006|.0029 ± .0008|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0014 ± .0004|.0022 ± .0004|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0034 ± .0002|.0055 ± .0002|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0020 ± .0002|.0030 ± .0001|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1622 ± .0040|.2013 ± .0036|
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1254 ± .0018|.1961 ± .0026|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1253 ± .0042|.1957 ± .0048|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0027 ± .0002|.0065 ± .0005|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0010 ± .0001|.0023 ± .0001|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0005 ± .0001|.0013 ± .0002|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0015 ± .0001|.0037 ± .0002|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0002 ± .0001|.0004 ± .0001|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0051 ± .0001|.0116 ± .0003|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0027 ± .0002|.0066 ± .0005|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0009 ± .0002|.0024 ± .0006|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0024 ± .0001|.0066 ± .0005|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0019 ± .0003|.0044 ± .0004|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1252 ± .0017|.1964 ± .0020|
 
-- Summarized execution time results from `experiment_results/ml-1m_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-1m_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|67.28 ± 2.997|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|74.52 ± 2.706|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|505.7 ± 136.6|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|834.3 ± 181.8|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|1404. ± 282.5|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|946.1 ± 112.5|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|4475. ± 1067.|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|648.5 ± 55.35|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|470.0 ± 19.09|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|490.4 ± 23.20|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|1289. ± 22.07|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|749.3 ± 6.818|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|549.0 ± 10.42|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|62.50 ± 3.393|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|65.73 ± 5.698|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|428.7 ± 8.749|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|718.4 ± 7.618|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|1114. ± 14.14|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|855.1 ± 13.96|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|3907. ± 15.04|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|594.5 ± 16.06|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|448.9 ± 13.98|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|476.3 ± 14.38|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|1127. ± 15.99|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|592.6 ± 5.611|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|520.1 ± 4.842|
 
 ## lastfm
 
 Experiment ran using the Lastfm dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm.yml`:
 
-- Summarized results from `experiment_results/lastfm.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/lastfm.csv`:
 
-| Model | MAP@5 | nDCG@5 |
-|---------|---------|-----------|
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
 |Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1171 ± .0034|.1628 ± .0054|
 |Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1178 ± .0018|.1621 ± .0027|
 |TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0003 ± .0001|.0003 ± .0001|
@@ -187,7 +187,7 @@ Experiment ran using the Lastfm dataset with the following presented models and 
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0001 ± .0000|.0001 ± .0000|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1174 ± .0021|.1624 ± .0043|
 
-- Summarized execution time results from `experiment_results/lastfm_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/lastfm_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
@@ -209,10 +209,10 @@ Experiment ran using the Lastfm dataset with the following presented models and 
 
 Experiment ran using the Lastfm dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm-enriched.yml`:
 
-- Summarized results from `experiment_results/lastfm_enriched.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/lastfm_enriched.csv`:
 
-| Model | MAP@5 | nDCG@5 |
-|---------|---------|-----------|
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
 |Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1408 ± .0043|.1923 ± .0054|
 |Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1390 ± .0035|.1946 ± .0035|
 |TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0003 ± .0001|.0003 ± .0001|
@@ -227,7 +227,7 @@ Experiment ran using the Lastfm dataset with DBpedia enrichement and the followi
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0021 ± .0011|.0023 ± .0013|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1383 ± .0017|.1903 ± .0026|
 
-- Summarized execution time results from `experiment_results/lastfm_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/lastfm_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
@@ -249,10 +249,10 @@ Experiment ran using the Lastfm dataset with DBpedia enrichement and the followi
 
 Experiment ran using the Douban Movie dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_douban-movie.yml`: 
 
-- Summarized results from `experiment_results/douban-movie.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/douban-movie.csv`:
 
-| Model | MAP@5 | nDCG@5 |
-|---------|---------|-----------|
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
 |Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.5843 ± .0101|.6754 ± .0117|
 |Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.5885 ± .0047|.6825 ± .0044|
 |TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.3991 ± .0032|.4813 ± .0064|
@@ -268,7 +268,7 @@ Experiment ran using the Douban Movie dataset with the following presented model
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.5833 ± .0043|.6755 ± .0059|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.4142 ± .0084|.4971 ± .0120|
 
-- Summarized execution time results from `experiment_results/douban-movie_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/douban-movie_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
@@ -291,10 +291,10 @@ Experiment ran using the Douban Movie dataset with the following presented model
 
 Experiment ran using the Douban Movie dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_douban-movie_enriched.yml`: 
 
-- Summarized results from `experiment_results/douban-movie_enriched.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/douban-movie_enriched.csv`:
 
-| Model | MAP@5 | nDCG@5 |
-|---------|---------|-----------|
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
 |Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.5739 ± .0093|.6627 ± .0134|
 |Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.5722 ± .0055|.6609 ± .0084|
 |TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.4035 ± .0029|.4830 ± .0044|
@@ -310,7 +310,7 @@ Experiment ran using the Douban Movie dataset with DBpedia enrichement and the f
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.5736 ± .0018|.6617 ± .0061|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.4184 ± .0137|.5016 ± .0119|
 
-- Summarized execution time results from `experiment_results/douban-movie_times_enriched.csv` (configuration: CPU: AMD Ryzen 5 7600 6-Core Processor; RAM: 31GB; GPUs: ['NVIDIA GeForce RTX 4060']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/douban-movie_times_enriched.csv` (configuration: CPU: AMD Ryzen 5 7600 6-Core Processor; RAM: 31GB; GPUs: ['NVIDIA GeForce RTX 4060']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
@@ -328,83 +328,3 @@ Experiment ran using the Douban Movie dataset with DBpedia enrichement and the f
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|51.79 ± 43.51|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|22.54 ± 1.364|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|9266. ± 104.2|
-
-## yelp
-
-Experiment ran using the Yelp Challenge dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_yelp.yml`: 
-
-- Summarized results from `experiment_results/yelp.csv`:
-
-| Model | MAP@10 | nDCG@10 |
-|---------|---------|-----------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.01689 ± .00017|.03860 ± .00036|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.01688 ± .00029|.03852 ± .00078|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.00001 ± .00000|.00004 ± .00000|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.00010 ± .00001|.00026 ± .00003|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.00000 ± .00000|.00001 ± .00000|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.00001 ± .00000|.00003 ± .00000|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.00001 ± .00000|.00002 ± .00001|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.00006 ± .00001|.00017 ± .00002|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.00001 ± .00000|.00002 ± .00000|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.00002 ± .00000|.00007 ± .00001|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.00001 ± .00000|.00004 ± .00001|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.00001 ± .00000|.00004 ± .00001|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.01683 ± .00015|.03858 ± .00059|
-
-- Summarized execution time results from `experiment_results/yelp_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
-
-| Model | Execution Time (s) |
-|---------|----------------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|1307.4 ± 333.51|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|1417.7 ± 555.66|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|6423.5 ± 1493.2|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|9996.2 ± 2948.8|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|28568. ± 7317.5|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|13663. ± 3201.2|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|15845. ± 140.81|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|3734.3 ± 163.13|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|7292.4 ± 215.27|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|6905.9 ± 406.81|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|41117. ± 231.11|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|8067.5 ± 75.832|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|4243.7 ± 139.98|
-
-## amazon-video_games-5
-
-Experiment ran using the Amazon Video-Games core-5 dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_amazon-video_games-5.yml`: 
-
-- Summarized results from `experiment_results/amazon-video_games-5.csv`:
-
-| Model | MAP@5 | nDCG@5 |
-|---------|---------|-----------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.0280 ± .0004|.0367 ± .0006|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.0278 ± .0005|.0366 ± .0006|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0001 ± .0000|.0002 ± .0000|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0000 ± .0000|.0001 ± .0000|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0001 ± .0000|.0001 ± .0000|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0001 ± .0000|.0001 ± .0000|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0001 ± .0000|.0001 ± .0000|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0001 ± .0000|.0001 ± .0000|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0001 ± .0000|.0002 ± .0000|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0001 ± .0000|.0002 ± .0000|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0001 ± .0000|.0002 ± .0000|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.0002 ± .0001|.0003 ± .0001|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0280 ± .0008|.0367 ± .0007|
-
-- Summarized execution time results from `experiment_results/amazon-video_games-5.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
-
-| Model | Execution Time (s) |
-|---------|----------------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|740.5 ± 18.09|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|736.7 ± 19.41|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|570.4 ± 46.34|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|862.5 ± 56.28|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|11119 ± 119.3|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|1192. ± 69.81|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|2375. ± 95.82|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|473.3 ± 42.67|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|2966. ± 58.25|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|726.1 ± 57.64|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|18211 ± 164.9|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|2763. ± 65.41|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|1964. ± 24.11|

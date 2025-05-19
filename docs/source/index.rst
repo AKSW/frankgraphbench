@@ -12,6 +12,7 @@ project at DBpedia, named FranKGraphBench: Knowledge Graph Aware Recommender Sys
 This project have two main components:
 
 - **Data Integration**: for enriching standard Recommender Systems datasets using DBpedia.
+   - As part of the Data Integration module we fixed and used the DBpedia 2016-10 core version, accessible through the endpoint () and with .ttl files downloadable  here ().
 - **Framework**: for running reproducible experiments on enriched and non-enriched datasets through a `.yml`  configuration file.
 
 
