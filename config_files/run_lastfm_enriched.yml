@@ -15,7 +15,7 @@ experiment:
       map_path: datasets/lastfm/processed/map.csv
       enrich_path: datasets/lastfm/processed/enriched.csv
       remove_unmatched: False
-      properties: [bandMember, genre, associatedMusicalArtist, awards, recordLabel, associatedBand, origin]
+      properties: [abstract, bandMember, genre, associatedMusicalArtist, awards, recordLabel, associatedBand, origin]
 
   preprocess:
     # - method: filter_by_rating
@@ -164,7 +164,7 @@ experiment:
         save_weights: True
       parameters:
         embedding_model: sentence-transformers/all-mpnet-base-v2
-        embed_with: name
+        embed_with: abstract
         iterations: 30
         mi: 0.5
     - name: ePHEN
