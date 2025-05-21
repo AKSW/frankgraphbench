@@ -211,4 +211,4 @@ experiment:
   report:
     file: "experiment_results/fixed_db16_runs/douban-movie_enriched.csv"
     execution_times:
-      file: "experiment_results/fixed_db16_runs/douban-movie_times_enriched.csv"
+      file: "experiment_results/fixed_db16_runs/douban-movie_enriched_times.csv"
