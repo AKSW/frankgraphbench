@@ -253,39 +253,39 @@ Experiment ran using the Douban Movie dataset with the following presented model
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.7415 ± .0066|.8091 ± .0050|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.7427 ± .0040|.8108 ± .0037|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.5837 ± .0042|.6742 ± .0025|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.5779 ± .0032|.6669 ± .0021|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.5900 ± .0034|.6786 ± .0015|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.5917 ± .0034|.6804 ± .0016|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.5931 ± .0037|.6808 ± .0033|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.5935 ± .0059|.6824 ± .0041|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.5919 ± .0034|.6789 ± .0014|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.5884 ± .0019|.6790 ± .0017|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.5916 ± .0030|.6803 ± .0012|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=name_EN;iterations=30;mi=0.5|.5971 ± .0042|.6852 ± .0022|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.7403 ± .0063|.8074 ± .0067|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.5963 ± .0073|.6866 ± .0073|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.7416 ± .0080|.8109 ± .0065|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.7418 ± .0069|.8119 ± .0060|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.5839 ± .0049|.6737 ± .0032|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.5773 ± .0030|.6663 ± .0016|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.5900 ± .0041|.6784 ± .0021|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.5909 ± .0038|.6798 ± .0022|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.5927 ± .0052|.6800 ± .0027|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.5929 ± .0058|.6809 ± .0035|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.5915 ± .0033|.6781 ± .0014|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.5877 ± .0028|.6776 ± .0022|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.5911 ± .0036|.6792 ± .0022|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=name_EN;iterations=30;mi=0.5|.5925 ± .0035|.6586 ± .0018|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.7401 ± .0046|.8086 ± .0042|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.5956 ± .0134|.6846 ± .0089|
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/douban-movie_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|5.199 ± .6045|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|5.240 ± .1954|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|47.84 ± .6285|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|70.69 ± 1.761|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|78.39 ± 2.203|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|79.52 ± 3.933|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|348.6 ± 7.303|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|62.87 ± 2.368|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|44.91 ± 1.734|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|49.91 ± 2.109|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|51.02 ± 1.804|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=name_EN;iterations=30;mi=0.5|47.73 ± .6584|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|41.90 ± .5456|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|9479. ± 301.5|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|834.3 ± 24.82|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|823.1 ± 29.22|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|110.7 ± 1.628|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|126.1 ± 3.252|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|140.5 ± 4.679|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|134.4 ± 5.008|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|404.2 ± 8.478|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|117.1 ± 4.573|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|103.4 ± 3.690|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|105.7 ± 4.065|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|117.3 ± 3.828|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=name_EN;iterations=30;mi=0.5|1099. ± 2.803|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|1488. ± 13.74|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|6276. ± 160.6|
 
 ## douban-movie_enriched
 
@@ -295,36 +295,36 @@ Experiment ran using the Douban Movie dataset with DBpedia enrichement and the f
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.5739 ± .0093|.6627 ± .0134|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.5722 ± .0055|.6609 ± .0084|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.4035 ± .0029|.4830 ± .0044|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.3949 ± .0029|.4695 ± .0056|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.4062 ± .0022|.4872 ± .0066|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.4076 ± .0033|.4883 ± .0040|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.4045 ± .0032|.4866 ± .0055|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.4102 ± .0056|.4916 ± .0036|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.4011 ± .0011|.4810 ± .0040|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.4056 ± .0037|.4871 ± .0062|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.4086 ± .0016|.4895 ± .0028|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|.3876 ± .0038|.4601 ± .0036|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.5736 ± .0018|.6617 ± .0061|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.4184 ± .0137|.5016 ± .0119|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.7371 ± .0064|.8043 ± .0060|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.7367 ± .0050|.8039 ± .0048|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.5838 ± .0046|.6738 ± .0038|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.5777 ± .0029|.6669 ± .0025|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.5891 ± .0041|.6780 ± .0022|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.5913 ± .0032|.6799 ± .0015|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.5930 ± .0036|.6808 ± .0015|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.5935 ± .0049|.6819 ± .0030|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.5917 ± .0049|.6783 ± .0019|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.5874 ± .0042|.6774 ± .0020|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.5912 ± .0044|.6796 ± .0019|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.5283 ± .0032|.6225 ± .0019|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.7372 ± .0044|.8044 ± .0047|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.5944 ± .0089|.6829 ± .0081|
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/douban-movie_times_enriched.csv` (configuration: CPU: AMD Ryzen 5 7600 6-Core Processor; RAM: 31GB; GPUs: ['NVIDIA GeForce RTX 4060']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|2.824 ± .5424|
-|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|2.839 ± .2007|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|58.86 ± 1.623|
-|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|81.12 ± 1.741|
-|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|95.10 ± 2.397|
-|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|92.93 ± 2.962|
-|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|160.5 ± 3.752|
-|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|58.57 ± 2.213|
-|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|46.99 ± 2.122|
-|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|51.79 ± 2.264|
-|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|56.15 ± 2.132|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|51.79 ± 43.51|
-|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|22.54 ± 1.364|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|9266. ± 104.2|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|832.9 ± 15.72|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|856.7 ± 12.74|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|112.4 ± 4.230|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|129.6 ± 5.001|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|144.0 ± 5.130|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|138.6 ± 5.678|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|406.2 ± 9.683|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|120.4 ± 5.355|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|106.0 ± 4.017|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|108.0 ± 4.924|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|120.9 ± 5.727|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|1114. ± 7.497|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|1470. ± 16.06|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|6278. ± 167.4|
