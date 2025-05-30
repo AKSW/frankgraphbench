@@ -1,6 +1,7 @@
 import os
 import queue
 import string
+# import time
 import pandas as pd
 from string import Template
 from .datasets.worker import Worker
@@ -18,8 +19,8 @@ class Dataset:
         self.output_path = output_path
         self.n_workers = n_workers
 
-        self.sparql_endpoint = "http://dbpedia.org/sparql"
-        self.timeout = 180
+        self.sparql_endpoint = "http://141.57.8.18:8896/sparql"
+        self.timeout = 1000
 
         # Output files
         self.item_filename = os.path.join(self.output_path, "item.csv")
@@ -152,11 +153,11 @@ class Dataset:
                 response = self._query(query, return_type)
                 responses.append((idx, response))
                 pbar.update(n=1)
+                # time.sleep(2)
             except queue.Empty:
                 break
             except Exception as e:
-                print(f"Exception:")
-                print(e)
+                print(f"Exception: {e}")
 
         return responses
 

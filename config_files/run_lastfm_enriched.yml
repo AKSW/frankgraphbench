@@ -15,7 +15,7 @@ experiment:
       map_path: datasets/lastfm/processed/map.csv
       enrich_path: datasets/lastfm/processed/enriched.csv
       remove_unmatched: False
-      properties: [bandMember, genre, associatedMusicalArtist, awards, recordLabel, associatedBand, origin]
+      properties: [abstract, bandMember, genre, associatedMusicalArtist, awards, recordLabel, associatedBand, origin]
 
   preprocess:
     # - method: filter_by_rating
@@ -163,8 +163,8 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_model: "sentence-transformers/all-roberta-large-v1"
-        embed_with: name
+        embedding_model: sentence-transformers/all-mpnet-base-v2
+        embed_with: abstract
         iterations: 30
         mi: 0.5
     - name: ePHEN
@@ -187,11 +187,11 @@ experiment:
         mi: 0.5
 
   evaluation:
-    k: 5
+    k: 10
     relevance_threshold: 0
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/lastfm_enriched.csv"
+    file: "experiment_results/fixed_db16_runs/lastfm_enriched.csv"
     execution_times:
-      file: "experiment_results/lastfm_enriched_times.csv"
+      file: "experiment_results/fixed_db16_runs/lastfm_enriched_times.csv"

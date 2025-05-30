@@ -100,12 +100,14 @@ Check [Makefile](Makefile) for more examples.
 
 | Dataset | #items matched | #items |
 |---------|---------------|---|
-|[MovieLens-100k](https://grouplens.org/datasets/movielens/100k/)|1462|1681|
-|[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3356|3883|
-|[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/)|11815|17632|
-|[Douban-Movie-Short-Comments-Dataset](https://www.kaggle.com/datasets/utmhikari/doubanmovieshortcomments/data)|25|28|douban-movie|
+|[MovieLens-100k](https://grouplens.org/datasets/movielens/100k/)|1411|1681|
+|[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3253|3883|
+|[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/)|8628|17632|
+|[Douban-Movie-Short-Comments-Dataset](https://www.kaggle.com/datasets/utmhikari/doubanmovieshortcomments/data)|24|28|douban-movie|
 |[Yelp-Dataset](https://www.yelp.com/dataset/download)|---|150348|yelp|
 |[Amazon-Video-Games-5](https://nijianmo.github.io/amazon/index.html)|---|21106|amazon-video_games-5|
+
+Dataset enrichment is done through a fixed DBpedia endpoint available at ..., with raw files download available at ...
 
 # Framework for reproducible experiments usage
 

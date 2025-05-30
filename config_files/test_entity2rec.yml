@@ -1,20 +1,20 @@
 experiment:
-  dataset:
-    name: ml-100k
-    item: # infos related to item dataset (mandatory, at least item_id)
-      path: datasets/ml-100k/processed/item.csv
-      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
-    user: # mandatory (at least user_id)
-      path: datasets/ml-100k/processed/user.csv
-      extra_features: [gender, occupation] # features beside user_id
-    ratings: # mandatory (at least [user_id, item_id, rating])
-      path: datasets/ml-100k/processed/rating.csv
-      timestamp: True
-    enrich:
-      map_path: datasets/ml-100k/processed/map.csv
-      enrich_path: datasets/ml-100k/processed/enriched.csv
-      remove_unmatched: False
-      properties: [subject, director, abstract]
+  # dataset:
+    # name: ml-100k
+    # item: # infos related to item dataset (mandatory, at least item_id)
+    #   path: datasets/ml-100k/processed/item.csv
+    #   extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
+    # user: # mandatory (at least user_id)
+    #   path: datasets/ml-100k/processed/user.csv
+    #   extra_features: [gender, occupation] # features beside user_id
+    # ratings: # mandatory (at least [user_id, item_id, rating])
+    #   path: datasets/ml-100k/processed/rating.csv
+    #   timestamp: True
+    # enrich:
+    #   map_path: datasets/ml-100k/processed/map.csv
+    #   enrich_path: datasets/ml-100k/processed/enriched.csv
+    #   remove_unmatched: False
+    #   properties: [subject, director, abstract]
   # dataset:
     # name: ml-100k
     # item: # infos related to item dataset (mandatory, at least item_id)
@@ -47,17 +47,17 @@ experiment:
   #     enrich_path: datasets/douban-movie/processed/enriched.csv
   #     remove_unmatched: False
   #     properties: [subject, director, abstract]
-  # dataset:
-  #   name: ml-1m
-  #   item: # infos related to item dataset (mandatory, at least item_id)
-  #     path: datasets/ml-1m/processed/item.csv
-  #     extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
-  #   user: # mandatory (at least user_id)
-  #     path: datasets/ml-1m/processed/user.csv
-  #     extra_features: [gender, occupation] # features beside user_id
-  #   ratings: # mandatory (at least [user_id, item_id, rating])
-  #     path: datasets/ml-1m/processed/rating.csv
-  #     timestamp: True
+  dataset:
+    name: ml-1m
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/ml-1m/processed/item.csv
+      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/ml-1m/processed/user.csv
+      extra_features: [gender, occupation] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/ml-1m/processed/rating.csv
+      timestamp: True
 
   preprocess:
     # - method: filter_by_rating
@@ -121,16 +121,16 @@ experiment:
             n_walks: 50
             embedding_size: 64
             epochs: 1
-        workers: 32
+        workers: 16
         frac_negative_candidates: 0.2
         seed: 42
 
   evaluation:
-    k: 5
+    k: 10
     relevance_threshold: 0
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/e2rec_runs/ml-1m_e2rec.csv"
+    file: "experiment_results/fixed_db16_runs/ml-1m_e2rec.csv"
     execution_times:
-      file: "experiment_results/e2rec_runs/ml-1m_e2rec_times.csv"
+      file: "experiment_results/fixed_db16_runs/ml-1m_e2rec_times.csv"

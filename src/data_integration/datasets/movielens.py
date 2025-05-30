@@ -21,6 +21,7 @@ class MovieLens(Dataset):
 
     def __init__(self, input_path, output_path, n_workers=1):
         super().__init__(input_path, output_path, n_workers)
+        self.map_fields = {"item_id": "item_id::string", "URI": "URI::string"}
         self.map_query_template = Template(
             """
             PREFIX dct:  <http://purl.org/dc/terms/>
@@ -46,7 +47,17 @@ class MovieLens(Dataset):
             }
         """
         )
-
+        self.enrich_fields = {
+            "item_id": "item_id::string",
+            "abstract": "abstract::string",
+            "producer": "producer::string_list",
+            "distributor": "distributor::string_list",
+            "writer": "writer::string_list",
+            "cinematography": "cinematography::string_list",
+            "subject": "subject::string_list",
+            "starring": "starring::string_list",
+            "director": "director::string_list"
+        }
         self.enrich_query_template = Template(
             """
             PREFIX dct:  <http://purl.org/dc/terms/>
@@ -150,12 +161,12 @@ class MovieLens(Dataset):
         return query
 
     def enrich(self, df_map) -> pd.DataFrame():
-        df_map = df_map[df_map["URI"].notna()]
+        df_map = df_map[df_map[self.map_fields["URI"]].notna()]
 
         q = queue.Queue()
-        for _, row in df_map[["URI", "item_id"]].iterrows():
-            query = self.get_enrich_query(row["URI"])
-            q.put((row["item_id"], query))
+        for _, row in df_map[[self.map_fields["URI"], self.map_fields["item_id"]]].iterrows():
+            query = self.get_enrich_query(row[self.map_fields["URI"]])
+            q.put((row[self.map_fields["item_id"]], query))
 
         if self.n_workers > 1:
             responses = self.parallel_queries(q, CSV)
@@ -174,7 +185,8 @@ class MovieLens(Dataset):
             item_enriching[idx] = df.iloc[0]  # getting pd.Series
 
         df_enrich = pd.DataFrame.from_dict(item_enriching, orient="index")
-        df_enrich.index.name = "item_id"
+        df_enrich = df_enrich.rename(self.enrich_fields, axis=1)
+        df_enrich.index.name = self.enrich_fields["item_id"]
 
         return df_enrich
 
@@ -201,7 +213,6 @@ class MovieLens100k(MovieLens):
             "movie_title": "movie_title::string",
             "movie_year": "movie_year::string",  # extracted from movie_title
         }
-        self.map_fields = {"item_id": "item_id::string", "URI": "URI::string"}
         self.rating_fields = {
             "user id": "user_id::string",
             "item id": "item_id::string",
@@ -299,7 +310,6 @@ class MovieLens1M(MovieLens):
             "movie_title": "movie_title::string",
             "movie_year": "movie_year::string",  # extracted from movie_title
         }
-        self.map_fields = {"item_id": "item_id::string", "URI": "URI::string"}
         self.rating_fields = {
             "UserID": "user_id::string",
             "MovieID": "item_id::string",

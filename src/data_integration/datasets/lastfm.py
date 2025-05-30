@@ -70,12 +70,23 @@ class LastFM(Dataset):
             }
         """
         )
-
+        self.enrich_fields = {
+            "item_id": "item_id::string",
+            "abstract": "abstract::string",
+            "bandMember": "bandMember::string_list",
+            "genre": "genre::string_list",
+            "associatedMusicalArtist": "associatedMusicalArtist::string_list",
+            "awards": "awards::string_list",
+            "recordLabel": "recordLabel::string_list",
+            "associatedBand": "associatedBand::string_list",
+            "origin": "origin::string_list"
+        }
         self.enrich_query_template = Template(
             """
             PREFIX dct:  <http://purl.org/dc/terms/>
             PREFIX dbo:  <http://dbpedia.org/ontology/>
             PREFIX dbr:  <http://dbpedia.org/resource/>
+            PREFIX dbp:  <http://dbpedia.org/property/>
             PREFIX rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             SELECT DISTINCT
@@ -154,12 +165,12 @@ class LastFM(Dataset):
         return query
 
     def enrich(self, df_map):
-        df_map = df_map[df_map["URI"].notna()]
+        df_map = df_map[df_map[self.map_fields["URI"]].notna()]
 
         q = queue.Queue()
-        for _, row in df_map[["URI", "item_id"]].iterrows():
-            query = self.get_enrich_query(row["URI"])
-            q.put((row["item_id"], query))
+        for _, row in df_map[[self.map_fields["URI"], self.map_fields["item_id"]]].iterrows():
+            query = self.get_enrich_query(row[self.map_fields["URI"]])
+            q.put((row[self.map_fields["item_id"]], query))
 
         if self.n_workers > 1:
             responses = self.parallel_queries(q, CSV)
@@ -174,11 +185,17 @@ class LastFM(Dataset):
             if df.shape[0] > 1:
                 print("At least one property has more than one value!")
                 print(df.value_counts(dropna=False))
-
-            item_enriching[idx] = df.iloc[0]  # getting pd.Series
+                
+            try:
+                item_enriching[idx] = df.iloc[0]  # getting pd.Series
+            except Exception as e:
+                print(f"Error at item {idx}: {e}")
+                print(df)
+                continue
 
         df_enrich = pd.DataFrame.from_dict(item_enriching, orient="index")
-        df_enrich.index.name = "item_id"
+        df_enrich = df_enrich.rename(self.enrich_fields, axis=1)
+        df_enrich.index.name = self.enrich_fields["item_id"]
 
         return df_enrich
 

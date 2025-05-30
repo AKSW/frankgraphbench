@@ -6,12 +6,14 @@ Currently the supported datasets are:
 
 | Dataset | #items matched | #items | name |
 |---------|---------------|---|-----|
-|[MovieLens-100k](https://grouplens.org/datasets/movielens/100k/)|1462|1681|ml-100k|
-|[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3356|3883|ml-1m|
-|[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/)|11815|17632|lastfm|
-|[Douban-Movie-Short-Comments-Dataset](https://www.kaggle.com/datasets/utmhikari/doubanmovieshortcomments/data)|25|28|douban-movie|
+|[MovieLens-100k](https://grouplens.org/datasets/movielens/100k/)|1411|1681|ml-100k|
+|[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3253|3883|ml-1m|
+|[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/)|8628|17632|lastfm|
+|[Douban-Movie-Short-Comments-Dataset](https://www.kaggle.com/datasets/utmhikari/doubanmovieshortcomments/data)|24|28|douban-movie|
 |[Yelp-Dataset](https://www.yelp.com/dataset/download)|---|150348|yelp|
 |[Amazon-Video-Games-5](https://nijianmo.github.io/amazon/index.html)|---|21106|amazon-video_games-5|
+
+Dataset enrichment is done through a fixed DBpedia endpoint available at ..., with raw files download available at ...
 
 ## Models
 
@@ -29,6 +31,7 @@ Currently the supported Recommender System models are:
     - `q`: likelihood of moving away from the previous node, promoting more exploration of different parts of the graph.
     - `embedding_size`: embedding size, usually between 64 and 128. 
     - `window_size`: word2vec window size, where it determines how many of the "words" within the walk length will impact the skipgram model calculation. Usually is a smaller value than the walk length.
+
 ### transE
 - TransE graph embedding + cosine similarity.
   - Reference: Antoine Bordes, Nicolas Usunier, Alberto Garcia-Duran, Jason Weston, and Oksana Yakhnenko. 2013. Translating embeddings for modeling multi-relational data. Advances in neural information processing systems 26 (2013).
@@ -38,6 +41,7 @@ Currently the supported Recommender System models are:
     - `epochs`: number of training iterations.
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
+
 ### transH
 - TransH graph embedding + cosine similarity.
   - Reference: Zhen Wang, Jianwen Zhang, Jianlin Feng, and Zheng Chen. 2014. Knowledge graph embedding by translating on hyperplanes. In Proceedings of the AAAI conference on artificial intelligence, Vol. 28.
@@ -47,6 +51,7 @@ Currently the supported Recommender System models are:
     - `epochs`: number of training iterations.
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
+
 ### transR
 - TransR graph embedding + cosine similarity.
   - Reference: Yankai Lin, Zhiyuan Liu, Maosong Sun, Yang Liu, and Xuan Zhu. 2015. Learning entity and relation embeddings for knowledge graph completion. In Proceedings of the AAAI conference on artificial intelligence, Vol. 29.
@@ -57,6 +62,7 @@ Currently the supported Recommender System models are:
     - `epochs`: number of training iterations.
     - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
+
 ### transD
 - TransD graph embedding + cosine similarity.
   - Reference: Guoliang Ji, Shizhu He, Liheng Xu, Kang Liu, and Jun Zhao. 2015. Knowledge graph embedding via dynamic mapping matrix. In Proceedings of the 53rd annual meeting of the association for computational linguistics and the 7th international joint conference on natural language processing (volume 1: Long papers). 687–696.
