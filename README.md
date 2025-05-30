@@ -107,6 +107,8 @@ Check [Makefile](Makefile) for more examples.
 |[Yelp-Dataset](https://www.yelp.com/dataset/download)|---|150348|yelp|
 |[Amazon-Video-Games-5](https://nijianmo.github.io/amazon/index.html)|---|21106|amazon-video_games-5|
 
+Dataset enrichment is done through a fixed DBpedia endpoint available at ..., with raw files download available at ...
+
 # Framework for reproducible experiments usage
 
 ## pip
