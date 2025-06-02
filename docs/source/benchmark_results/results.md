@@ -51,7 +51,7 @@ Experiment ran using the MovieLens-100k dataset with DBpedia enrichement and the
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
-|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1434 ± .0015|.2349 ± .0019|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1439 ± .0016|.2349 ± .0019|
 |Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1433 ± .0033|.2329 ± .0037|
 |TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0033 ± .0002|.0082 ± .0003|
 |TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0007 ± .0001|.0018 ± .0002|
@@ -62,7 +62,7 @@ Experiment ran using the MovieLens-100k dataset with DBpedia enrichement and the
 |DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0033 ± .0008|.0081 ± .0018|
 |ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0046 ± .0005|.0112 ± .0008|
 |RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0045 ± .0003|.0108 ± .0008|
-|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0045 ± .0003|.0108 ± .0008|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0046 ± .0003|.0107 ± .0005|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1442 ± .0022|.2350 ± .0019|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.0056 ± .0013|.0136 ± .0028|
 
