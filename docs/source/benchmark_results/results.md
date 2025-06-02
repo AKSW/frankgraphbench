@@ -11,7 +11,7 @@ Experiment ran using the MovieLens-100k dataset with the following presented mod
 |---------|----------|------------|
 |Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.0993 ± .0034|.1766 ± .0043|
 |Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.0973 ± .0039|.1748 ± .0064|
-|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0032 ± .0003|.0023 ± .0004|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0032 ± .0003|.0077 ± .0004|
 |TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0009 ± .0003|.0023 ± .0004|
 |TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0029 ± .0003|.0070 ± .0006|
 |TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0047 ± .0003|.0113 ± .0005|
