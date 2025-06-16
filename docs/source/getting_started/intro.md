@@ -8,7 +8,7 @@ This project has two main components:
 - **Data Integration**: for enriching standard Recommender Systems datasets using DBpedia.
 - **Framework**: for running reproducible experiments on enriched and non-enriched datasets through a `.yml`  configuration file.
 
-As part of the Data Integration module we fixed and used the DBpedia 2016-10 core version, accessible through the endpoint () and with .ttl files downloadable  here ().
+As part of the Data Integration module we fixed and used the DBpedia 2016-10 core version, accessible through the [endpoint](http://141.57.8.18:8895/sparql/) and with .ttl files downloadable  [here](http://141.57.8.18:8989/).
 
 
 ![project pipeline](../imgs/framework.svg)
