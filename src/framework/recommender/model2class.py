@@ -46,5 +46,9 @@ model2class = {
     'entity2rec': {
         'submodule': 'entity2rec.model',
         'class': 'Entity2Rec'
+    },
+    'kGAT': {
+        'submodule': 'kGAT.model',
+        'class': 'KGAT'
     }
 }
