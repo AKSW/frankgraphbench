@@ -42,11 +42,11 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/douban-movie/processed/rating.csv
       timestamp: False
-    enrich:
-      map_path: datasets/douban-movie/processed/map.csv
-      enrich_path: datasets/douban-movie/processed/enriched.csv
-      remove_unmatched: False
-      properties: [subject, director, abstract]
+    # enrich:
+    #   map_path: datasets/douban-movie/processed/map.csv
+    #   enrich_path: datasets/douban-movie/processed/enriched.csv
+    #   remove_unmatched: False
+    #   properties: [subject, director, abstract]
   # dataset:
   #   name: ml-1m
   #   item: # infos related to item dataset (mandatory, at least item_id)
@@ -127,7 +127,7 @@ experiment:
         relation_template: 
           collab: [rating]
           social: [name] 
-          content: [name_EN, name_CN, subject, director, abstract]
+          content: [name_EN, name_CN]
 
   evaluation:
     k: 10
