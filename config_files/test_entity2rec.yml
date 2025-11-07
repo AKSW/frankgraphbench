@@ -1,52 +1,52 @@
 experiment:
-  # dataset:
-    # name: ml-100k
-    # item: # infos related to item dataset (mandatory, at least item_id)
-    #   path: datasets/ml-100k/processed/item.csv
-    #   extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
-    # user: # mandatory (at least user_id)
-    #   path: datasets/ml-100k/processed/user.csv
-    #   extra_features: [gender, occupation] # features beside user_id
-    # ratings: # mandatory (at least [user_id, item_id, rating])
-    #   path: datasets/ml-100k/processed/rating.csv
-    #   timestamp: True
-    # enrich:
-    #   map_path: datasets/ml-100k/processed/map.csv
-    #   enrich_path: datasets/ml-100k/processed/enriched.csv
-    #   remove_unmatched: False
-    #   properties: [subject, director, abstract]
-  # dataset:
-    # name: ml-100k
-    # item: # infos related to item dataset (mandatory, at least item_id)
-    #   path: datasets/ml-100k/processed/item.csv
-    #   extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
-    # user: # mandatory (at least user_id)
-    #   path: datasets/ml-100k/processed/user.csv
-    #   extra_features: [gender, occupation] # features beside user_id
-    # ratings: # mandatory (at least [user_id, item_id, rating])
-    #   path: datasets/ml-100k/processed/rating.csv
-    #   timestamp: True
-    # enrich:
-    #   map_path: datasets/ml-100k/processed/map.csv
-    #   enrich_path: datasets/ml-100k/processed/enriched.csv
-    #   remove_unmatched: False
-    #   properties: [subject, director, abstract]
   dataset:
-    name: douban-movie
+    name: ml-100k
     item: # infos related to item dataset (mandatory, at least item_id)
-      path: datasets/douban-movie/processed/item.csv
-      extra_features: [name_EN, name_CN] # features(columns) beside item_id to be used
+      path: datasets/ml-100k/processed/item.csv
+      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
     user: # mandatory (at least user_id)
-      path: datasets/douban-movie/processed/user.csv
-      extra_features: [name]
+      path: datasets/ml-100k/processed/user.csv
+      extra_features: [gender, occupation] # features beside user_id
     ratings: # mandatory (at least [user_id, item_id, rating])
-      path: datasets/douban-movie/processed/rating.csv
-      timestamp: False
-    enrich:
-      map_path: datasets/douban-movie/processed/map.csv
-      enrich_path: datasets/douban-movie/processed/enriched.csv
-      remove_unmatched: False
-      properties: [subject, director, abstract]
+      path: datasets/ml-100k/processed/rating.csv
+      timestamp: True
+    # enrich:
+    #   map_path: datasets/ml-100k/processed/map.csv
+    #   enrich_path: datasets/ml-100k/processed/enriched.csv
+    #   remove_unmatched: False
+    #   properties: [subject, director, abstract]
+  # dataset:
+    # name: ml-100k
+    # item: # infos related to item dataset (mandatory, at least item_id)
+    #   path: datasets/ml-100k/processed/item.csv
+    #   extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
+    # user: # mandatory (at least user_id)
+    #   path: datasets/ml-100k/processed/user.csv
+    #   extra_features: [gender, occupation] # features beside user_id
+    # ratings: # mandatory (at least [user_id, item_id, rating])
+    #   path: datasets/ml-100k/processed/rating.csv
+    #   timestamp: True
+    # enrich:
+    #   map_path: datasets/ml-100k/processed/map.csv
+    #   enrich_path: datasets/ml-100k/processed/enriched.csv
+    #   remove_unmatched: False
+    #   properties: [subject, director, abstract]
+  # dataset:
+  #   name: douban-movie
+  #   item: # infos related to item dataset (mandatory, at least item_id)
+  #     path: datasets/douban-movie/processed/item.csv
+  #     extra_features: [name_EN, name_CN] # features(columns) beside item_id to be used
+  #   user: # mandatory (at least user_id)
+  #     path: datasets/douban-movie/processed/user.csv
+  #     extra_features: [name]
+  #   ratings: # mandatory (at least [user_id, item_id, rating])
+  #     path: datasets/douban-movie/processed/rating.csv
+  #     timestamp: False
+  #   enrich:
+  #     map_path: datasets/douban-movie/processed/map.csv
+  #     enrich_path: datasets/douban-movie/processed/enriched.csv
+  #     remove_unmatched: False
+  #     properties: [subject, director, abstract]
   # dataset:
   #   name: ml-1m
   #   item: # infos related to item dataset (mandatory, at least item_id)
@@ -126,8 +126,8 @@ experiment:
         seed: 42
         relation_template: 
           collab: [rating]
-          social: [name] 
-          content: [name_EN, name_CN, subject, director, abstract]
+          social: [gender, occupation]
+          content: [movie_year, movie_title]
 
   evaluation:
     k: 10
@@ -135,6 +135,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/fixed_db16_runs/douban-movie_enriched_e2rec.csv"
+    file: "experiment_results/fixed_db16_runs/ml-100k_e2rec.csv"
     execution_times:
-      file: "experiment_results/fixed_db16_runs/douban-movie_enriched_e2rec_times.csv"
+      file: "experiment_results/fixed_db16_runs/ml-100k_e2rec_times.csv"
