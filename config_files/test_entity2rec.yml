@@ -10,11 +10,11 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/ml-100k/processed/rating.csv
       timestamp: True
-    # enrich:
-    #   map_path: datasets/ml-100k/processed/map.csv
-    #   enrich_path: datasets/ml-100k/processed/enriched.csv
-    #   remove_unmatched: False
-    #   properties: [subject, director, abstract]
+    enrich:
+      map_path: datasets/ml-100k/processed/map.csv
+      enrich_path: datasets/ml-100k/processed/enriched.csv
+      remove_unmatched: False
+      properties: [subject, director, abstract]
   # dataset:
     # name: ml-100k
     # item: # infos related to item dataset (mandatory, at least item_id)
@@ -127,7 +127,7 @@ experiment:
         relation_template: 
           collab: [rating]
           social: [gender, occupation]
-          content: [movie_year, movie_title]
+          content: [movie_year, movie_title,subject, director, abstract]
 
   evaluation:
     k: 10
@@ -135,6 +135,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/fixed_db16_runs/ml-100k_e2rec.csv"
+    file: "experiment_results/fixed_db16_runs/ml-100k_enriched_e2rec.csv"
     execution_times:
-      file: "experiment_results/fixed_db16_runs/ml-100k_e2rec_times.csv"
+      file: "experiment_results/fixed_db16_runs/ml-100k_enriched_e2rec_times.csv"
