@@ -5,11 +5,11 @@ Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In
 @author: Xiang Wang (xiangwang@u.nus.edu)
 '''
 import framework.recommender.models.kGAT.metrics as metrics
-import multiprocessing
+import multiprocess
 import heapq
 import numpy as np
 
-cores = multiprocessing.cpu_count() // 2
+cores = multiprocess.cpu_count() // 2
 
 def ranklist_by_heapq(user_pos_test, test_items, rating, Ks):
     item_score = {}
@@ -74,12 +74,11 @@ def get_performance(user_pos_test, r, auc, Ks):
             'ndcg': np.array(ndcg), 'hit_ratio': np.array(hit_ratio), 'auc': auc}
 
 
-def test_one_user(x, data_generator, args):
-    # user u's ratings for user u
-    rating = x[0]
-    #uid
-    u = x[1]
-    #user u's items in the training set
+def test_one_user(x):
+    user_wrap, data_generator, args = x
+    # user u's ratings for user u and uid
+    rating, u = user_wrap
+    print(f"testing user {u}")
     try:
         training_items = data_generator.train_user_dict[u]
     except Exception:
@@ -112,8 +111,8 @@ def test_one_user(x, data_generator, args):
 def test(sess, model, users_to_test, data_generator, args, drop_flag=False, batch_test_flag=False):
     result = {'precision': np.zeros(len(args.ks)), 'recall': np.zeros(len(args.ks)), 'ndcg': np.zeros(len(args.ks)),
               'hit_ratio': np.zeros(len(args.ks)), 'auc': 0.}
-
-    pool = multiprocessing.Pool(cores)
+    
+    pool = multiprocess.Pool(cores)
 
     if args.model_type in ['ripple']:
 
@@ -172,7 +171,8 @@ def test(sess, model, users_to_test, data_generator, args, drop_flag=False, batc
             rate_batch = rate_batch.reshape((-1, len(item_batch)))
 
         user_batch_rating_uid = zip(rate_batch, user_batch)
-        batch_result = pool.map(test_one_user, user_batch_rating_uid)
+        full_wrap = [(user_wrap, data_generator, args) for user_wrap in user_batch_rating_uid]
+        batch_result = pool.map(test_one_user, full_wrap)
         count += len(batch_result)
 
         for re in batch_result:
