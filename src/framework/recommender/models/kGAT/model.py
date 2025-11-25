@@ -19,6 +19,7 @@ class KGAT(Recommender):
     def __init__(
                     self, 
                     config : dict,
+                    model_type: str = 'kgat',
                     verbose: int = 50,
                     embed_size: int = 64,
                     epoch: int = 1000,
@@ -40,6 +41,7 @@ class KGAT(Recommender):
                  ):
         super().__init__(config)
         args_dict = {
+            'model_type': model_type,
             'verbose': verbose,
             'epoch': epoch,
             'embed_size': embed_size,
