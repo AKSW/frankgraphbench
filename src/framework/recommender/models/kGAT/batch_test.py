@@ -4,48 +4,12 @@ Tensorflow Implementation of Knowledge Graph Attention Network (KGAT) model in:
 Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In KDD 2019.
 @author: Xiang Wang (xiangwang@u.nus.edu)
 '''
-import utility.metrics as metrics
-from utility.parser import parse_args
+import framework.recommender.models.kGAT.metrics as metrics
 import multiprocessing
 import heapq
 import numpy as np
 
-from utility.loader_bprmf import BPRMF_loader
-
-from utility.loader_cke import CKE_loader
-from utility.loader_nfm import NFM_loader
-from utility.loader_kgat import KGAT_loader
-from utility.loader_cfkg import CFKG_loader
-
 cores = multiprocessing.cpu_count() // 2
-
-args = parse_args()
-Ks = eval(args.Ks)
-
-if args.model_type == 'bprmf':
-    data_generator = BPRMF_loader(args=args, path=args.data_path + args.dataset)
-    batch_test_flag = False
-
-elif args.model_type == 'cke':
-    data_generator = CKE_loader(args=args, path=args.data_path + args.dataset)
-    batch_test_flag = False
-
-elif args.model_type in ['cfkg']:
-    data_generator = CFKG_loader(args=args, path=args.data_path + args.dataset)
-    batch_test_flag = True
-
-elif args.model_type in ['fm','nfm']:
-    data_generator = NFM_loader(args=args, path=args.data_path + args.dataset)
-    batch_test_flag = True
-
-elif args.model_type in ['kgat']:
-    data_generator = KGAT_loader(args=args, path=args.data_path + args.dataset)
-    batch_test_flag = False
-
-
-USR_NUM, ITEM_NUM = data_generator.n_users, data_generator.n_items
-N_TRAIN, N_TEST = data_generator.n_train, data_generator.n_test
-BATCH_SIZE = args.batch_size
 
 def ranklist_by_heapq(user_pos_test, test_items, rating, Ks):
     item_score = {}
@@ -110,7 +74,7 @@ def get_performance(user_pos_test, r, auc, Ks):
             'ndcg': np.array(ndcg), 'hit_ratio': np.array(hit_ratio), 'auc': auc}
 
 
-def test_one_user(x):
+def test_one_user(x, data_generator, args):
     # user u's ratings for user u
     rating = x[0]
     #uid
@@ -123,14 +87,14 @@ def test_one_user(x):
     #user u's items in the test set
     user_pos_test = data_generator.test_user_dict[u]
 
-    all_items = set(range(ITEM_NUM))
+    all_items = set(range(data_generator.n_items))
 
     test_items = list(all_items - set(training_items))
 
     if args.test_flag == 'part':
-        r, auc = ranklist_by_heapq(user_pos_test, test_items, rating, Ks)
+        r, auc = ranklist_by_heapq(user_pos_test, test_items, rating, args.ks)
     else:
-        r, auc = ranklist_by_sorted(user_pos_test, test_items, rating, Ks)
+        r, auc = ranklist_by_sorted(user_pos_test, test_items, rating, args.ks)
 
     # # .......checking.......
     # try:
@@ -142,25 +106,25 @@ def test_one_user(x):
     #     exit()
     # # .......checking.......
 
-    return get_performance(user_pos_test, r, auc, Ks)
+    return get_performance(user_pos_test, r, auc, args.ks)
 
 
-def test(sess, model, users_to_test, drop_flag=False, batch_test_flag=False):
-    result = {'precision': np.zeros(len(Ks)), 'recall': np.zeros(len(Ks)), 'ndcg': np.zeros(len(Ks)),
-              'hit_ratio': np.zeros(len(Ks)), 'auc': 0.}
+def test(sess, model, users_to_test, data_generator, args, drop_flag=False, batch_test_flag=False):
+    result = {'precision': np.zeros(len(args.ks)), 'recall': np.zeros(len(args.ks)), 'ndcg': np.zeros(len(args.ks)),
+              'hit_ratio': np.zeros(len(args.ks)), 'auc': 0.}
 
     pool = multiprocessing.Pool(cores)
 
     if args.model_type in ['ripple']:
 
-        u_batch_size = BATCH_SIZE
-        i_batch_size = BATCH_SIZE // 20
+        u_batch_size = args.batch_size
+        i_batch_size = args.batch_size // 20
     elif args.model_type in ['fm', 'nfm']:
-        u_batch_size = BATCH_SIZE
-        i_batch_size = BATCH_SIZE
+        u_batch_size = args.batch_size
+        i_batch_size = args.batch_size
     else:
-        u_batch_size = BATCH_SIZE * 2
-        i_batch_size = BATCH_SIZE
+        u_batch_size = args.batch_size * 2
+        i_batch_size = args.batch_size
 
     test_users = users_to_test
     n_test_users = len(test_users)
@@ -176,13 +140,13 @@ def test(sess, model, users_to_test, drop_flag=False, batch_test_flag=False):
 
         if batch_test_flag:
 
-            n_item_batchs = ITEM_NUM // i_batch_size + 1
-            rate_batch = np.zeros(shape=(len(user_batch), ITEM_NUM))
+            n_item_batchs = data_generator.n_items // i_batch_size + 1
+            rate_batch = np.zeros(shape=(len(user_batch), data_generator.n_items))
 
             i_count = 0
             for i_batch_id in range(n_item_batchs):
                 i_start = i_batch_id * i_batch_size
-                i_end = min((i_batch_id + 1) * i_batch_size, ITEM_NUM)
+                i_end = min((i_batch_id + 1) * i_batch_size, data_generator.n_items)
 
                 item_batch = range(i_start, i_end)
 
@@ -196,10 +160,10 @@ def test(sess, model, users_to_test, drop_flag=False, batch_test_flag=False):
                 rate_batch[:, i_start: i_end] = i_rate_batch
                 i_count += i_rate_batch.shape[1]
 
-            assert i_count == ITEM_NUM
+            assert i_count == data_generator.n_items
 
         else:
-            item_batch = range(ITEM_NUM)
+            item_batch = range(data_generator.n_items)
             feed_dict = data_generator.generate_test_feed_dict(model=model,
                                                                user_batch=user_batch,
                                                                item_batch=item_batch,

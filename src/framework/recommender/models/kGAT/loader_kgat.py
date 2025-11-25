@@ -5,15 +5,15 @@ Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In
 @author: Xiang Wang (xiangwang@u.nus.edu)
 '''
 import numpy as np
-from utility.load_data import Data
+from framework.recommender.models.kGAT.load_data import Data
 from time import time
 import scipy.sparse as sp
 import random as rd
 import collections
 
 class KGAT_loader(Data):
-    def __init__(self, args, path):
-        super().__init__(args, path)
+    def __init__(self, ratings_triples, item_property_triples, args, batch_size: int = 32, random_seed: int = 42):
+        super().__init__(ratings_triples, item_property_triples, args, batch_size, random_seed)
 
         # generate the sparse adjacency matrices for user-item interaction & relational kg data.
         self.adj_list, self.adj_r_list = self._get_relational_adj_list()
@@ -195,7 +195,8 @@ class KGAT_loader(Data):
 
             pos_rs, pos_ts = [], []
             while True:
-                if len(pos_rs) == num: break
+                if len(pos_rs) == num: 
+                    break
                 pos_id = np.random.randint(low=0, high=n_pos_triples, size=1)[0]
 
                 t = pos_triples[pos_id][0]
@@ -209,7 +210,8 @@ class KGAT_loader(Data):
         def sample_neg_triples_for_h(h, r, num):
             neg_ts = []
             while True:
-                if len(neg_ts) == num: break
+                if len(neg_ts) == num: 
+                    break
 
                 t = np.random.randint(low=0, high=self.n_users + self.n_entities, size=1)[0]
                 if (t, r) not in self.all_kg_dict[h] and t not in neg_ts:
@@ -244,8 +246,8 @@ class KGAT_loader(Data):
             model.pos_items: batch_data['pos_items'],
             model.neg_items: batch_data['neg_items'],
 
-            model.mess_dropout: eval(self.args.mess_dropout),
-            model.node_dropout: eval(self.args.node_dropout),
+            model.mess_dropout: self.args.mess_dropout,
+            model.node_dropout: self.args.node_dropout,
         }
 
         return feed_dict
@@ -278,8 +280,8 @@ class KGAT_loader(Data):
         feed_dict ={
             model.users: user_batch,
             model.pos_items: item_batch,
-            model.mess_dropout: [0.] * len(eval(self.args.layer_size)),
-            model.node_dropout: [0.] * len(eval(self.args.layer_size)),
+            model.mess_dropout: [0.] * len(self.args.layer_size),
+            model.node_dropout: [0.] * len(self.args.layer_size),
 
         }
 

@@ -9,53 +9,45 @@ import numpy as np
 import random as rd
 
 class Data(object):
-    def __init__(self, args, path):
-        self.path = path
+    def __init__(self, ratings_triples, item_property_triples, args, batch_size, random_seed):
         self.args = args
 
-        self.batch_size = args.batch_size
-
-        train_file = path + '/train.txt'
-        test_file = path + '/test.txt'
-
-        kg_file = path + '/kg_final.txt'
+        self.batch_size = batch_size
 
         # ----------get number of users and items & then load rating data from train_file & test_file------------.
         self.n_train, self.n_test = 0, 0
         self.n_users, self.n_items = 0, 0
 
-        self.train_data, self.train_user_dict = self._load_ratings(train_file)
-        self.test_data, self.test_user_dict = self._load_ratings(test_file)
+        test_ratings_triples = ratings_triples.sample(frac=0.1, random_state=random_seed)
+        train_ratings_triples = ratings_triples[~ratings_triples.isin(test_ratings_triples)].dropna().reset_index(drop=True).astype(int)
+        test_ratings_triples = test_ratings_triples.reset_index(drop=True)
+
+        self.train_data, self.train_user_dict = self._load_ratings(train_ratings_triples)
+        self.test_data, self.test_user_dict = self._load_ratings(test_ratings_triples)
         self.exist_users = self.train_user_dict.keys()
 
         self._statistic_ratings()
 
         # ----------get number of entities and relations & then load kg data from kg_file ------------.
         self.n_relations, self.n_entities, self.n_triples = 0, 0, 0
-        self.kg_data, self.kg_dict, self.relation_dict = self._load_kg(kg_file)
+        self.kg_dict, self.relation_dict = self._load_kg(item_property_triples)
 
         # ----------print the basic info about the dataset-------------.
         self.batch_size_kg = self.n_triples // (self.n_train // self.batch_size)
         self._print_data_info()
 
     # reading train & test interaction data.
-    def _load_ratings(self, file_name):
+    def _load_ratings(self, ratings_triples): # done for creating train and test data the way they do it with our ratings
         user_dict = dict()
         inter_mat = list()
 
-        lines = open(file_name, 'r').readlines()
-        for l in lines:
-            tmps = l.strip()
-            inters = [int(i) for i in tmps.split(' ')]
+        for index, row in ratings_triples.groupby('head').apply(lambda x: x['tail']).items():
+            inter_mat.append([index[0], row])
 
-            u_id, pos_ids = inters[0], inters[1:]
-            pos_ids = list(set(pos_ids))
-
-            for i_id in pos_ids:
-                inter_mat.append([u_id, i_id])
-
-            if len(pos_ids) > 0:
-                user_dict[u_id] = pos_ids
+        for user in ratings_triples['head'].unique():
+            items = ratings_triples['tail'][ratings_triples['head'] == user].to_list()
+            if len(items) > 0:
+                user_dict[user] = items
         return np.array(inter_mat), user_dict
 
     def _statistic_ratings(self):
@@ -65,28 +57,23 @@ class Data(object):
         self.n_test = len(self.test_data)
 
     # reading train & test interaction data.
-    def _load_kg(self, file_name):
-        def _construct_kg(kg_np):
+    def _load_kg(self, item_property_triples):
+        def _construct_kg(kg_df):
             kg = collections.defaultdict(list)
             rd = collections.defaultdict(list)
 
-            for head, relation, tail in kg_np:
-                kg[head].append((tail, relation))
-                rd[relation].append((head, tail))
+            for _, row in kg_df.iterrows():
+                kg[row['head']].append((row['tail'], row['relation']))
+                rd[row['relation']].append((row['head'], row['tail']))
             return kg, rd
 
-        kg_np = np.loadtxt(file_name, dtype=np.int32)
-        kg_np = np.unique(kg_np, axis=0)
+        self.n_relations = len(item_property_triples['relation'].unique())
+        self.n_entities = len(item_property_triples['head'].unique()) + len(item_property_triples['tail'].unique())
+        self.n_triples = len(item_property_triples.index)
 
-        # self.n_relations = len(set(kg_np[:, 1]))
-        # self.n_entities = len(set(kg_np[:, 0]) | set(kg_np[:, 2]))
-        self.n_relations = max(kg_np[:, 1]) + 1
-        self.n_entities = max(max(kg_np[:, 0]), max(kg_np[:, 2])) + 1
-        self.n_triples = len(kg_np)
+        kg_dict, relation_dict = _construct_kg(item_property_triples)
 
-        kg_dict, relation_dict = _construct_kg(kg_np)
-
-        return kg_np, kg_dict, relation_dict
+        return kg_dict, relation_dict
 
     def _print_data_info(self):
         print('[n_users, n_items]=[%d, %d]' % (self.n_users, self.n_items))
@@ -105,7 +92,8 @@ class Data(object):
             n_pos_items = len(pos_items)
             pos_batch = []
             while True:
-                if len(pos_batch) == num: break
+                if len(pos_batch) == num: 
+                    break
                 pos_id = np.random.randint(low=0, high=n_pos_items, size=1)[0]
                 pos_i_id = pos_items[pos_id]
 
@@ -116,7 +104,8 @@ class Data(object):
         def sample_neg_items_for_u(u, num):
             neg_items = []
             while True:
-                if len(neg_items) == num: break
+                if len(neg_items) == num: 
+                    break
                 neg_i_id = np.random.randint(low=0, high=self.n_items,size=1)[0]
 
                 if neg_i_id not in self.train_user_dict[u] and neg_i_id not in neg_items:

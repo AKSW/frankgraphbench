@@ -77,68 +77,38 @@ class Graph(nx.Graph):
         return ratings
 
     def get_all_triples(self, return_type='str'):
-
         # ratings triples
         ratings_triples = self.get_ratings_triples(return_type=return_type)
-
         # user property triples
         user_property_triples = self.get_user_property_triples(return_type=return_type)
-
         # item property triples
         item_property_triples = self.get_item_property_triples(return_type=return_type)
 
         return pd.concat([ratings_triples, user_property_triples, item_property_triples])
 
     def get_ratings_triples(self, return_type='str'):
-        triples_return = {"head": [], "relation": [], "tail": []}
-
-        ratings = self.get_ratings_with_labels()
-        desc = "Generating ratings triples"
-        n_total = len(ratings.keys())
-        for user, ratings in tqdm(ratings.items(), total=n_total, desc=desc):
-            ratings.sort(key=lambda x: x[1], reverse=True)
-            for rating in ratings:
-                if return_type == "str":
-                    triples_return["head"].append(user.__str__()) 
-                else:
-                    triples_return["head"].append(user)
-                triples_return["relation"].append(f"rating{rating[1]}")
-                if return_type == "str":
-                    triples_return["tail"].append(rating[0].__str__())
-                else:
-                    triples_return["tail"].append(rating[0])
-
-        return pd.DataFrame(triples_return)
+        if return_type == "int":
+            triples_return = self._get_ratings_triples_int()
+            return pd.DataFrame(triples_return)
+        else:
+            triples_return = self._get_ratings_triples(return_type)
+            return pd.DataFrame(triples_return)
     
     def get_user_property_triples(self, return_type='str'):
-        triples_return = {"head": [], "relation": [], "tail": []}
-
-        user_properties = self.get_user_property_edges()
-        desc = "Generating user properties triples"
-        for user, user_property in tqdm(user_properties, desc=desc):
-            if return_type == "str":
-                triples_return["head"].append(user.__str__())
-            else:
-                triples_return["head"].append(user)
-            triples_return["relation"].append(user_property.get_property_type())
-            triples_return["tail"].append(user_property.get_id())
-
-        return pd.DataFrame(triples_return)
+        if return_type == "int":
+            triples_return = self._get_user_property_triples_int()
+            return pd.DataFrame(triples_return)
+        else:
+            triples_return = self._get_user_property_triples(return_type)
+            return pd.DataFrame(triples_return)
     
     def get_item_property_triples(self, return_type='str'):
-        triples_return = {"head": [], "relation": [], "tail": []}
-
-        item_properties = self.get_item_property_edges()
-        desc = "Generating item properties triples"
-        for item, item_property in tqdm(item_properties, desc=desc):
-            if return_type == "str":
-                triples_return["head"].append(item.__str__())
-            else:
-                triples_return["head"].append(item)
-            triples_return["relation"].append(item_property.get_property_type())
-            triples_return["tail"].append(item_property.get_id())
-
-        return pd.DataFrame(triples_return)
+        if return_type == "int":
+            triples_return = self._get_item_property_triples_int()
+            return pd.DataFrame(triples_return)
+        else:
+            triples_return = self._get_item_property_triples(return_type)
+            return pd.DataFrame(triples_return)
 
     def get_user_rated_items(self, user: UserNode) -> Set[ItemNode]:
         return self.rating_edges[user]
@@ -205,6 +175,142 @@ class Graph(nx.Graph):
         G.rating_item2users = self.rating_item2users.copy()
 
         return G
+    
+    def _get_ratings_triples(self, return_type):
+        triples_return = {"head": [], "relation": [], "tail": []}
+        
+        ratings = self.get_ratings_with_labels()
+        desc = "Generating ratings triples"
+        n_total = len(ratings.keys())
+        for user, ratings in tqdm(ratings.items(), total=n_total, desc=desc):
+            ratings.sort(key=lambda x: x[1], reverse=True)
+            for rating in ratings:
+                # user
+                if return_type == "str":
+                    triples_return["head"].append(user.__str__())
+                else:
+                    triples_return["head"].append(user)
+                # relation
+                triples_return["relation"].append(f"rating{rating[1]}")
+                # item
+                if return_type == "str":
+                    triples_return["tail"].append(rating[0].__str__())
+                else:
+                    triples_return["tail"].append(rating[0])
+
+        return triples_return
+    
+    def _get_ratings_triples_int(self):
+        triples_return = {"head": [], "relation": [], "tail": []}
+        
+        ratings = self.get_rating_edges()
+        desc = "Generating ratings triples integer"
+        for user, rating in tqdm(ratings, desc=desc):
+            # user
+            triples_return["head"].append(int(user.get_id()))
+            # relation
+            triples_return["relation"].append(1)
+            # item
+            triples_return["tail"].append(int(rating.get_id()))
+
+        return triples_return
+    
+    def _get_user_property_triples(self, return_type):
+        triples_return = {"head": [], "relation": [], "tail": []}
+
+        user_properties = self.get_user_property_edges()
+        desc = "Generating user properties triples"
+        for user, user_property in tqdm(user_properties, desc=desc):
+            # user
+            if return_type == "str":
+                triples_return["head"].append(user.__str__())
+            else:
+                triples_return["head"].append(user)
+            # relation
+            triples_return["relation"].append(user_property.get_property_type())
+            # item
+            triples_return["tail"].append(user_property.get_id())
+
+        return triples_return
+    
+    def _get_user_property_triples_int(self, relation_id_start: int = 2):
+        triples_return = {"head": [], "relation": [], "tail": []}
+
+        property_types = {'rating': relation_id_start}
+        mirror_G = self.convert_back()
+        int_edges_list = list(self.edges())
+        desc = "Generating item properties triples int"
+        for idx, pair in tqdm(enumerate(mirror_G.edges()), desc=desc):
+            if isinstance(pair[0], UserNode) and isinstance(pair[1], PropertyNode):
+                if pair[1].get_property_type() not in property_types.keys():
+                    property_types[pair[1].get_property_type()] = max(property_types.values()) + 1
+                # user
+                triples_return["head"].append(int(int_edges_list[idx][0]))
+                # relation
+                triples_return["relation"].append(property_types[pair[1].get_property_type()])
+                # item
+                triples_return["tail"].append(int(int_edges_list[idx][1]))
+
+            elif isinstance(pair[0], PropertyNode) and isinstance(pair[1], UserNode):
+                if pair[0].get_property_type() not in property_types.keys():
+                    property_types[pair[0].get_property_type()] = max(property_types.values()) + 1
+                # user
+                triples_return["head"].append(int(int_edges_list[idx][1]))
+                # relation
+                triples_return["relation"].append(property_types[pair[0].get_property_type()])
+                # item
+                triples_return["tail"].append(int(int_edges_list[idx][0]))
+
+        return triples_return
+    
+    def _get_item_property_triples(self, return_type):
+        triples_return = {"head": [], "relation": [], "tail": []}
+
+        item_properties = self.get_item_property_edges()
+        desc = "Generating item properties triples"
+        for item, item_property in tqdm(item_properties, desc=desc):
+            # user
+            if return_type == "str":
+                triples_return["head"].append(item.__str__())
+            else:
+                triples_return["head"].append(item)
+            # relation
+            triples_return["relation"].append(item_property.get_property_type())
+            # item
+            triples_return["tail"].append(item_property.get_id())
+
+        return triples_return
+    
+    def _get_item_property_triples_int(self, relation_id_start: int = 1):
+        triples_return = {"head": [], "relation": [], "tail": []}
+
+        property_types = {'rating': relation_id_start}
+        mirror_G = self.convert_back()
+        int_edges_list = list(self.edges())
+        desc = "Generating item properties triples int"
+        for idx, pair in tqdm(enumerate(mirror_G.edges()), desc=desc):
+            if isinstance(pair[0], ItemNode) and isinstance(pair[1], PropertyNode):
+                if pair[1].get_property_type() not in property_types.keys():
+                    property_types[pair[1].get_property_type()] = max(property_types.values()) + 1
+                # user
+                triples_return["head"].append(int(int_edges_list[idx][0]))
+                # relation
+                triples_return["relation"].append(property_types[pair[1].get_property_type()])
+                # item
+                triples_return["tail"].append(int(int_edges_list[idx][1]))
+
+            elif isinstance(pair[0], PropertyNode) and isinstance(pair[1], ItemNode):
+                if pair[0].get_property_type() not in property_types.keys():
+                    property_types[pair[0].get_property_type()] = max(property_types.values()) + 1
+                # user
+                triples_return["head"].append(int(int_edges_list[idx][1]))
+                # relation
+                triples_return["relation"].append(property_types[pair[0].get_property_type()])
+                # item
+                triples_return["tail"].append(int(int_edges_list[idx][0]))
+
+        return triples_return
+
 
     def __read_csv(self, path: str) -> pd.DataFrame:
         df = pd.read_csv(path)
