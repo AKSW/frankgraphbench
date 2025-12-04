@@ -68,6 +68,7 @@ experiment:
         save_weights: True
       parameters:
         embed_size: 64
+        epoch: 500
       
 
   evaluation:
