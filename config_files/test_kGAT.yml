@@ -68,7 +68,11 @@ experiment:
         save_weights: True
       parameters:
         embed_size: 64
-        epoch: 500
+        epoch: 1
+        verbose: 1
+        validate_factor: 1
+        validate_frac: .005
+        test_flag: sort
       
 
   evaluation:

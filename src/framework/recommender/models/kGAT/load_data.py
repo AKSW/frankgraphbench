@@ -18,7 +18,7 @@ class Data(object):
         self.n_train, self.n_test = 0, 0
         self.n_users, self.n_items = 0, 0
 
-        test_ratings_triples = ratings_triples.sample(frac=0.1, random_state=random_seed)
+        test_ratings_triples = ratings_triples.sample(frac=self.args.validate_frac, random_state=random_seed)
         train_ratings_triples = ratings_triples[~ratings_triples.isin(test_ratings_triples)].dropna().reset_index(drop=True).astype(int)
         test_ratings_triples = test_ratings_triples.reset_index(drop=True)
 
