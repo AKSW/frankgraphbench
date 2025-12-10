@@ -11,6 +11,7 @@ from ...recommender import Recommender
 import numpy as np
 import tensorflow as tf
 from time import time
+from tqdm import tqdm
 
 import argparse
 import sys
@@ -176,7 +177,9 @@ class KGAT(Recommender):
             # validate
             t2 = time()
             users_to_test = list(self._data_generator.test_user_dict.keys())
+            print('validation start...')
             ret = test(self._sess, self._model, users_to_test, self._data_generator, self._args, drop_flag=False, batch_test_flag=self._batch_test_flag)
+            print('\nvalidation end...')
 
             # performance logging
             t3 = time()
@@ -220,9 +223,19 @@ class KGAT(Recommender):
 
     def get_recommendations(self, k : int = 5) -> Dict[UserNode, List[ItemNode]]:
         users_to_test = list(self._data_generator.train_user_dict.keys()) + list(self._data_generator.test_user_dict.keys())
+        print('getting recommendations start...')
         ret = test_rank_list(self._sess, self._model, users_to_test, self._data_generator, self._args, drop_flag=False, batch_test_flag=self._batch_test_flag)
-        print(ret)
-        raise NotImplementedError('Override get_recommendations() for your model subclass.')
+        print('getting recommendations end...')
 
-    def get_user_recommendation(self, user : UserNode, k : int = 5):
-        raise NotImplementedError('Override get_user_recommendation() for your model subclass.')
+        print('formatting rec for frankgraph evaluator...')
+        users_dict = {key: value for key, value in [(int(x.get_id()), x) for x in self.G_train.get_user_nodes()]}
+        items_dict = {key: value for key, value in [(int(x.get_id()), x) for x in self.G_train.get_item_nodes()]}
+        
+        recommendations = {}
+        for user, rec_items, _ in tqdm(ret, desc="generating return dict from recommendations"):
+            if users_dict[user] in recommendations:
+                recommendations[users_dict[user]] = list(set(recommendations[users_dict[user]]+[items_dict[item] for item in rec_items]))
+            else:
+                recommendations[users_dict[user]] = [items_dict[item] for item in rec_items]
+        
+        return recommendations
