@@ -50,5 +50,9 @@ model2class = {
     'kGAT': {
         'submodule': 'kGAT.model',
         'class': 'KGAT'
+    },
+    'bPRMF': {
+        'submodule': 'bPRMF.model',
+        'class': 'BPRMF'
     }
 }
