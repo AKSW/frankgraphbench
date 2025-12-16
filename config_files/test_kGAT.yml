@@ -10,11 +10,6 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/ml-100k/processed/rating.csv
       timestamp: True
-    enrich:
-      map_path: datasets/ml-100k/processed/map.csv
-      enrich_path: datasets/ml-100k/processed/enriched.csv
-      remove_unmatched: False
-      properties: [subject, director, abstract]
 
   preprocess:
     # - method: filter_by_rating
@@ -59,7 +54,7 @@ experiment:
 
     test:
       method: k_fold
-      k: 2
+      k: 5
       level: "user"
 
   models:
