@@ -1,10 +1,10 @@
 from typing import Dict, List, Tuple
 from framework.dataloader.graph.graph import Graph
 from framework.dataloader.graph.node import ItemNode, UserNode
-from framework.recommender.models.bPRMF.helper import early_stopping
-from framework.recommender.models.bPRMF.batch_test import test, test_rank_list
-from framework.recommender.models.bPRMF.loader_bprmf import BPRMF_loader
-from framework.recommender.models.bPRMF.BPRMF import BPRMF_model
+from framework.recommender.models.cFKG.helper import early_stopping
+from framework.recommender.models.cFKG.batch_test import test, test_rank_list
+from framework.recommender.models.cFKG.loader_cfkg import CFKG_loader
+from framework.recommender.models.cFKG.CFKG import CFKG_model
 
 from ...recommender import Recommender
 
@@ -16,20 +16,29 @@ from tqdm import tqdm
 import argparse
 import sys
 
-class BPRMF(Recommender):
+class CFKG(Recommender):
     def __init__(
                     self, 
                     config : dict,
-                    model_type: str = 'mf',
+                    model_type: str = 'cfkg',
                     verbose: int = 50,
                     embed_size: int = 64,
                     epoch: int = 1000,
                     validate_factor: int = 10,
                     validate_frac: float = 0.1,
+                    kge_size: int = 64,
+                    layer_size: list = [64,32,16],
                     batch_size: int = 1024,
+                    batch_size_kg: int = 2048,
                     test_flag: str = 'part',
                     regs: list = [1e-5,1e-5,1e-2],
+                    node_dropout: list = [0.1],
+                    mess_dropout: list = [0.1,0.1,0.1],
+                    l1_flag: bool = True,
                     lr: float = 0.0001,
+                    adj_type: str = 'si',
+                    adj_uni_type: str = 'sum',
+                    alg_type: str = 'bi',
                     report: int = 0,
                     ks: list = [10],
                     random_seed: int = 42
@@ -42,24 +51,34 @@ class BPRMF(Recommender):
             'validate_factor': validate_factor,
             'validate_frac': validate_frac,
             'embed_size': embed_size,
+            'kge_size': kge_size,
+            'layer_size': layer_size,
             'batch_size': batch_size,
+            'batch_size_kg': batch_size_kg,
             'test_flag': test_flag,
             'regs': regs,
+            'node_dropout': node_dropout,
+            'mess_dropout': mess_dropout,
+            'l1_flag': l1_flag,
             'lr': lr,
+            'adj_uni_type': adj_uni_type,
+            'alg_type': alg_type,
+            'adj_type': adj_type,
             'report': report,
             'ks': ks
         }
         self._args = argparse.Namespace(**args_dict)
 
-        self.embed_size = embed_size
-        self.epoch = epoch
-        self.regs = regs
+        self.n_layers = len(layer_size)
+        self.adj_type = adj_type
+        self.adj_uni_type = adj_uni_type
+        self.alg_type = alg_type
         self.random_seed = random_seed
         self.batch_size = batch_size
 
     def name(self):
-        text = "BPRMF"
-        text += f";embed_size={self.embed_size};epoch={self.epoch};regs{self.regs}"
+        text = "CFKG"
+        text += f";n_layers={self.n_layers};adj_type={self.adj_type};adj_uni_type={self.adj_uni_type};alg_type{self.alg_type}"
         return text
     
     def train(self, G_train: Graph, ratings_train: Dict[UserNode, List[Tuple[ItemNode, float]]]):
@@ -68,7 +87,7 @@ class BPRMF(Recommender):
         self._ratings_triples = self.G_train.get_ratings_triples(return_type="int")
         self._item_property_triples = self.G_train.get_item_property_triples(return_type="int")
         
-        self._data_generator = BPRMF_loader(ratings_triples=self._ratings_triples, item_property_triples=self._item_property_triples, args=self._args, batch_size=self.batch_size, random_seed=self.random_seed)
+        self._data_generator = CFKG_loader(ratings_triples=self._ratings_triples, item_property_triples=self._item_property_triples, args=self._args, batch_size=self.batch_size, random_seed=self.random_seed)
         
         self._config = dict()
         self._config['n_users'] = self._data_generator.n_users
@@ -76,11 +95,20 @@ class BPRMF(Recommender):
         self._config['n_relations'] = self._data_generator.n_relations
         self._config['n_entities'] = self._data_generator.n_entities
 
+        # "Load the laplacian matrix."
+        self._config['A_in'] = sum(self._data_generator.lap_list)
+
+        # "Load the KG triplets."
+        self._config['all_h_list'] = self._data_generator.all_h_list
+        self._config['all_r_list'] = self._data_generator.all_r_list
+        self._config['all_t_list'] = self._data_generator.all_t_list
+        self._config['all_v_list'] = self._data_generator.all_v_list
+
         t0 = time()
 
         self._pretrain_data = None
 
-        self._model = BPRMF_model(data_config=self._config, pretrain_data=self._pretrain_data, args=self._args)
+        self._model = CFKG_model(data_config=self._config, pretrain_data=self._pretrain_data, args=self._args)
         
         self.fit(t0)
 

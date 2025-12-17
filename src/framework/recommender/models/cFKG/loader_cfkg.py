@@ -1,21 +1,21 @@
 '''
 Created on Dec 18, 2018
-Tensorflow Implementation of Knowledge Graph Attention Network (KGAT) model in:
+Tensorflow Implementation of the Baseline Model, CFKG, in:
 Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In KDD 2019.
 @author: Xiang Wang (xiangwang@u.nus.edu)
 @modifiedBy: Paulo do Carmo on Dec, 2025
 '''
 import numpy as np
-from framework.recommender.models.kGAT.load_data import Data
+from framework.recommender.models.cFKG.load_data import Data
 from time import time
 import scipy.sparse as sp
 import random as rd
 import collections
 
-class KGAT_loader(Data):
+class CFKG_loader(Data):
     def __init__(self, ratings_triples, item_property_triples, args, batch_size, random_seed):
         super().__init__(ratings_triples, item_property_triples, args, batch_size, random_seed)
-
+        self.batch_size_kg = self.batch_size
         # generate the sparse adjacency matrices for user-item interaction & relational kg data.
         self.adj_list, self.adj_r_list = self._get_relational_adj_list()
 
@@ -95,6 +95,9 @@ class KGAT_loader(Data):
         if self.args.adj_type == 'bi':
             lap_list = [_bi_norm_lap(adj) for adj in self.adj_list]
             print('\tgenerate bi-normalized adjacency matrix.')
+        elif self.args.adj_type == 'wokg':
+            lap_list = self.adj_list[0:2]
+            print('\tgenerate w/o knowledge adjacency matrix.')
         else:
             lap_list = [_si_norm_lap(adj) for adj in self.adj_list]
             print('\tgenerate si-normalized adjacency matrix.')
@@ -196,7 +199,7 @@ class KGAT_loader(Data):
 
             pos_rs, pos_ts = [], []
             while True:
-                if len(pos_rs) == num: 
+                if len(pos_rs) == num:
                     break
                 pos_id = np.random.randint(low=0, high=n_pos_triples, size=1)[0]
 
@@ -211,7 +214,7 @@ class KGAT_loader(Data):
         def sample_neg_triples_for_h(h, r, num):
             neg_ts = []
             while True:
-                if len(neg_ts) == num: 
+                if len(neg_ts) == num:
                     break
 
                 t = np.random.randint(low=0, high=self.n_users + self.n_entities, size=1)[0]
@@ -232,28 +235,6 @@ class KGAT_loader(Data):
         return heads, pos_r_batch, pos_t_batch, neg_t_batch
 
     def generate_train_batch(self):
-        users, pos_items, neg_items = self._generate_train_cf_batch()
-
-        batch_data = {}
-        batch_data['users'] = users
-        batch_data['pos_items'] = pos_items
-        batch_data['neg_items'] = neg_items
-
-        return batch_data
-
-    def generate_train_feed_dict(self, model, batch_data):
-        feed_dict = {
-            model.users: batch_data['users'],
-            model.pos_items: batch_data['pos_items'],
-            model.neg_items: batch_data['neg_items'],
-
-            model.mess_dropout: self.args.mess_dropout,
-            model.node_dropout: self.args.node_dropout,
-        }
-
-        return feed_dict
-
-    def generate_train_A_batch(self):
         heads, relations, pos_tails, neg_tails = self._generate_train_A_batch()
 
         batch_data = {}
@@ -264,7 +245,7 @@ class KGAT_loader(Data):
         batch_data['neg_tails'] = neg_tails
         return batch_data
 
-    def generate_train_A_feed_dict(self, model, batch_data):
+    def generate_train_feed_dict(self, model, batch_data):
         feed_dict = {
             model.h: batch_data['heads'],
             model.r: batch_data['relations'],
@@ -273,16 +254,34 @@ class KGAT_loader(Data):
 
         }
 
+        # print(batch_data['heads'])
+        # print('\n')
+        # print(batch_data['pos_tails'])
+        # print('\n')
+        # print(batch_data['neg_tails'])
+        # print('\n')
+        # exit()
+
         return feed_dict
 
 
     def generate_test_feed_dict(self, model, user_batch, item_batch, drop_flag=True):
+        user_list = list(np.repeat(user_batch, len(item_batch)))
+        item_list = list(np.array(item_batch) + self.n_users) * len(user_batch)
+
+        # print(user_list)
+        # print('\n')
+        # print(item_list)
+
+
 
         feed_dict ={
-            model.users: user_batch,
-            model.pos_items: item_batch,
-            model.mess_dropout: [0.] * len(self.args.layer_size),
-            model.node_dropout: [0.] * len(self.args.layer_size),
+            model.h: user_list,
+            model.r: [0] * len(user_list),
+            model.pos_t: item_list,
+
+            model.mess_dropout: [0.] * len(eval(self.args.layer_size)),
+            model.node_dropout: [0.] * len(eval(self.args.layer_size)),
 
         }
 

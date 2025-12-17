@@ -8,7 +8,7 @@ Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In
 from framework.recommender.models.bPRMF.load_data import Data
 
 class BPRMF_loader(Data):
-    def __init__(self, ratings_triples, item_property_triples, args, batch_size: int = 32, random_seed: int = 42):
+    def __init__(self, ratings_triples, item_property_triples, args, batch_size, random_seed):
         super().__init__(ratings_triples, item_property_triples, args, batch_size, random_seed)
 
     def generate_train_batch(self):

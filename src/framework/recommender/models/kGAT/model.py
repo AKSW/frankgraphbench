@@ -42,6 +42,7 @@ class KGAT(Recommender):
                     use_kge: bool = True,
                     report: int = 0,
                     ks: list = [10],
+                    random_seed : int = 42
                  ):
         super().__init__(config)
         args_dict = {
@@ -66,7 +67,7 @@ class KGAT(Recommender):
             'use_att': use_att,
             'use_kge': use_kge,
             'report': report,
-            'ks': ks
+            'ks': ks,
         }
         self._args = argparse.Namespace(**args_dict)
 
@@ -74,6 +75,8 @@ class KGAT(Recommender):
         self.adj_type = adj_type
         self.adj_uni_type = adj_uni_type
         self.alg_type = alg_type
+        self.random_seed = random_seed
+        self.batch_size = batch_size
 
     def name(self):
         text = "KGAT"
@@ -86,7 +89,7 @@ class KGAT(Recommender):
         self._ratings_triples = self.G_train.get_ratings_triples(return_type="int")
         self._item_property_triples = self.G_train.get_item_property_triples(return_type="int")
         
-        self._data_generator = KGAT_loader(ratings_triples=self._ratings_triples, item_property_triples=self._item_property_triples, args=self._args)
+        self._data_generator = KGAT_loader(ratings_triples=self._ratings_triples, item_property_triples=self._item_property_triples, args=self._args, batch_size=self.batch_size, random_seed=self.random_seed)
         
         self._config = dict()
         self._config['n_users'] = self._data_generator.n_users

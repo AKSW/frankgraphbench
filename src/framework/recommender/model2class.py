@@ -54,5 +54,9 @@ model2class = {
     'bPRMF': {
         'submodule': 'bPRMF.model',
         'class': 'BPRMF'
+    },
+    'cFKG': {
+        'submodule': 'cFKG.model',
+        'class': 'CFKG'
     }
 }
