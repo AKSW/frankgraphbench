@@ -280,8 +280,8 @@ class CFKG_loader(Data):
             model.r: [0] * len(user_list),
             model.pos_t: item_list,
 
-            model.mess_dropout: [0.] * len(eval(self.args.layer_size)),
-            model.node_dropout: [0.] * len(eval(self.args.layer_size)),
+            model.mess_dropout: [0.] * len(self.args.layer_size),
+            model.node_dropout: [0.] * len(self.args.layer_size),
 
         }
 
