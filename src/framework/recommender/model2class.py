@@ -58,5 +58,9 @@ model2class = {
     'cFKG': {
         'submodule': 'cFKG.model',
         'class': 'CFKG'
+    },
+    'cKE': {
+        'submodule': 'cKE.model',
+        'class': 'CKE'
     }
 }
