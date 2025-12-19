@@ -14,7 +14,7 @@ threadpoolctl
 tqdm
 tzdata
 pykeen
-torch==2.1.2
+torch==2.2
 py-cpuinfo
 gputil
 psutil
@@ -22,4 +22,4 @@ sentence-transformers
 graph-walker @ git+https://github.com/AlvaroJoseLopes/graph-walker
 SPARQLWrapper
 multiprocess
-tensorflow<2.11
+tensorflow
