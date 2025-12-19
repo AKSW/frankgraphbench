@@ -10,11 +10,6 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/ml-100k/processed/rating.csv
       timestamp: True
-    enrich:
-      map_path: datasets/ml-100k/processed/map.csv
-      enrich_path: datasets/ml-100k/processed/enriched.csv
-      remove_unmatched: False
-      properties: [subject, director, abstract]
 
   preprocess:
     # - method: filter_by_rating
@@ -59,18 +54,50 @@ experiment:
 
     test:
       method: k_fold
-      k: 10
+      k: 5
       level: "user"
 
   models:
-    - name: ePHEN
+    - name: bPRMF
       config:
         save_weights: True
       parameters:
-        embedding_model: "Qwen/Qwen3-Embedding-8B"
-        embed_with: abstract
-        iterations: 30
-        mi: 0.5
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
+    - name: cFKG
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
+    - name: cKE
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
+    - name: kGAT
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
 
   evaluation:
     k: 10
@@ -78,6 +105,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/ml100k_enriched/ephen.csv"
+    file: "experiment_results/fixed_db16_runs/ml-100k_gnns.csv"
     execution_times:
-      file: "experiment_results/ml100k_enriched/ephen_times.csv"
+      file: "experiment_results/fixed_db16_runs/ml-100k_gnns_times.csv"

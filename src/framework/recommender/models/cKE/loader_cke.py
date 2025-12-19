@@ -15,9 +15,9 @@ class CKE_loader(Data):
     def _generate_train_kg_batch(self):
         exist_heads = self.kg_dict.keys()
         if self.batch_size_kg <= len(exist_heads):
-            heads = rd.sample(exist_heads, self.batch_size_kg)
+            heads = rd.sample(sorted(exist_heads), self.batch_size_kg)
         else:
-            heads = [rd.choice(exist_heads) for _ in range(self.batch_size_kg)]
+            heads = [rd.choice(sorted(exist_heads)) for _ in range(self.batch_size_kg)]
 
         def sample_pos_triples_for_h(h, num):
             # pos triples associated with head entity h.

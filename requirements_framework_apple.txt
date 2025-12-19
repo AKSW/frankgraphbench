@@ -1,7 +1,7 @@
 gensim
 joblib
 networkx
-numpy
+numpy<2
 pandas
 python-dateutil
 pytz
@@ -19,7 +19,7 @@ py-cpuinfo
 gputil
 psutil
 sentence-transformers
-graph-walker @ git+https://github.com/AlvaroJoseLopes/graph-walker
 SPARQLWrapper
 multiprocess
-tensorflow
+tensorflow-macos
+tensorflow-metal
