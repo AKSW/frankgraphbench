@@ -10,6 +10,11 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/ml-100k/processed/rating.csv
       timestamp: True
+    enrich:
+      map_path: datasets/ml-100k/processed/map.csv
+      enrich_path: datasets/ml-100k/processed/enriched.csv
+      remove_unmatched: False
+      properties: [subject, director, abstract]
 
   preprocess:
     # - method: filter_by_rating
@@ -105,6 +110,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/fixed_db16_runs/ml-100k_gnns.csv"
+    file: "experiment_results/fixed_db16_runs/ml-100k_enriched_gnns.csv"
     execution_times:
-      file: "experiment_results/fixed_db16_runs/ml-100k_gnns_times.csv"
+      file: "experiment_results/fixed_db16_runs/ml-100k_enriched_gnns_times.csv"
