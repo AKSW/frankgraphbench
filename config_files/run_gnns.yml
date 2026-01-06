@@ -16,16 +16,17 @@ experiment:
   #     remove_unmatched: False
   #     properties: [subject, director, abstract]
   dataset:
-    name: douban-movie
+    name: lastfm
     item: # infos related to item dataset (mandatory, at least item_id)
-      path: datasets/douban-movie/processed/item.csv
-      extra_features: [name_EN, name_CN] # features(columns) beside item_id to be used
+      path: datasets/lastfm/processed/item.csv
+      extra_features: [name] # features(columns) beside item_id to be used
     user: # mandatory (at least user_id)
-      path: datasets/douban-movie/processed/user.csv
-      extra_features: [name]
+      path: datasets/lastfm/processed/user.csv
     ratings: # mandatory (at least [user_id, item_id, rating])
-      path: datasets/douban-movie/processed/rating.csv
+      path: datasets/lastfm/processed/rating.csv
       timestamp: False
+    social:
+      path: datasets/lastfm/processed/social.csv
 
   preprocess:
     # - method: filter_by_rating
@@ -121,6 +122,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/fixed_db16_runs/douban-movie_gnns.csv"
+    file: "experiment_results/fixed_db16_runs/lastfm_gnns.csv"
     execution_times:
-      file: "experiment_results/fixed_db16_runs/douban-movie_gnns_times.csv"
+      file: "experiment_results/fixed_db16_runs/lastfm_gnns_times.csv"
