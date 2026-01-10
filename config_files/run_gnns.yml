@@ -27,6 +27,11 @@ experiment:
       timestamp: False
     social:
       path: datasets/lastfm/processed/social.csv
+    enrich:
+      map_path: datasets/lastfm/processed/map.csv
+      enrich_path: datasets/lastfm/processed/enriched.csv
+      remove_unmatched: False
+      properties: [abstract, bandMember, genre, associatedMusicalArtist, awards, recordLabel, associatedBand, origin]
 
   preprocess:
     # - method: filter_by_rating
@@ -122,6 +127,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/fixed_db16_runs/lastfm_gnns.csv"
+    file: "experiment_results/fixed_db16_runs/lastfm_enriched_gnns.csv"
     execution_times:
-      file: "experiment_results/fixed_db16_runs/lastfm_gnns_times.csv"
+      file: "experiment_results/fixed_db16_runs/lastfm_enriched_gnns_times.csv"
