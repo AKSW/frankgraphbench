@@ -15,23 +15,34 @@ experiment:
   #     enrich_path: datasets/ml-100k/processed/enriched.csv
   #     remove_unmatched: False
   #     properties: [subject, director, abstract]
+  # dataset:
+  #   name: lastfm
+  #   item: # infos related to item dataset (mandatory, at least item_id)
+  #     path: datasets/lastfm/processed/item.csv
+  #     extra_features: [name] # features(columns) beside item_id to be used
+  #   user: # mandatory (at least user_id)
+  #     path: datasets/lastfm/processed/user.csv
+  #   ratings: # mandatory (at least [user_id, item_id, rating])
+  #     path: datasets/lastfm/processed/rating.csv
+  #     timestamp: False
+  #   social:
+  #     path: datasets/lastfm/processed/social.csv
+  #   enrich:
+  #     map_path: datasets/lastfm/processed/map.csv
+  #     enrich_path: datasets/lastfm/processed/enriched.csv
+  #     remove_unmatched: False
+  #     properties: [abstract, bandMember, genre, associatedMusicalArtist, awards, recordLabel, associatedBand, origin]
   dataset:
-    name: lastfm
+    name: douban-movie
     item: # infos related to item dataset (mandatory, at least item_id)
-      path: datasets/lastfm/processed/item.csv
-      extra_features: [name] # features(columns) beside item_id to be used
+      path: datasets/douban-movie/processed/item.csv
+      extra_features: [name_EN, name_CN] # features(columns) beside item_id to be used
     user: # mandatory (at least user_id)
-      path: datasets/lastfm/processed/user.csv
+      path: datasets/douban-movie/processed/user.csv
+      extra_features: [name]
     ratings: # mandatory (at least [user_id, item_id, rating])
-      path: datasets/lastfm/processed/rating.csv
+      path: datasets/douban-movie/processed/rating.csv
       timestamp: False
-    social:
-      path: datasets/lastfm/processed/social.csv
-    enrich:
-      map_path: datasets/lastfm/processed/map.csv
-      enrich_path: datasets/lastfm/processed/enriched.csv
-      remove_unmatched: False
-      properties: [abstract, bandMember, genre, associatedMusicalArtist, awards, recordLabel, associatedBand, origin]
 
   preprocess:
     # - method: filter_by_rating
@@ -127,6 +138,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/fixed_db16_runs/lastfm_enriched_gnns.csv"
+    file: "experiment_results/fixed_db16_runs/douban-movie_gnns.csv"
     execution_times:
-      file: "experiment_results/fixed_db16_runs/lastfm_enriched_gnns_times.csv"
+      file: "experiment_results/fixed_db16_runs/douban-movie_gnns_times.csv"
