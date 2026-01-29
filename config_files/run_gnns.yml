@@ -99,7 +99,7 @@ experiment:
         epoch: 1000
         verbose: 10
         validate_factor: 50
-        validate_frac: .001
+        validate_frac: .001  # for ml-1m .0001
         test_flag: sort
     - name: cFKG
       config:
@@ -109,7 +109,7 @@ experiment:
         epoch: 1000
         verbose: 10
         validate_factor: 50
-        validate_frac: .001
+        validate_frac: .001  # for ml-1m .0001
         test_flag: sort
     - name: cKE
       config:
@@ -119,7 +119,7 @@ experiment:
         epoch: 1000
         verbose: 10
         validate_factor: 50
-        validate_frac: .001
+        validate_frac: .001  # for ml-1m .0001
         test_flag: sort
     - name: kGAT
       config:
@@ -129,7 +129,7 @@ experiment:
         epoch: 1000
         verbose: 10
         validate_factor: 50
-        validate_frac: .001
+        validate_frac: .001  # for ml-1m .0001
         test_flag: sort
 
   evaluation:

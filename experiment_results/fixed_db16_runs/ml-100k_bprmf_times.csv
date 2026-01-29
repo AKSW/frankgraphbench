@@ -1,2 +1,0 @@
-model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
-"BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01] (CPU: AMD Ryzen 5 7600 6-Core Processor; RAM: 31GB; GPUs: ['NVIDIA GeForce RTX 4060'])",353.62324047088623,201.7594199180603,315.5726246833801,310.8139705657959,322.1411919593811,300.78208951950074,51.71708838219997

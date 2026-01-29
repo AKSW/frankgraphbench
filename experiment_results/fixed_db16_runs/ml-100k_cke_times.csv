@@ -1,2 +1,0 @@
-model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
-"CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001 (CPU: Apple M3 Ultra; RAM: 256GB; GPUs: [])",1484.6837129592896,2016.838457107544,2455.6759560108185,1617.504998922348,2388.600448846817,1992.6607147693635,392.56041455256724

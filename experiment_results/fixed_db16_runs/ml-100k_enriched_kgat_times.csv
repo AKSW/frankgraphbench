@@ -1,2 +1,0 @@
-model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
-KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi (CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']),53751.6649954319,55110.533029317856,56289.27739548683,54604.21646952629,58698.96130514145,55690.93063898086,1713.7577213380519
