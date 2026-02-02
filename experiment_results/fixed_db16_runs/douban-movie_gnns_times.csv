@@ -1,0 +1,3 @@
+model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
+"BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01] (CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2'])",3691.123863220215,2124.251455783844,3101.720093727112,3927.240178823471,3999.773524284363,3368.821823167801,697.726084840958
+CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi (CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']),21821.101176023483,26242.230861902237,26738.018015384674,29867.354107379913,23451.278049468994,25623.99644203186,2786.1105418660586
