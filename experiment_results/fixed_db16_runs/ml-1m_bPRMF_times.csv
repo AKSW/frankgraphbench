@@ -1,0 +1,2 @@
+model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
+"BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01] (CPU: Apple M3 Ultra; RAM: 256GB; GPUs: [])",12862.18787908554,13101.451964855194,13386.51886177063,13619.1801071167,13572.21381020546,13308.310524606704,287.82538597940726

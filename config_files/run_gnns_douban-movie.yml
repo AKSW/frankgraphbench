@@ -10,6 +10,11 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/douban-movie/processed/rating.csv
       timestamp: False
+    enrich:
+      map_path: datasets/douban-movie/processed/map.csv
+      enrich_path: datasets/douban-movie/processed/enriched.csv
+      remove_unmatched: False
+      properties: [subject, director, abstract]
 
   preprocess:
     # - method: filter_by_rating
@@ -78,26 +83,26 @@ experiment:
         validate_factor: 50 # for ml-1m 200
         validate_frac: .001  # for ml-1m .0001
         test_flag: sort
-    # - name: cKE # ERROR: loss@phase1 is nan.
-    #   config:
-    #     save_weights: True
-    #   parameters:
-    #     embed_size: 64
-    #     epoch: 1000
-    #     verbose: 10
-    #     validate_factor: 50 # for ml-1m 200
-    #     validate_frac: .001  # for ml-1m .0001
-    #     test_flag: sort
-    # - name: kGAT # ERROR: loss@phase2 is nan.
-    #   config:
-    #     save_weights: True
-    #   parameters:
-    #     embed_size: 64
-    #     epoch: 1000
-    #     verbose: 10
-    #     validate_factor: 50 # for ml-1m 200
-    #     validate_frac: .001  # for ml-1m .0001
-    #     test_flag: sort
+    - name: cKE # ERROR: loss@phase1 is nan.
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50 # for ml-1m 200
+        validate_frac: .001  # for ml-1m .0001
+        test_flag: sort
+    - name: kGAT # ERROR: loss@phase2 is nan.
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50 # for ml-1m 200
+        validate_frac: .001  # for ml-1m .0001
+        test_flag: sort
 
   evaluation:
     k: 10
@@ -105,6 +110,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/fixed_db16_runs/douban-movie_gnns.csv"
+    file: "experiment_results/fixed_db16_runs/douban-movie_enriched_gnns.csv"
     execution_times:
-      file: "experiment_results/fixed_db16_runs/douban-movie_gnns_times.csv"
+      file: "experiment_results/fixed_db16_runs/douban-movie_enriched_gnns_times.csv"
