@@ -123,6 +123,7 @@ Experiment ran using the MovieLens-1m dataset with the following presented model
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|.0028 ± .0002|.0062 ± .0004|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0843 ± .0011|.1445 ± .0017|
 |BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.0794 ± .0013|.1075 ± .0018|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0310 ± .0005|.0521 ± .0006|
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/ml-1m_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
@@ -145,6 +146,7 @@ Experiment ran using the MovieLens-1m dataset with the following presented model
 - Summarized execution time results from `experiment_results/fixed_db16_runs/ml-1m_bPRMF_times.csv` (configuration: CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []):
 
 |BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|13308 ± 287.8|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|44416 ± 1019.|
 
 ## ml-1m_enriched
 
