@@ -114,8 +114,8 @@ experiment:
         embed_size: 64
         epoch: 1000
         verbose: 10
-        validate_factor: 50 # for ml-1m 200 50 for others
-        validate_frac: .001  # for ml-1m .0001 .001 for others
+        validate_factor: 200 # for ml-1m 200 50 for others
+        validate_frac: .0001  # for ml-1m .0001 .001 for others
         test_flag: sort
     # - name: cFKG
     #   config:
