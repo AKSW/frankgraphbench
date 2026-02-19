@@ -19,6 +19,7 @@ class Entity2Rec(Recommender):
     def __init__(
             self, 
             config: dict,
+            relation_template: dict,
             feedback_file: str = None, 
             embedding_model: str = "deepwalk_based",
             embedding_model_kwargs: dict = None,
@@ -33,9 +34,9 @@ class Entity2Rec(Recommender):
             relevance: float = 0.0,
             metric: str = "NDCG",
             k: int = 5,
-            relation_template: dict = {'collab': 'rating', 'social': 'is', 'content': 'has'},
         ):
         super().__init__(config)
+        self.relation_template = relation_template
         self.feedback_file = feedback_file
         self.embedding_model = embedding_model
         self.embedding_model_kwargs = embedding_model_kwargs
@@ -50,7 +51,6 @@ class Entity2Rec(Recommender):
         self.relevance = relevance
         self.metric = metric
         self.k = k
-        self.relation_template = relation_template
         self._triples = None
         self._relations = []
         self._subgraphs = {}
@@ -124,16 +124,17 @@ class Entity2Rec(Recommender):
 
         # joining rating properties according to collab, content, social properties, and relevant score delimitations
         new_filter_temp = {}
-        for temp, rel in self.relation_template.items():
+        for temp, relation_types in self.relation_template.items(): # temp: collab, content, social / rel: comes from the unique relations from the dataset
             new_filter_temp[temp] = pd.Series()
             for relation in self._relations:
-                if rel in relation:
-                    new_filter_temp[temp] = pd.concat([new_filter_temp[temp], filter_temp[relation]])
+                for rel in relation_types:
+                    if rel in relation:
+                        new_filter_temp[temp] = pd.concat([new_filter_temp[temp], filter_temp[relation]])
 
         for rel, df in new_filter_temp.items():
             self._subgraphs[rel] = nx.subgraph(self.G_train, df)
         
-        # make relations same as template
+        # make relations be collab, content, social
         self._relations = list(self.relation_template.keys())
 
     def _compute_features(self, data, n_jobs=-1):

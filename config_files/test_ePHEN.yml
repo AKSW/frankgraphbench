@@ -59,7 +59,7 @@ experiment:
 
     test:
       method: k_fold
-      k: 2
+      k: 10
       level: "user"
 
   models:
@@ -67,13 +67,13 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_model: "sentence-transformers/distiluse-base-multilingual-cased-v2"
+        embedding_model: "Qwen/Qwen3-Embedding-8B"
         embed_with: abstract
         iterations: 30
         mi: 0.5
 
   evaluation:
-    k: 5
+    k: 10
     relevance_threshold: 0
     metrics: [MAP, nDCG]
 

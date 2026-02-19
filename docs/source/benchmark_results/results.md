@@ -3,9 +3,9 @@ Here we present the average and standard deviation results of the current benchm
 
 ## ml-100k
 
-Experiment ran using the MovieLens-100k dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k.yml`: 
+Experiment ran using the MovieLens-100k dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k.yml` and `config_files/run_gnns.yml`:
 
-- Summarized results from `experiment_results/fixed_db16_runs/ml-100k.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/ml-100k.csv` and `experiment_results/fixed_db16_runs/ml-100k_gnns.csv`:
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
@@ -23,8 +23,12 @@ Experiment ran using the MovieLens-100k dataset with the following presented mod
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|.0017 ± .0003|.0039 ± .0005|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0985 ± .0041|.1761 ± .0058|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.0069 ± .0004|.0158 ± .0006|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.2897 ± .0073|.3874 ± .0098|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0652 ± .0029|.1227 ± .0034|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.2939 ± .0056|.3898 ± .0067|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.2690 ± .0021|.3649 ± .0029|
 
-- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-100k_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-100k_times.csv` and `experiment_results/fixed_db16_runs/ml-100k_gnns_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
@@ -42,12 +46,16 @@ Experiment ran using the MovieLens-100k dataset with the following presented mod
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|66.40 ± .0470|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|50.83 ± .6383|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|74104 ± 3749.|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|2774. ± 460.9|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|37254 ± 1163.|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|3242. ± 266.1|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|38941 ± 1146.|
 
 ## ml-100k_enriched
 
-Experiment ran using the MovieLens-100k dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k_enriched.yml`: 
+Experiment ran using the MovieLens-100k dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k_enriched.yml` and `config_files/run_gnns.yml`: 
 
-- Summarized results from `experiment_results/fixed_db16_runs/ml-100k_enriched.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/ml-100k_enriched.csv` and `experiment_results/fixed_db16_runs/ml-100k_enriched_gnns.csv`:
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
@@ -65,8 +73,12 @@ Experiment ran using the MovieLens-100k dataset with DBpedia enrichement and the
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0046 ± .0003|.0107 ± .0005|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1442 ± .0022|.2350 ± .0019|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.0056 ± .0013|.0136 ± .0028|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.2887 ± .0036|.3852 ± .0049|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0410 ± .0011|.0834 ± .0017|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.2915 ± .0048|.3880 ± .0068|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.2740 ± .0030|.3707 ± .0034|
 
-- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-100k_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-100k_enriched_times.csv` and `experiment_results/fixed_db16_runs/ml-100k_enriched_gnns_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
@@ -84,12 +96,16 @@ Experiment ran using the MovieLens-100k dataset with DBpedia enrichement and the
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|108.0 ± 1.952|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|85.93 ± .7969|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|75651 ± 2808.|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|7498. ± 1095.|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|54686 ± 1834.|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|9050. ± 527.7|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|52116 ± 4862.|
 
 ## ml-1m
 
-Experiment ran using the MovieLens-1m dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-1m.yml`: 
+Experiment ran using the MovieLens-1m dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-1m.yml` and `config_files/run_gnns.yml`:
 
-- Summarized results from `experiment_results/fixed_db16_runs/ml-1m.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/ml-1m.csv`, `experiment_results/fixed_db16_runs/ml-1m_bPRMF.csv`, `experiment_results/fixed_db16_runs/ml-1m_cFKG.csv`, `experiment_results/fixed_db16_runs/ml-1m_cKE.csv` and `experiment_results/fixed_db16_runs/ml-1m_kGAT.csv`:
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
@@ -106,6 +122,10 @@ Experiment ran using the MovieLens-1m dataset with the following presented model
 |RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0025 ± .0001|.0062 ± .0004|
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|.0028 ± .0002|.0062 ± .0004|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0843 ± .0011|.1445 ± .0017|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.0794 ± .0013|.1075 ± .0018|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0310 ± .0005|.0521 ± .0006|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0798 ± .0008|.1077 ± .0011|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0646 ± .0005|.0902 ± .0004|
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/ml-1m_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
@@ -125,11 +145,18 @@ Experiment ran using the MovieLens-1m dataset with the following presented model
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|499.3 ± 8.566|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|451.9 ± 6.538|
 
+- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-1m_bPRMF_times.csv`, `experiment_results/fixed_db16_runs/ml-1m_cFKG_times.csv`, `experiment_results/fixed_db16_runs/ml-1m_cKE_times.csv` and `fixed_db16_runs/ml-1m_kGAT_times.csv` (configuration: CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []):
+
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|13308 ± 287.8|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|44416 ± 1019.|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|22654 ± 500.8|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|111312 ± 2031.|
+
 ## ml-1m_enriched
 
 Experiment ran using the MovieLens-1m dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-1m_enriched.yml`: 
 
-- Summarized results from `experiment_results/fixed_db16_runs/ml-1m_enriched.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/ml-1m_enriched.csv`, `experiment_results/fixed_db16_runs/ml-1m_enriched_bPRMF.csv`, `experiment_results/fixed_db16_runs/ml-1m_enriched_cFKG.csv`:
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
@@ -146,6 +173,7 @@ Experiment ran using the MovieLens-1m dataset with DBpedia enrichement and the f
 |RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0024 ± .0001|.0066 ± .0005|
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0019 ± .0003|.0044 ± .0004|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1252 ± .0017|.1964 ± .0020|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.0803 ± .0011|.1079 ± .0011|
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/ml-1m_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
@@ -165,11 +193,18 @@ Experiment ran using the MovieLens-1m dataset with DBpedia enrichement and the f
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|592.6 ± 5.611|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|520.1 ± 4.842|
 
+- Summarized execution time results from `experiment_results/fixed_db16_runs/ml-1m_enriched_bPRMF_times.csv`, `experiment_results/fixed_db16_runs/ml-1m_enriched_cFKG_times.csv`, `experiment_results/fixed_db16_runs/ml-1m_enriched_cKE_times.csv` and `experiment_results/fixed_db16_runs/ml-1m_enriched_kGAT_times.csv` (configuration: CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []):
+
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|13913 ± 230.0|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|
+
 ## lastfm
 
-Experiment ran using the Lastfm dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm.yml`:
+Experiment ran using the Lastfm dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm.yml` and `config_files/run_gnns.yml`:
 
-- Summarized results from `experiment_results/fixed_db16_runs/lastfm.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/lastfm.csv` and `experiment_results/fixed_db16_runs/lastfm_gnns.csv`:
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
@@ -186,6 +221,10 @@ Experiment ran using the Lastfm dataset with the following presented models and 
 |RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0002 ± .0000|.0005 ± .0002|
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=name;iterations=30;mi=0.5|.0002 ± .0000|.0005 ± .0002|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0757 ± .0025|.1774 ± .0047|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.1032 ± .0013|.2362 ± .0036|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0031 ± .0026|.0094 ± .0073|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.1049 ± .0033|.2380 ± .0085|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.1017 ± .0021|.2342 ± .0032|
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/lastfm_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
@@ -205,11 +244,20 @@ Experiment ran using the Lastfm dataset with the following presented models and 
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=name;iterations=30;mi=0.5|262.9 ± .5831|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|144.7 ± 1.818|
 
+- Summarized execution time results from `experiment_results/fixed_db16_runs/lastfm_gnns_times.csv` (configuration: CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []):
+
+| Model | Execution Time (s) |
+|---------|----------------------|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|1883. ± 72.75|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|7920. ± 67.19|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|2537. ± 373.2|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|19364 ± 1473.|
+
 ## lastfm_enriched
 
-Experiment ran using the Lastfm dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm-enriched.yml`:
+Experiment ran using the Lastfm dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm-enriched.yml` and `config_files/run_gnns.yml`:
 
-- Summarized results from `experiment_results/fixed_db16_runs/lastfm_enriched.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/lastfm_enriched.csv` and `experiment_results/fixed_db16_runs/lastfm_enriched_gnns.csv`:
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
@@ -226,6 +274,10 @@ Experiment ran using the Lastfm dataset with DBpedia enrichement and the followi
 |RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0002 ± .0000|.0004 ± .0002|
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0001 ± .0000|.0002 ± .0001|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0840 ± .0010|.1992 ± .0022|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.1035 ± .0027|.2392 ± .0035|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0015 ± .0011|.0045 ± .0030|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.1035 ± .0030|.2394 ± .0043|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.1005 ± .0043|.2327 ± .0099|
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/lastfm_enriched_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
@@ -245,11 +297,20 @@ Experiment ran using the Lastfm dataset with DBpedia enrichement and the followi
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-roberta-large-v1;embed_with=abstract;iterations=30;mi=0.5|450.5 ± 1.035|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|368.2 ± 6.358|
 
+- Summarized execution time results from `experiment_results/fixed_db16_runs/lastfm_enriched_gnns_times.csv` (configuration: CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []):
+
+| Model | Execution Time (s) |
+|---------|----------------------|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|6039. ± 103.1|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|22985 ± 317.9|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|8218. ± 92.23|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|57487 ± 8615.|
+
 ## douban-movie
 
-Experiment ran using the Douban Movie dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_douban-movie.yml`: 
+Experiment ran using the Douban Movie dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_douban-movie.yml` and `config_files/run_gnns_douban-movie.yml`: 
 
-- Summarized results from `experiment_results/fixed_db16_runs/douban-movie.csv`:
+- Summarized results from `experiment_results/fixed_db16_runs/douban-movie.csv` and `experiment_results/fixed_db16_runs/douban-movie_gnns.csv`:
 
 | Model | MAP@10 | nDCG@10 |
 |---------|----------|------------|
@@ -267,8 +328,10 @@ Experiment ran using the Douban Movie dataset with the following presented model
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=name_EN;iterations=30;mi=0.5|.5925 ± .0035|.6586 ± .0018|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.7401 ± .0046|.8086 ± .0042|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.5956 ± .0134|.6846 ± .0089|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.3091 ± .0036|.3452 ± .0029|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.3031 ± .0048|.3398 ± .0036|
 
-- Summarized execution time results from `experiment_results/fixed_db16_runs/douban-movie_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
+- Summarized execution time results from `experiment_results/fixed_db16_runs/douban-movie_times.csv` and `experiment_results/fixed_db16_runs/douban-movie_gnns_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 
 | Model | Execution Time (s) |
 |---------|----------------------|
@@ -286,6 +349,8 @@ Experiment ran using the Douban Movie dataset with the following presented model
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=name_EN;iterations=30;mi=0.5|1099. ± 2.803|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|1488. ± 13.74|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|6276. ± 160.6|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|3369. ± 697.7|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|25624 ± 2786.|
 
 ## douban-movie_enriched
 
@@ -309,6 +374,10 @@ Experiment ran using the Douban Movie dataset with DBpedia enrichement and the f
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.5283 ± .0032|.6225 ± .0019|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.7372 ± .0044|.8044 ± .0047|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.5944 ± .0089|.6829 ± .0081|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.3136 ± .0035|.3544 ± .0020|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.3096 ± .0020|.3509 ± .0012|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.3135 ± .0036|.3543 ± .0021|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.3116 ± .0025|.3527 ± .0015|
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/douban-movie_times_enriched.csv` (configuration: CPU: AMD Ryzen 5 7600 6-Core Processor; RAM: 31GB; GPUs: ['NVIDIA GeForce RTX 4060']):
 
@@ -328,3 +397,7 @@ Experiment ran using the Douban Movie dataset with DBpedia enrichement and the f
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|1114. ± 7.497|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|1470. ± 16.06|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|6278. ± 167.4|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|3609. ± 736.6|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|30844 ± 3791.|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|4083. ± 119.5|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|45945 ± 7669.|

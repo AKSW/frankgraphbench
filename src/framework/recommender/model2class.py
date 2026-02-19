@@ -46,5 +46,21 @@ model2class = {
     'entity2rec': {
         'submodule': 'entity2rec.model',
         'class': 'Entity2Rec'
+    },
+    'kGAT': {
+        'submodule': 'kGAT.model',
+        'class': 'KGAT'
+    },
+    'bPRMF': {
+        'submodule': 'bPRMF.model',
+        'class': 'BPRMF'
+    },
+    'cFKG': {
+        'submodule': 'cFKG.model',
+        'class': 'CFKG'
+    },
+    'cKE': {
+        'submodule': 'cKE.model',
+        'class': 'CKE'
     }
 }

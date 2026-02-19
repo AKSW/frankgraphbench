@@ -12,7 +12,7 @@ Check the [docs](https://frankgraphbench.readthedocs.io/en/latest/index.html) fo
 
 ## pip
 
-We recommend using a python 3.8 virtual environment
+We recommend using a python 3.8 virtual environment:
 
 ```shell
 pip install pybind11
@@ -113,7 +113,7 @@ Dataset enrichment is done through a fixed DBpedia endpoint available at ..., wi
 
 ## pip
 
-We recommend using a python 3.8 virtual environment
+For x86 windows and linux PCs we recommend using a python 3.8 virtual environment. For Apple Silicon we recommend a python 3.11 virtual environment and using the manual install with `requirements_framework_apple.txt`, however the deep_walk_based embedding method does not work in this version:
 
 ```shell
 pip install pybind11
@@ -201,6 +201,14 @@ Install the require packages using python [virtualenv](https://docs.python.org/3
 python3 -m venv venv_framework/
 source venv_framework/bin/activate
 pip3 install -r requirements_framework.txt 
+```
+
+Apple silicon:
+
+```shell
+python3 -m venv venv_framework/
+source venv_framework/bin/activate
+pip3 install -r requirements_framework_apple.txt
 ```
 
 ### Usage 

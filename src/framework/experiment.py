@@ -111,10 +111,3 @@ def run(config_path):
     if 'execution_times' in experiment['report']:
         et_reporter = ExecutionTimesReporter(experiment['report']['execution_times']['file'])
         et_reporter.report(model_execution_times)
-                
-        
-
-
-
-
-

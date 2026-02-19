@@ -1,0 +1,81 @@
+experiment:
+  dataset:
+    name: ml-100k
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/ml-100k/processed/item.csv
+      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/ml-100k/processed/user.csv
+      extra_features: [gender, occupation] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/ml-100k/processed/rating.csv
+      timestamp: True
+
+  preprocess:
+    # - method: filter_by_rating
+    #   parameters:
+    #     threshold: 20
+    # - method: binarize
+    #   parameters:
+    #     threshold: 4
+    - method: filter_kcore
+      parameters:
+        k: 20
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+    # test:
+    #   method: random_by_ratio
+    #   level: global
+    #   p: 0.2
+    # validation:
+    #   method: random_by_ratio
+    #   level: global
+    #   p: 0.2
+
+    # test:
+    #   method: timestamp_by_ratio
+    #   level: user
+    #   p: 0.1
+    # validation:
+    #   level: user
+    #   method: timestamp_by_ratio
+    #   p: 0.2
+
+    # test:
+    #   method: fixed_timestamp
+    #   # type: global_level
+    #   timestamp: 890000000
+    # validation:
+    #   method: fixed_timestamp
+    #   timestamp: 880000000
+
+    test:
+      method: k_fold
+      k: 5
+      level: "user"
+
+  models:
+    - name: cKE
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
+      
+
+  evaluation:
+    k: 10
+    relevance_threshold: 0
+    metrics: [MAP, nDCG]
+
+  report:
+    file: "experiment_results/fixed_db16_runs/ml-100k_cke.csv"
+    execution_times:
+      file: "experiment_results/fixed_db16_runs/ml-100k_cke_times.csv"

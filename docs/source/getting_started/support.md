@@ -129,6 +129,58 @@ Currently the supported Recommender System models are:
     - `seed`: seed for fixing the sampling of negative and positive examples for training.
     - `relevance`: the necessary relevance of an evaluation from a user to be counted as a recommendation.
 
+### bPRMF
+- BPR: Bayesian Personalized Ranking from Implicit Feedback.
+  - Reference for implementation: Xiang Wang, Xiangnan He, Yixin Cao, Meng Liu and Tat-Seng Chua. 2019. KGAT: Knowledge Graph Attention Network for Recommendation. KDD '19: Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining. 950-958. Proposed in: Steffen Rendle, Christoph Freudenthaler, Zeno Gantner, and Lars Schmidt-Thieme. 2009. BPR: Bayesian personalized ranking from implicit feedback. Proceedings of the Twenty-Fifth Conference on Uncertainty in Artificial Intelligence (UAI '09). 452–461.
+  - Main parameters
+    - `embed_size`: the embedding vector size.
+    - `epoch`: the amount of epochs to be used during the training of the graph neural network.
+    - `validate_factor`: the amount of epochs where a validation for possible early stopping is triggered.
+    - `validate_frac`: the fraction amount of the training triples to be used for validation.
+    - `random_seed`: the seed for separating the validation set.
+    - `test_flag`: the type of testing to be executed during validation.
+    - `ks`: the evaluation type for validation.
+
+### cKE
+- CKE: Collaborative Knowledge Base Embedding for Recommender Systems.
+  - Reference for implementation: Xiang Wang, Xiangnan He, Yixin Cao, Meng Liu and Tat-Seng Chua. 2019. KGAT: Knowledge Graph Attention Network for Recommendation. KDD '19: Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining. 950-958. Proposed in: Fuzheng Zhang, Nicholas Jing Yuan, Defu Lian, Xing Xie, and Wei-Ying Ma. 2016. Collaborative Knowledge Base Embedding for Recommender Systems. KDD '16: Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining. 353–362.
+  - Main parameters
+    - `embed_size`: the embedding vector size.
+    - `kge_size`: vector size of the knowledge graph embedding.
+    - `epoch`: the amount of epochs to be used during the training of the graph neural network.
+    - `validate_factor`: the amount of epochs where a validation for possible early stopping is triggered.
+    - `validate_frac`: the fraction amount of the training triples to be used for validation.
+    - `random_seed`: the seed for separating the validation set.
+    - `test_flag`: the type of testing to be executed during validation.
+    - `ks`: the evaluation type for validation.
+
+
+### cFKG
+- CFKG: Collaborative Filtering Knowledge Graph for Recommendation.
+  - Reference for implementation: Xiang Wang, Xiangnan He, Yixin Cao, Meng Liu and Tat-Seng Chua. 2019. KGAT: Knowledge Graph Attention Network for Recommendation. KDD '19: Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining. 950-958. Proposed in: Qingyao Ai, Vahid Azizi, Xu Chen, and Yongfeng Zhang. 2018. Learning Heterogeneous Knowledge Base Embeddings for Explainable Recommendation. arXiv:1805.03352.
+  - Main parameters
+    - `embed_size`: the embedding vector size.
+    - `kge_size`: vector size of the knowledge graph embedding.
+    - `epoch`: the amount of epochs to be used during the training of the graph neural network.
+    - `validate_factor`: the amount of epochs where a validation for possible early stopping is triggered.
+    - `validate_frac`: the fraction amount of the training triples to be used for validation.
+    - `random_seed`: the seed for separating the validation set.
+    - `test_flag`: the type of testing to be executed during validation.
+    - `ks`: the evaluation type for validation.
+
+### kGAT
+- KGAT: Knowledge Graph Attention Network for Recommendation.
+  - Reference: Xiang Wang, Xiangnan He, Yixin Cao, Meng Liu and Tat-Seng Chua. 2019. KGAT: Knowledge Graph Attention Network for Recommendation. KDD '19: Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining. 950-958.
+  - Main parameters
+    - `embed_size`: the embedding vector size.
+    - `kge_size`: vector size of the knowledge graph embedding.
+    - `epoch`: the amount of epochs to be used during the training of the graph neural network.
+    - `validate_factor`: the amount of epochs where a validation for possible early stopping is triggered.
+    - `validate_frac`: the fraction amount of the training triples to be used for validation.
+    - `random_seed`: the seed for separating the validation set.
+    - `test_flag`: the type of testing to be executed during validation.
+    - `ks`: the evaluation type for validation.
+
 
 ## Pre-processing Methods
 
