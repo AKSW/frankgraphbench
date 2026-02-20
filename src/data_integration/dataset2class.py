@@ -30,5 +30,9 @@ dataset2class = {
     'amazon-video_games-5': {
         'submodule': 'datasets.amazon',
         'class': 'AmazonVideoGames5'
+    },
+    'mind-small': {
+        'submodule': 'datasets.mind',
+        'class': 'MINDSmall'
     }
 }
