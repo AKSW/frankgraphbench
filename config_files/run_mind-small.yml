@@ -76,82 +76,82 @@ experiment:
         n_walks: 50
         embedding_size: 64
         epochs: 1
-    - name: transE
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 150
-        scoring_fct_norm: 1
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: transH
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 150
-        scoring_fct_norm: 2
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: transR
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 150
-        relation_dim: 90
-        scoring_fct_norm: 2
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: transD
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 150
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: tuckER
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 200
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: rESCAL
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 50
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: distMult
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 50
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: complEx
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 100
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
-    - name: rotatE
-      config:
-        save_weights: True
-      parameters:
-        embedding_dim: 200
-        epochs: 25
-        seed: 42
-        triples: all # only (ratings) or (all) triples for training
+    # - name: transE
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_dim: 150
+    #     scoring_fct_norm: 1
+    #     epochs: 25
+    #     seed: 42
+    #     triples: all # only (ratings) or (all) triples for training
+    # - name: transH
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_dim: 150
+    #     scoring_fct_norm: 2
+    #     epochs: 25
+    #     seed: 42
+    #     triples: all # only (ratings) or (all) triples for training
+    # - name: transR
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_dim: 150
+    #     relation_dim: 90
+    #     scoring_fct_norm: 2
+    #     epochs: 25
+    #     seed: 42
+    #     triples: all # only (ratings) or (all) triples for training
+    # - name: transD
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_dim: 150
+    #     epochs: 25
+    #     seed: 42
+    #     triples: all # only (ratings) or (all) triples for training
+    # - name: tuckER
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_dim: 200
+    #     epochs: 25
+    #     seed: 42
+    #     triples: all # only (ratings) or (all) triples for training
+    # - name: rESCAL
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_dim: 50
+    #     epochs: 25
+    #     seed: 42
+    #     triples: all # only (ratings) or (all) triples for training
+    # - name: distMult
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_dim: 50
+    #     epochs: 25
+    #     seed: 42
+    #     triples: all # only (ratings) or (all) triples for training
+    # - name: complEx
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_dim: 100
+    #     epochs: 25
+    #     seed: 42
+    #     triples: all # only (ratings) or (all) triples for training
+    # - name: rotatE
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     embedding_dim: 200
+    #     epochs: 25
+    #     seed: 42
+    #     triples: all # only (ratings) or (all) triples for training
     - name: ePHEN
       config:
         save_weights: True
@@ -185,6 +185,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/mind/mind-small.csv"
+    file: "experiment_results/mind/mind-small_deep.csv"
     execution_times:
-      file: "experiment_results/mind/mind-small_times.csv"
+      file: "experiment_results/mind/mind-small_deep_times.csv"
