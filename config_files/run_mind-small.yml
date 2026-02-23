@@ -157,7 +157,7 @@ experiment:
         save_weights: True
       parameters:
         embedding_model: sentence-transformers/all-mpnet-base-v2
-        embed_with: movie_title
+        embed_with: abstract
         iterations: 30
         mi: 0.5
     - name: ePHEN
