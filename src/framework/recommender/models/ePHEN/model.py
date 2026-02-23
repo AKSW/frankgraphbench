@@ -109,6 +109,8 @@ class EPHEN(Recommender):
         model = SentenceTransformer(self.embedding_model)
         item_properties = pd.DataFrame(self.G_train.get_item_property_edges())
         filtered_properties = item_properties[1][item_properties[1].apply(lambda x: x.get_property_type() == self.embed_with)].reset_index(drop=True)
+        if len(filtered_properties) == 0:
+            raise ValueError(f"No properties of type '{self.embed_with}' found for items in the graph.")
         self.init_embeddings = {}
         for property in tqdm(filtered_properties):
             self.init_embeddings[property] = model.encode(property.id)
