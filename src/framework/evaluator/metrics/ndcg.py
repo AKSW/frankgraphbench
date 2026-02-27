@@ -1,4 +1,5 @@
 from ..metric import Metric
+
 import numpy as np
 
 class nDCG(Metric):

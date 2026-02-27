@@ -6,5 +6,17 @@ metric2class = {
     'nDCG': {
         'submodule': 'metrics.ndcg',
         'class': 'nDCG'
+    },
+    'precision': {
+        'submodule': 'metrics.precision',
+        'class': 'Precision'
+    },
+    'recall': {
+        'submodule': 'metrics.recall',
+        'class': 'Recall'
+    },
+    'F-score': {
+        'submodule': 'metrics.f-score',
+        'class': 'FScore'
     }
 }

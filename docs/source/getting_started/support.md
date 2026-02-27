@@ -10,6 +10,7 @@ Currently the supported datasets are:
 |[MovieLens-1M](https://grouplens.org/datasets/movielens/1m/)|3253|3883|ml-1m|
 |[LastFM-hetrec-2011](https://grouplens.org/datasets/hetrec-2011/)|8628|17632|lastfm|
 |[Douban-Movie-Short-Comments-Dataset](https://www.kaggle.com/datasets/utmhikari/doubanmovieshortcomments/data)|24|28|douban-movie|
+|[MIND-small](https://msnews.github.io/)|30409|51282|mind-small|
 |[Yelp-Dataset](https://www.yelp.com/dataset/download)|---|150348|yelp|
 |[Amazon-Video-Games-5](https://nijianmo.github.io/amazon/index.html)|---|21106|amazon-video_games-5|
 
@@ -201,6 +202,9 @@ Currently the supported Splitting method are:
 Those are the already implemented metrics:
 * MAP@k
 * nDCG@k
+* Precision@k
+* Recall@k
+* F-score@k
 
 ## Chart Generation
 
