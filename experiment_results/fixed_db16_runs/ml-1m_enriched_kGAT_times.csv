@@ -1,0 +1,2 @@
+model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
+KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi (CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []),162433.6340789795,148777.21907186508,149861.1116051674,145061.09436488152,142243.7334561348,149675.35851540565,6930.154957847329
