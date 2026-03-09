@@ -54,6 +54,8 @@ class MINDSmall(MIND):
         
         del df["title_entities"]
         del df["abstract_entities"]
+
+        df["item_id::string"] = df["item_id::string"].apply(lambda x: x.replace("N", ""))
         
         return df
     
@@ -62,6 +64,7 @@ class MINDSmall(MIND):
         filename = os.path.join(self.input_path, "behaviors.tsv")
         df = pd.read_csv(filename, sep='\t', names=["impression_id", "user_id", "time", "history", "impressions"])
         df = df[["user_id"]].drop_duplicates()
+        df["user_id"] = df["user_id"].apply(lambda x: x.replace("U", ""))
         return df.rename(columns=self.user_fields)
     
     def load_rating_data(self):
@@ -74,8 +77,8 @@ class MINDSmall(MIND):
         for _, row in df.iterrows():
             for impression in row["impressions"].split(self.behavior_separator):
                 item_id, rating = impression.split("-")
-                rating_df["user_id::string"].append(row["user_id"])
-                rating_df["item_id::string"].append(item_id)
+                rating_df["user_id::string"].append(row["user_id"].replace("U", ""))
+                rating_df["item_id::string"].append(item_id.replace("N", ""))
                 rating_df["rating::number"].append(int(rating))
                 rating_df["timestamp::string"].append(row["time"])
 
@@ -86,7 +89,9 @@ class MINDSmall(MIND):
         filename = os.path.join(self.input_path, "news.tsv")
         df = pd.read_csv(filename, sep='\t', names=self.item_fields)
 
-        if not set(df["item_id::string"].unique()).issubset(set(df_item["item_id"].unique())):
+        df["item_id::string"] = df["item_id::string"].apply(lambda x: x.replace("N", ""))
+        
+        if not set(df["item_id::string"].unique()).issubset(set(df_item["item_id"].astype(str).unique())):
             raise ValueError("News tsv file contains news items that are not present in the item dataframe.")
 
         title_entities = df[["item_id::string", "title_entities"]][(df["title_entities"] != "[]") & (df["title_entities"].notna())]
