@@ -214,5 +214,7 @@ class CFKG(Recommender):
         recommendations = {users_dict[user]: [] for user in users_to_test}
         for user, rec_items, _ in tqdm(ret, desc="generating return dict from recommendations"):
             recommendations[users_dict[user]] = list(set(recommendations[users_dict[user]]+[items_dict[item] for item in rec_items]))
+
+        self._sess.close()
         
         return recommendations
