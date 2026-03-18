@@ -157,10 +157,10 @@ class Graph(nx.Graph):
         G = nx.relabel_nodes(self, mapping, copy=True)
         nx.set_node_attributes(G, {v: k for k, v in mapping.items()}, "old_label")
 
-        G.item_nodes = self.item_nodes.copy()
-        G.user_nodes = self.user_nodes.copy()
-        G.rating_edges = self.rating_edges.copy()
-        G.rating_item2users = self.rating_item2users.copy()
+        G.item_nodes = set([mapping[item] for item in self.item_nodes])
+        G.user_nodes = set([mapping[user] for user in self.user_nodes])
+        G.rating_edges = {mapping[user]: set([mapping[item] for item in item_set]) for user, item_set in self.rating_edges}
+        G.rating_item2users = {mapping[item]: set([mapping[user] for user in user_set]) for item, user_set in self.rating_item2users}
 
         return G
 
@@ -169,10 +169,10 @@ class Graph(nx.Graph):
         G = nx.relabel_nodes(self, mapping, copy=True)
         nx.set_node_attributes(G, {v: k for k, v in mapping.items()}, "old_label")
 
-        G.item_nodes = self.item_nodes.copy()
-        G.user_nodes = self.user_nodes.copy()
-        G.rating_edges = self.rating_edges.copy()
-        G.rating_item2users = self.rating_item2users.copy()
+        G.item_nodes = set([mapping[item] for item in self.item_nodes])
+        G.user_nodes = set([mapping[user] for user in self.user_nodes])
+        G.rating_edges = {mapping[user]: set([mapping[item] for item in item_set]) for user, item_set in self.rating_edges}
+        G.rating_item2users = {mapping[item]: set([mapping[user] for user in user_set]) for item, user_set in self.rating_item2users}
 
         return G
     
