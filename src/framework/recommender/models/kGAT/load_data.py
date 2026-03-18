@@ -24,6 +24,7 @@ class Data(object):
         test_ratings_triples = test_ratings_triples.reset_index(drop=True)
 
         self.all_items = set(ratings_triples['tail'].to_list())
+        self.all_users = ratings_triples['head'].unique()
 
         self.train_data, self.train_user_dict = self._load_ratings(train_ratings_triples)
         self.test_data, self.test_user_dict = self._load_ratings(test_ratings_triples)
@@ -54,8 +55,8 @@ class Data(object):
         return np.array(inter_mat), user_dict
 
     def _statistic_ratings(self):
-        self.n_users = max(max(self.train_data[:, 0]), max(self.test_data[:, 0])) + 1
-        self.n_items = max(max(self.train_data[:, 1]), max(self.test_data[:, 1])) + 1
+        self.n_users = len(self.all_users)
+        self.n_items = len(self.all_items)
         self.n_train = len(self.train_data)
         self.n_test = len(self.test_data)
 
