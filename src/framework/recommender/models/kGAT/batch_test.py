@@ -82,7 +82,7 @@ def test_one_user(x):
     #user u's items in the test set
     user_pos_test = data_generator.test_user_dict[u]
 
-    test_items = list(data_generator.all_items - set(training_items))
+    test_items = list(set(data_generator.all_items) - set(training_items))
 
     if args.test_flag == 'part':
         r, auc = ranklist_by_heapq(test_items, rating, args.ks)
@@ -191,7 +191,7 @@ def test_one_user_rank_list(x):
     except Exception:
         training_items = []
 
-    test_items = list(data_generator.all_items - set(training_items))
+    test_items = list(set(data_generator.all_items) - set(training_items))
 
     r, auc = ranklist_by_heapq(test_items, rating, args.ks)
 
