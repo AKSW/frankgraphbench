@@ -205,13 +205,13 @@ class Graph(nx.Graph):
         
         ratings = self.get_rating_edges()
         desc = "Generating ratings triples integer"
-        for user, rating in tqdm(ratings, desc=desc):
+        for user, item in tqdm(ratings, desc=desc):
             # user
-            triples_return["head"].append(int(user.get_id()))
+            triples_return["head"].append(user)
             # relation
             triples_return["relation"].append(1)
             # item
-            triples_return["tail"].append(int(rating.get_id()))
+            triples_return["tail"].append(item)
 
         return triples_return
     
