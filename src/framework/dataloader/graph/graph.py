@@ -159,8 +159,8 @@ class Graph(nx.Graph):
 
         G.item_nodes = set([mapping[item] for item in self.item_nodes])
         G.user_nodes = set([mapping[user] for user in self.user_nodes])
-        G.rating_edges = {mapping[user]: set([mapping[item] for item in item_set]) for user, item_set in self.rating_edges}
-        G.rating_item2users = {mapping[item]: set([mapping[user] for user in user_set]) for item, user_set in self.rating_item2users}
+        G.rating_edges = {mapping[user]: set([mapping[item] for item in item_set]) for user, item_set in self.rating_edges.items()}
+        G.rating_item2users = {mapping[item]: set([mapping[user] for user in user_set]) for item, user_set in self.rating_item2users.items()}
 
         return G
 
