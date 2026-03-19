@@ -14,8 +14,8 @@ cores = multiprocess.cpu_count() // 2
 
 def ranklist_by_heapq(test_items, rating, Ks):
     item_score = {}
-    for i in test_items:
-        item_score[i] = rating[i]
+    for idx, item in enumerate(test_items):
+        item_score[item] = rating[idx]
 
     K_max = max(Ks)
     K_max_item_score = heapq.nlargest(K_max, item_score, key=item_score.get)
@@ -40,8 +40,8 @@ def get_auc(item_score, user_pos_test):
 
 def ranklist_by_sorted(user_pos_test, test_items, rating, Ks):
     item_score = {}
-    for i in test_items:
-        item_score[i] = rating[i]
+    for idx, item in enumerate(test_items):
+        item_score[item] = rating[idx]
 
     K_max = max(Ks)
     K_max_item_score = heapq.nlargest(K_max, item_score, key=item_score.get)
