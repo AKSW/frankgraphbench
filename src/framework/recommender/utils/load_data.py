@@ -55,8 +55,8 @@ class Data(object):
         return np.array(inter_mat), user_dict
 
     def _statistic_ratings(self):
-        self.n_users = len(self.all_users)
-        self.n_items = len(self.all_items)
+        self.n_users = max(max(self.train_data[:, 0]), max(self.test_data[:, 0])) + 1
+        self.n_items = max(max(self.train_data[:, 1]), max(self.test_data[:, 1])) + 1
         self.n_train = len(self.train_data)
         self.n_test = len(self.test_data)
 

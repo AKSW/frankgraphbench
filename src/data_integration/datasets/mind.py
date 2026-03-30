@@ -1,6 +1,7 @@
 import os
 
 from ..dataset import Dataset
+from tqdm import tqdm
 
 import pandas as pd
 
@@ -11,7 +12,7 @@ class MIND(Dataset):
     def __init__(self, input_path, output_path, n_workers=1):
         super().__init__(input_path, output_path, n_workers=n_workers)
         self.item_fields = [
-            "item_id::string",
+            "news_id::string",
             "category::string",
             "subcategory::string",
             "title::string",
@@ -20,7 +21,7 @@ class MIND(Dataset):
             "title_entities",
             "abstract_entities"
         ]
-        self.user_fields = {"user_id":"user_id::string"}
+        self.user_fields = {"user_id":"user_og::string"}
         self.behavior_separator = " "  # separator for history and impressions in behavior file
         self.rating_fields = [
             "user_id::string",
@@ -55,7 +56,7 @@ class MINDSmall(MIND):
         del df["title_entities"]
         del df["abstract_entities"]
 
-        df["item_id::string"] = df["item_id::string"].apply(lambda x: x.replace("N", ""))
+        df["item_id::string"] = df.index.astype(str)
         
         return df
     
@@ -64,8 +65,9 @@ class MINDSmall(MIND):
         filename = os.path.join(self.input_path, "behaviors.tsv")
         df = pd.read_csv(filename, sep='\t', names=["impression_id", "user_id", "time", "history", "impressions"])
         df = df[["user_id"]].drop_duplicates()
-        df["user_id"] = df["user_id"].apply(lambda x: x.replace("U", ""))
-        return df.rename(columns=self.user_fields)
+        df = df.rename(columns=self.user_fields).reset_index(drop=True)
+        df["user_id::string"] = df.index.astype(str)
+        return df
     
     def load_rating_data(self):
         # Reading and parsing behavior file of mind-small dataset
@@ -73,16 +75,28 @@ class MINDSmall(MIND):
         df = pd.read_csv(filename, sep='\t', names=["impression_id", "user_id", "time", "history", "impressions"])
         del df["history"]
 
-        rating_df = {field: [] for field in self.rating_fields}
-        for _, row in df.iterrows():
+        user_filename = os.path.join(self.output_path, "user.csv")
+        item_filename = os.path.join(self.output_path, "item.csv")
+        
+        if os.path.exists(user_filename) and os.path.exists(item_filename):
+            df_user = pd.read_csv(user_filename)
+            df_item = pd.read_csv(item_filename)
+        else:
+            raise ValueError("User and Item files must be processed before processing the rating data.")
+        
+        user_dict = dict(zip(df_user["user_og::string"], df_user["user_id::string"]))
+        item_dict = dict(zip(df_item["news_id::string"], df_item["item_id::string"]))
+
+        rating_dict = {field: [] for field in self.rating_fields}
+        for _, row in tqdm(df.iterrows(), total=df.shape[0], desc="Processing ratings"):
             for impression in row["impressions"].split(self.behavior_separator):
                 item_id, rating = impression.split("-")
-                rating_df["user_id::string"].append(row["user_id"].replace("U", ""))
-                rating_df["item_id::string"].append(item_id.replace("N", ""))
-                rating_df["rating::number"].append(int(rating))
-                rating_df["timestamp::string"].append(row["time"])
+                rating_dict["user_id::string"].append(str(user_dict.get(row["user_id"])))
+                rating_dict["item_id::string"].append(str(item_dict.get(item_id)))
+                rating_dict["rating::number"].append(int(rating))
+                rating_dict["timestamp::string"].append(row["time"])
 
-        return pd.DataFrame(rating_df)
+        return pd.DataFrame(rating_dict)
     
     def entity_linking(self, df_item):
         # adding maping info from the abstract and title entities

@@ -207,11 +207,11 @@ class Graph(nx.Graph):
         desc = "Generating ratings triples integer"
         for user, item in tqdm(ratings, desc=desc):
             # user
-            triples_return["head"].append(user)
+            triples_return["head"].append(int(user.get_id()))
             # relation
             triples_return["relation"].append(1)
             # item
-            triples_return["tail"].append(item)
+            triples_return["tail"].append(int(item.get_id()))
 
         return triples_return
     
