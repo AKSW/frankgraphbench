@@ -14,8 +14,8 @@ cores = multiprocess.cpu_count() // 2
 
 def ranklist_by_heapq(test_items, rating, Ks):
     item_score = {}
-    for i in test_items:
-        item_score[i] = rating[i]
+    for idx, item in enumerate(test_items):
+        item_score[item] = rating[idx]
 
     K_max = max(Ks)
     K_max_item_score = heapq.nlargest(K_max, item_score, key=item_score.get)
@@ -40,8 +40,8 @@ def get_auc(item_score, user_pos_test):
 
 def ranklist_by_sorted(user_pos_test, test_items, rating, Ks):
     item_score = {}
-    for i in test_items:
-        item_score[i] = rating[i]
+    for idx, item in enumerate(test_items):
+        item_score[item] = rating[idx]
 
     K_max = max(Ks)
     K_max_item_score = heapq.nlargest(K_max, item_score, key=item_score.get)
@@ -82,7 +82,7 @@ def test_one_user(x):
     #user u's items in the test set
     user_pos_test = data_generator.test_user_dict[u]
 
-    test_items = list(data_generator.all_items - set(training_items))
+    test_items = list(set(data_generator.all_items) - set(training_items))
 
     if args.test_flag == 'part':
         r, auc = ranklist_by_heapq(test_items, rating, args.ks)
@@ -191,7 +191,7 @@ def test_one_user_rank_list(x):
     except Exception:
         training_items = []
 
-    test_items = list(data_generator.all_items - set(training_items))
+    test_items = list(set(data_generator.all_items) - set(training_items))
 
     r, auc = ranklist_by_heapq(test_items, rating, args.ks)
 

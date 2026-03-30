@@ -201,8 +201,8 @@ class CFKG(Recommender):
 
 
     def get_recommendations(self, k : int = 5) -> Dict[UserNode, List[ItemNode]]:
-        users_dict = {key: value for key, value in [(int(x.get_id()), x) for x in self.G_train.get_user_nodes()]}
-        items_dict = {key: value for key, value in [(int(x.get_id()), x) for x in self.G_train.get_item_nodes()]}
+        users_dict = {key: value for key, value in [(x, self.G_train.nodes[x]["old_label"]) for x in self.G_train.get_user_nodes()]}
+        items_dict = {key: value for key, value in [(x, self.G_train.nodes[x]["old_label"]) for x in self.G_train.get_item_nodes()]}
 
         users_to_test = list(users_dict.keys())
         print('getting recommendations start...')
