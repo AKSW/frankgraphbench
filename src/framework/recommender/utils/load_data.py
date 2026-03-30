@@ -23,6 +23,7 @@ class Data(object):
         train_ratings_triples = ratings_triples[~ratings_triples.isin(test_ratings_triples)].dropna().reset_index(drop=True).astype(int)
         test_ratings_triples = test_ratings_triples.reset_index(drop=True)
 
+        self.all_users = set(ratings_triples['head'].to_list())
         self.all_items = set(ratings_triples['tail'].to_list())
 
         self.train_data, self.train_user_dict = self._load_ratings(train_ratings_triples)

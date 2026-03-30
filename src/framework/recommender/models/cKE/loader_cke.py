@@ -6,7 +6,7 @@ Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In
 '''
 import numpy as np
 import random as rd
-from framework.recommender.models.cKE.load_data import Data
+from framework.recommender.utils.load_data import Data
 
 class CKE_loader(Data):
     def __init__(self, ratings_triples, item_property_triples, args, batch_size, random_seed):

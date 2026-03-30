@@ -5,7 +5,7 @@ Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In
 @author: Xiang Wang (xiangwang@u.nus.edu)
 @modifiedBy: Paulo do Carmo on Dec, 2025
 '''
-from framework.recommender.models.bPRMF.load_data import Data
+from framework.recommender.utils.load_data import Data
 
 class BPRMF_loader(Data):
     def __init__(self, ratings_triples, item_property_triples, args, batch_size, random_seed):
