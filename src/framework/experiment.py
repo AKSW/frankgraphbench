@@ -1,8 +1,6 @@
 import yaml
-import json
 import importlib
 from collections import defaultdict
-from copy import deepcopy
 
 from .dataloader.dataloader import load, preprocess, split
 from .recommender.model2class import model2class
@@ -90,7 +88,7 @@ def run(config_path):
         print('----'*20)
 
 
-    print(f'Metrics final result')
+    print('Metrics final result')
     for model, metrics in model_metrics.items():
         print(f'{model}')
         metrics_mean = np.array(metrics).mean(axis=0)
@@ -98,7 +96,7 @@ def run(config_path):
         for idx, (metric_mean, metric_std) in enumerate(zip(metrics_mean, metrics_std)):
             print(f'\t{eval_metrics[idx].name()} mean: {metric_mean} +- {metric_std}')
     print('')
-    print(f'Execution times final result')
+    print('Execution times final result')
     for model, execution_times in model_execution_times.items():
         print(f'model: {model}; CPU: {cpuinfo.get_cpu_info()["brand_raw"]}; RAM: {round(psutil.virtual_memory().total/(1024**3))}GB; GPUs: {[gpu.name for gpu in GPUtil.getGPUs()]}')
         execution_times_mean = np.array(execution_times).mean(axis=0)

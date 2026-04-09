@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 class Dataset:
     def __init__(self, input_path, output_path, n_workers=1):
-        r"""
+        """
         Base class for Recommender System's datasets
         """
         self.input_path = input_path
@@ -196,7 +196,7 @@ class Dataset:
             print("Fields: " + ", ".join(df_user.columns))
             df_user.to_csv(self.user_filename, index=False)
         except NotImplementedError:
-            print(f"Override load_user_data() of your Dataset subclass.")
+            print("Override load_user_data() of your Dataset subclass.")
 
     def convert_rating_data(self):
         """
@@ -209,7 +209,7 @@ class Dataset:
             print("Fields: " + ", ".join(df_rating.columns))
             df_rating.to_csv(self.rating_filename, index=False)
         except NotImplementedError:
-            print(f"Override load_rating_data() of your Dataset subclass.")
+            print("Override load_rating_data() of your Dataset subclass.")
 
     def convert_social_data(self):
         """
@@ -221,7 +221,7 @@ class Dataset:
             print(f"{df_social.shape[0]} social link between users")
             df_social.to_csv(self.social_filename, index=False)
         except NotImplementedError:
-            print(f"Override load_rating_data() of your Dataset subclass.")
+            print("Override load_rating_data() of your Dataset subclass.")
 
     def map_URIs(self):
         """

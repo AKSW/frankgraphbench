@@ -23,3 +23,4 @@ graph-walker @ git+https://github.com/AlvaroJoseLopes/graph-walker
 SPARQLWrapper
 multiprocess
 tensorflow
+ollama
