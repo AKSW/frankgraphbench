@@ -10,7 +10,7 @@ import multiprocess
 import heapq
 import numpy as np
 
-cores = multiprocess.cpu_count() // 2
+cores = multiprocess.cpu_count() // 4
 
 def ranklist_by_heapq(test_items, rating, Ks):
     item_score = {}
