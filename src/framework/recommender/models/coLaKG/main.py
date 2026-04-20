@@ -1,5 +1,5 @@
 import world
-import utils
+import framework.recommender.models.coLaKG.colakg_utils as colakg_utils
 from world import cprint
 import torch
 import numpy as np
@@ -12,7 +12,7 @@ import register
 from register import dataset
 from sklearn.metrics.pairwise import cosine_similarity
 
-utils.set_seed(world.seed)    # from world.py
+colakg_utils.set_seed(world.seed)    # from world.py
 print(">>SEED:", world.seed)
 
 current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -30,9 +30,9 @@ sorted_indices = torch.tensor(sorted_indices).long()
 
 Recmodel = register.MODELS[world.model_name](world.config, dataset, sorted_indices, item_semantic_emb, user_semantic_emb)
 Recmodel = Recmodel.to(world.device)
-bpr = utils.BPRLoss(Recmodel, world.config)         # loads model and loss. here will do only the main one at first
+bpr = colakg_utils.BPRLoss(Recmodel, world.config)         # loads model and loss. here will do only the main one at first
 
-weight_file = utils.getFileName()
+weight_file = colakg_utils.getFileName()
 print(f"load and save to {weight_file}")
 if world.LOAD:
     try:

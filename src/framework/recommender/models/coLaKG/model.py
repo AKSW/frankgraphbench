@@ -1,3 +1,4 @@
+import time
 import torch
 import walker
 
@@ -10,6 +11,9 @@ from typing import Optional
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .CoLaKG import CoLaKG_model
+from .dataloader import Loader
+from .colakg_utils import BPRLoss
+from .Procedure import Test, BPR_train_original
 from ...recommender import Recommender
 from ....dataloader.graph.node import PropertyNode, ItemNode
 
@@ -22,6 +26,8 @@ class CoLaKG(Recommender):
             model_name: str,
             emb_model_name: str,
             walk_len: int = 10,
+            validate_frac: float = 0.01,
+            validate_seed: int = 42,
             bpr_batch_size: int = 2048,
             latent_dim_rec: int = 64,
             lightGCN_n_layers: int = 3,
@@ -48,6 +54,9 @@ class CoLaKG(Recommender):
         self.model_name = model_name
         self.emb_model_name = emb_model_name
         self.walk_len = walk_len
+        self.validate_frac = validate_frac
+        self.validate_seed = validate_seed
+        self.epochs = epochs
         self.config_dict = {
             "neighbor_k": neighbor_k,
             "dropout_i": dropout_i,
@@ -67,7 +76,6 @@ class CoLaKG(Recommender):
             "A_split": A_split,
             "bigdata": bigdata,
             "seed": seed,
-            "epochs": epochs
         }
 
     def name(self):
@@ -93,7 +101,26 @@ class CoLaKG(Recommender):
         sorted_indices = sorted_indices[:, 1:self.config['neighbor_k']+1] # does not include itself
         sorted_indices = torch.tensor(sorted_indices).long()
 
-        self.model = CoLaKG_model(self.config_dict)
+        ratings_triples = self.G_train.get_ratings_triples(return_type="int")
+        self.dataset = Loader(self.config_dict, ratings_triples, self.validate_frac, self.validate_seed)
+
+        self.model = CoLaKG_model(self.config_dict, self.dataset)
+        bpr = BPRLoss(self.model, self.config_dict)
+
+        for epoch in range(self.epochs):
+            start = time.time()
+
+            if epoch % 5 == 0:
+                print("[TEST]")
+                test_results = Test(self.dataset, self.model, epoch)
+                print(f"TEST RESULTS at EPOCH[{epoch+1}/{self.epochs}]: {test_results}")
+
+            output_information = BPR_train_original(self.dataset, self.model, bpr, epoch)
+
+            end = time.time()
+            epoch_time = end - start
+
+            print(f"Epoch [{epoch+1}/{self.epochs}] {output_information} - completed in {epoch_time:.2f} seconds")
 
     def _pre_train(self):
         print("building input...")
@@ -119,11 +146,11 @@ class CoLaKG(Recommender):
         messages_users_dict = self.__build_input_user(system_prompt["user"])
         
         client = Client(host=self.model_host)
-        llm_responses_items_dict = self.__get_ollama(client, messages_items_dict, "item")
-        llm_responses_users_dict = self.__get_ollama(client, messages_users_dict, "user")
+        llm_responses_items_dict = self.__get_ollama(client, messages_items_dict, "item", count_limit=10)
+        llm_responses_users_dict = self.__get_ollama(client, messages_users_dict, "user", count_limit=10)
 
-        semantic_embs_items_dict = self.__get_emb_ollama(client, llm_responses_items_dict, "item")
-        semantic_embs_users_dict = self.__get_emb_ollama(client, llm_responses_users_dict, "user")
+        semantic_embs_items_dict = self.__get_emb_ollama(client, llm_responses_items_dict, "item", count_limit=10)
+        semantic_embs_users_dict = self.__get_emb_ollama(client, llm_responses_users_dict, "user", count_limit=10)
 
         print("pre-training finished...")
 

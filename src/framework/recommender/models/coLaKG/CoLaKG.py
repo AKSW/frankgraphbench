@@ -4,8 +4,8 @@ import torch
 from torch import nn
 import numpy as np
 import torch.nn.functional as F
-import utils
 
+from .dataloader import Loader
 
 class BasicModel(nn.Module):    
     def __init__(self):
@@ -14,10 +14,24 @@ class BasicModel(nn.Module):
     def getUsersRating(self, users):
         raise NotImplementedError
 
+class PairWiseModel(BasicModel):
+    def __init__(self):
+        super(PairWiseModel, self).__init__()
+    def bpr_loss(self, users, pos, neg):
+        """
+        Parameters:
+            users: users list 
+            pos: positive items for corresponding users
+            neg: negative items for corresponding users
+        Return:
+            (log-loss, l2-loss)
+        """
+        raise NotImplementedError
 
 class CoLaKG_model(BasicModel):
     def __init__(self, 
-                 config:dict, 
+                 config: dict,
+                 dataset: Loader,
                  adj_matrix=None, 
                  semantic_emb=None, 
                  user_semantic_emb=None,):
@@ -28,6 +42,7 @@ class CoLaKG_model(BasicModel):
         CORES = multiprocessing.cpu_count() // 2
 
         self.config = config
+        self.dataset = dataset
         self.adj_matrix = adj_matrix.to(device)
         self.semantic_emb = semantic_emb.to(device)
         self.user_semantic_emb = user_semantic_emb.to(device)
@@ -40,7 +55,7 @@ class CoLaKG_model(BasicModel):
     def __init_weight(self):
         self.num_users  = self.dataset.n_users # get a graph and info object here
         self.num_items  = self.dataset.m_items
-        print("self.num_items", self.num_items)
+        print("num_items", self.num_items)
         self.latent_dim = self.config['latent_dim_rec']
         self.n_layers = self.config['lightGCN_n_layers']
         self.keep_prob = self.config['keep_prob']

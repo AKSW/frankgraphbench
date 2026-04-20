@@ -1,25 +1,21 @@
-
-import world
 import torch
-from torch import nn, optim
+from torch import optim
 import numpy as np
-from torch import log
-from dataloader import BasicDataset
 from time import time
-from model import LightGCN
-from model import PairWiseModel
 from sklearn.metrics import roc_auc_score
-import random
-import os
+
+from .CoLaKG import PairWiseModel
+from .dataloader import BasicDataset
+
 try:
     from cppimport import imp_from_filepath
     from os.path import join, dirname
     path = join(dirname(__file__), "sources/sampling.cpp")
     sampling = imp_from_filepath(path)
-    sampling.seed(world.seed)
+    sampling.seed(42)
     sample_ext = True
 except:
-    world.cprint("Cpp extension not loaded")
+    print("Cpp extension not loaded")
     sample_ext = False
 
 
@@ -99,18 +95,9 @@ def set_seed(seed):
         torch.cuda.manual_seed_all(seed)
     torch.manual_seed(seed)
 
-def getFileName():
-    if world.model_name == 'mf':
-        file = f"mf-{world.dataset}-{world.config['latent_dim_rec']}.pth.tar"
-    if world.model_name == 'lgn':
-        file = f"lgn-{world.dataset}-{world.config['lightGCN_n_layers']}-{world.config['latent_dim_rec']}.pth.tar"
-    elif world.model_name == 'colakg':
-        file = f"colakg-{world.dataset}-{world.config['lightGCN_n_layers']}-{world.config['latent_dim_rec']}.pth.tar"
-    return os.path.join(world.FILE_PATH,file)
-
 def minibatch(*tensors, **kwargs):
 
-    batch_size = kwargs.get('batch_size', world.config['bpr_batch_size'])
+    batch_size = kwargs.get('batch_size', 128)
 
     if len(tensors) == 1:
         tensor = tensors[0]

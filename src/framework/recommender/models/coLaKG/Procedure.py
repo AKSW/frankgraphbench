@@ -1,11 +1,10 @@
 
-import world
 import numpy as np
 import torch
-import utils
+import framework.recommender.models.coLaKG.colakg_utils as colakg_utils
 import dataloader
 from pprint import pprint
-from utils import timer
+from framework.recommender.models.coLaKG.colakg_utils import timer
 from time import time
 from tqdm import tqdm
 import model
@@ -19,33 +18,32 @@ CORES = multiprocessing.cpu_count() // 2
 def BPR_train_original(dataset, recommend_model, loss_class, epoch, neg_k=1, w=None):
     Recmodel = recommend_model
     Recmodel.train()
-    bpr: utils.BPRLoss = loss_class
+    bpr: colakg_utils.BPRLoss = loss_class
     
     with timer(name="Sample"):
-        S = utils.UniformSample_original(dataset)
+        S = colakg_utils.UniformSample_original(dataset)
     users = torch.Tensor(S[:, 0]).long()
     posItems = torch.Tensor(S[:, 1]).long()
     negItems = torch.Tensor(S[:, 2]).long()
 
-    users = users.to(world.device)
-    posItems = posItems.to(world.device)
-    negItems = negItems.to(world.device)
-    users, posItems, negItems = utils.shuffle(users, posItems, negItems)
-    total_batch = len(users) // world.config['bpr_batch_size'] + 1
+    users = users#.to(world.device)
+    posItems = posItems#.to(world.device)
+    negItems = negItems#.to(world.device)
+    users, posItems, negItems = colakg_utils.shuffle(users, posItems, negItems)
+    total_batch = len(users) // 32
     # print("bpr_batch_size: ", world.config['bpr_batch_size'])
     # print("total_batch: ", total_batch)
     aver_loss = 0.
     for (batch_i,
          (batch_users,
           batch_pos,
-          batch_neg)) in enumerate(utils.minibatch(users,
+          batch_neg)) in enumerate(colakg_utils.minibatch(users,
                                                    posItems,
                                                    negItems,
-                                                   batch_size=world.config['bpr_batch_size'])):
+                                                   batch_size=32)):
         cri = bpr.stageOne(batch_users, batch_pos, batch_neg)
         aver_loss += cri
-        if world.tensorboard:
-            w.add_scalar(f'BPRLoss/BPR', cri, epoch * int(len(users) / world.config['bpr_batch_size']) + batch_i)
+        
     aver_loss = aver_loss / total_batch
     time_info = timer.dict()
     timer.zero()
@@ -57,21 +55,21 @@ def test_one_batch(X):
     groundTrue = X[1]
     # print("sorted_items", sorted_items)
     # print("groundTrue", groundTrue)
-    r = utils.getLabel(groundTrue, sorted_items)
+    r = colakg_utils.getLabel(groundTrue, sorted_items)
     pre, recall, ndcg = [], [], []
-    for k in world.topks:
-        ret = utils.RecallPrecision_ATk(groundTrue, r, k)
+    for k in 10:
+        ret = colakg_utils.RecallPrecision_ATk(groundTrue, r, k)
         pre.append(ret['precision'])
         recall.append(ret['recall'])
-        ndcg.append(utils.NDCGatK_r(groundTrue,r,k))
+        ndcg.append(colakg_utils.NDCGatK_r(groundTrue,r,k))
     return {'recall':np.array(recall), 
             'precision':np.array(pre), 
             'ndcg':np.array(ndcg)}
         
             
 def Test(dataset, Recmodel, epoch, w=None, multicore=0):
-    u_batch_size = world.config['test_u_batch_size']
-    dataset: utils.BasicDataset
+    u_batch_size = 32
+    dataset: colakg_utils.BasicDataset
     testDict: dict = dataset.testDict
     Recmodel: model.LightGCN
     # eval mode with no dropout
@@ -94,7 +92,7 @@ def Test(dataset, Recmodel, epoch, w=None, multicore=0):
         # auc_record = []
         # ratings = []
         total_batch = len(users) // u_batch_size + 1
-        for batch_users in utils.minibatch(users, batch_size=u_batch_size):
+        for batch_users in colakg_utils.minibatch(users, batch_size=u_batch_size):
             allPos = dataset.getUserPosItems(batch_users)
             groundTrue = [testDict[u] for u in batch_users]
             batch_users_gpu = torch.Tensor(batch_users).long()
