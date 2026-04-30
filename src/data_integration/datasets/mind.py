@@ -102,11 +102,12 @@ class MINDSmall(MIND):
         # adding maping info from the abstract and title entities
         filename = os.path.join(self.input_path, "news.tsv")
         df = pd.read_csv(filename, sep='\t', names=self.item_fields)
-
-        df["item_id::string"] = df["item_id::string"].apply(lambda x: x.replace("N", ""))
         
-        if not set(df["item_id::string"].unique()).issubset(set(df_item["item_id"].astype(str).unique())):
+        if not set(df["news_id::string"].unique()).issubset(set(df_item["news_id"].astype(str).unique())):
             raise ValueError("News tsv file contains news items that are not present in the item dataframe.")
+        
+        df = df.join(df_item.set_index("news_id"), on="news_id::string")
+        df["item_id::string"] = df["item_id"].astype(str)
 
         title_entities = df[["item_id::string", "title_entities"]][(df["title_entities"] != "[]") & (df["title_entities"].notna())]
         title_entities = title_entities.rename(columns={"item_id::string": "item_id::string", "title_entities": "entities::string"})
