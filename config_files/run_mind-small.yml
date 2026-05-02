@@ -9,11 +9,11 @@ experiment:
     ratings:
       path: datasets/mind-small/processed/rating.csv
       timestamp: False
-    enrich:
-      map_path: datasets/mind-small/processed/map.csv
-      enrich_path: datasets/mind-small/processed/enriched.csv
-      remove_unmatched: False
-      properties: [label, type, wikidata_id]
+    # enrich:
+    #   map_path: datasets/mind-small/processed/map.csv
+    #   enrich_path: datasets/mind-small/processed/enriched.csv
+    #   remove_unmatched: False
+    #   properties: [label, type, wikidata_id]
 
   preprocess:
     # - method: filter_by_rating
@@ -190,6 +190,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/mind/mind-small_enriched_deep.csv"
+    file: "experiment_results/mind/mind-small_deep.csv"
     execution_times:
-      file: "experiment_results/mind/mind-small_enriched_deep_times.csv"
+      file: "experiment_results/mind/mind-small_deep_times.csv"
