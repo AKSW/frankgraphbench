@@ -1,0 +1,115 @@
+experiment:
+  dataset:
+    name: ml-100k
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/ml-100k/processed/item.csv
+      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/ml-100k/processed/user.csv
+      extra_features: [gender, occupation] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/ml-100k/processed/rating.csv
+      timestamp: True
+
+  preprocess:
+    - method: filter_kcore
+      parameters:
+        k: 20
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+
+    test:
+      method: k_fold
+      k: 5
+      level: "user"
+
+  models:
+    - name: transE
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 75
+        scoring_fct_norm: 1
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: transH
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 75
+        scoring_fct_norm: 2
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: transR
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 75
+        relation_dim: 90
+        scoring_fct_norm: 2
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: transD
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 75
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: tuckER
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 100
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: rESCAL
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 25
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: distMult
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 25
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: complEx
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 50
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: rotatE
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 100
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+
+  evaluation:
+    k: 10
+    relevance_threshold: 0
+    metrics: [MAP, nDCG, precision, recall, F-score]
+
+  report:
+    file: "experiment_results/kge_parameters/ml-100k_kge_embedding-2.csv"
+    execution_times:
+      file: "experiment_results/kge_parameters/ml-100k_kge_embedding-2.csv"
