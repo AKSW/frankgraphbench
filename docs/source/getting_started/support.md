@@ -40,7 +40,7 @@ Currently the supported Recommender System models are:
     - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
     - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
     - `epochs`: number of training iterations.
-    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### transH
@@ -50,7 +50,7 @@ Currently the supported Recommender System models are:
     - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
     - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
     - `epochs`: number of training iterations.
-    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### transR
@@ -61,7 +61,7 @@ Currently the supported Recommender System models are:
     - `relation_dim`: the relation embedding dimension, usually equal or smaller than `embedding_dim`.
     - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
     - `epochs`: number of training iterations.
-    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### transD
@@ -71,7 +71,7 @@ Currently the supported Recommender System models are:
     - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
     - `relation_dim`: the relation embedding dimension, usually equal or smaller than `embedding_dim`.
     - `epochs`: number of training iterations.
-    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### tuckER
@@ -85,7 +85,7 @@ Currently the supported Recommender System models are:
     - `dropout_2`: the third dropout, `cf.formula`.
     - `apply_batch_normalization`: wheter to apply batch normalization (`bool`).
     - `epochs`: number of training iterations.
-    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### rESCAL
@@ -94,7 +94,16 @@ Currently the supported Recommender System models are:
   - Main parameters
     - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
     - `epochs`: number of training iterations.
-    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
+
+### distMult
+- DistMult graph embedding + cosine similarity.
+  - Reference: Bishan Yang, Scott Wen-tau Yih, Xiaodong He, Jianfeng Gao, and Li Deng. 2015. Embedding Entities and Relations for Learning and Inference in Knowledge Bases. In Int. Conference on Learning Representations. ICLR, San Diego, CA, USA, 1–12.
+  - Main parameters
+    - `embedding_dim`: the entity embedding dimension.
+    - `epochs`: number of training iterations.
+    - `seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### complEx
@@ -103,7 +112,16 @@ Currently the supported Recommender System models are:
   - Main parameters
     - `embedding_dim`: the entity embedding dimension.
     - `epochs`: number of training iterations.
-    - `random_seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
+
+### rotatE
+- RotatE graph embedding + cosine similarity.
+  - Reference: Zhiqing Sun, Zhi-Hong Deng, Jian-Yun Nie, and Jian Tang. 2019. RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space. In Int. Conference on Learning Representations. Openreview, Louisiana, United States, 1–18.
+  - Main parameters
+   - `embedding_dim`: the entity embedding dimension.
+    - `epochs`: number of training iterations.
+    - `seed`: seed for the sampling of the triples during, training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### ePHEN
