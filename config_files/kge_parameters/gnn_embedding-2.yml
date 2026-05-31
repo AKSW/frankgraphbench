@@ -56,4 +56,4 @@ experiment:
   report:
     file: "experiment_results/kge_parameters/ml-100k_gnn_embedding-2.csv"
     execution_times:
-      file: "experiment_results/kge_parameters/ml-100k_gnn_embedding-2.csv"
+      file: "experiment_results/kge_parameters/ml-100k_gnn_embedding-2_times.csv"
