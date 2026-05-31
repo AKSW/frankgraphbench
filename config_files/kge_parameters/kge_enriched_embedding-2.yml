@@ -36,7 +36,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 150
+        embedding_dim: 75
         scoring_fct_norm: 1
         epochs: 25
         seed: 42
@@ -45,7 +45,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 150
+        embedding_dim: 75
         scoring_fct_norm: 2
         epochs: 25
         seed: 42
@@ -54,7 +54,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 150
+        embedding_dim: 75
         relation_dim: 90
         scoring_fct_norm: 2
         epochs: 25
@@ -64,7 +64,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 150
+        embedding_dim: 75
         epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
@@ -72,7 +72,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 200
+        embedding_dim: 100
         epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
@@ -80,7 +80,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 50
+        embedding_dim: 25
         epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
@@ -88,7 +88,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 50
+        embedding_dim: 25
         epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
@@ -96,7 +96,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 100
+        embedding_dim: 50
         epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
@@ -104,7 +104,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        embedding_dim: 200
+        embedding_dim: 100
         epochs: 25
         seed: 42
         triples: all # only (ratings) or (all) triples for training
