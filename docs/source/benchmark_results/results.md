@@ -423,7 +423,6 @@ Experiment ran using the MIND-small dataset and the following presented models w
 |RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0001 ± .0000|.0000 ± .0000|
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0000 ± .0000|.0000 ± .0000|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1688 ± .0030|.0317 ± .0009|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.5944 ± .0089|.6829 ± .0081|
 |BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.0001 ± .0000|.0000 ± .0000|
 |CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0001 ± .0000|.0000 ± .0000|
 
@@ -448,7 +447,6 @@ Experiment ran using the MIND-small dataset and the following presented models w
 |RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0001 ± .0000|.0000 ± .0000|
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0006 ± .0012|.0002 ± .0004|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1447 ± .0039|.0278 ± .0009|
-|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.5944 ± .0089|.6829 ± .0081|
 |BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.0000 ± .0000|.0000 ± .0000|
 |CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0000 ± .0000|.0000 ± .0000|
 
