@@ -1,0 +1,3 @@
+model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
+"CKE;epoch=1000;kge_size=64;embed_size=150;regs=[1e-05, 1e-05, 0.01];lr=0.0001 (CPU: Apple M3 Ultra; RAM: 256GB; GPUs: [])",2648.490417957306,1477.5188028812408,2149.0312559604645,1739.5523900985718,2747.7689321041107,2152.472359800339,495.27547275961797
+KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi (CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []),8352.404403209686,9261.392028808594,10510.331097841263,10468.97760105133,7383.6372838020325,9195.348482942582,1212.313849510829
