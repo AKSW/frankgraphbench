@@ -1,4 +1,4 @@
-# Results
+# Overall Results
 Here we present the average and standard deviation results of the current benchmark version. We also point to the corresponding `.yml` configuration file used for each configuration so that users can consistently reproduce experiments or build new configurations based on one of them.
 
 ## ml-100k
@@ -401,3 +401,101 @@ Experiment ran using the Douban Movie dataset with DBpedia enrichement and the f
 |CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|30844 ± 3791.|
 |CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|4083. ± 119.5|
 |KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|45945 ± 7669.|
+
+## mind-small
+
+Experiment ran using the MIND-small dataset and the following presented models with their configurations. The complete configuration can be found in `config_files/run_mind-small.yml` and `config_files/run_mind-small_gnns.yml`: 
+
+- Summarized results from the files `experiment_results/mind/mind-small_*.csv`:
+
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1690 ± .0016|.0316 ± .0008|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1694 ± .0024|.0318 ± .0007|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0000 ± .0000|.0000 ± .0000|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0000 ± .0000|.0000 ± .0000|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0000 ± .0000|.0000 ± .0000|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0000 ± .0000|.0000 ± .0000|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0061 ± .0022|.0026 ± .0011|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0009 ± .0001|.0002 ± .0000|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0000 ± .0000|.0000 ± .0000|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0001 ± .0000|.0000 ± .0000|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0001 ± .0000|.0000 ± .0000|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0000 ± .0000|.0000 ± .0000|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1688 ± .0030|.0317 ± .0009|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.5944 ± .0089|.6829 ± .0081|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.0001 ± .0000|.0000 ± .0000|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0001 ± .0000|.0000 ± .0000|
+
+## mind-small_enriched
+
+Experiment ran using the MIND-small dataset and the following presented models with their configurations. The complete configuration can be found in `config_files/run_mind-small.yml` and `config_files/run_mind-small_gnns.yml`: 
+
+- Summarized results from the files `experiment_results/mind/mind-small_*.csv`:
+
+| Model | MAP@10 | nDCG@10 |
+|---------|----------|------------|
+|Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64|.1459 ± .0025|.0282 ± .0006|
+|Node2Vec based model + cosine similarity;q=0.6;p=0.8;embedding_size=64|.1473 ± .0014|.0283 ± .0009|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;epochs=25;seed=42;triples=ratings|.0000 ± .0000|.0000 ± .0000|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;epochs=25;seed=42;triples=ratings|.0000 ± .0000|.0000 ± .0000|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;epochs=25;seed=42;triples=all|.0000 ± .0000|.0000 ± .0000|
+|TransD based model + cosine similarity;embedding_dim=150;epochs=25;seed=42;triples=ratings|.0000 ± .0000|.0000 ± .0000|
+|TuckER based model + cosine similarity;embedding_dim=200;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;epochs=25;seed=42;triples=ratings|.0001 ± .0001|.0000 ± .0000|
+|RESCAL based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=ratings|.0007 ± .0000|.0000 ± .0000|
+|DistMult based model + cosine similarity;embedding_dim=50;epochs=25;seed=42;triples=all|.0003 ± .0001|.0001 ± .0000|
+|ComplEx based model + cosine similarity;embedding_dim=100;epochs=25;seed=42|.0001 ± .0000|.0000 ± .0000|
+|RotatE based model + cosine similarity;embedding_dim=200;epochs=25;seed=42;triples=all|.0001 ± .0000|.0000 ± .0000|
+|EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=abstract;iterations=30;mi=0.5|.0006 ± .0012|.0002 ± .0004|
+|EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.1447 ± .0039|.0278 ± .0009|
+|Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.5944 ± .0089|.6829 ± .0081|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.0000 ± .0000|.0000 ± .0000|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0000 ± .0000|.0000 ± .0000|
+
+# Embedding Dimension Ablation
+
+## ml-100k kge_embedding
+
+Ablation experiment changin only the `embedding_dim` parameter of KGE models on the ml-100k dataset. The complete configuration for the first experiment with the recommended embedding dimension size can be found in `config_files\kge_parameters\kge_embedding-1.yml`, and the full results besides averages and standard deviations can be found in `experiment_results\kge_parameters\ml-100k_kge_embedding-1.csv`:
+
+| Model | MAP@10 | nDCG@10 | Precision@10 | Recall@10 | F-score@10 |
+|---------|----------|------------|--------------|-----------|-------------|
+|TransE based model + cosine similarity;embedding_dim=150;scoring_fct_norm=1;entity_initializer=None;relation_initializer=None;relation_constrainer=None;regularizer=None;epochs=25;seed=42;triples=all|.0032 ± .0003|.0078 ± .0006|.0097 ± .0006|.0050 ± .0005|.0066 ± .0006|
+|TransH based model + cosine similarity;embedding_dim=150;scoring_fct_norm=2;entity_initializer=None;relation_initializer=None;relation_regularizer=None;epochs=25;seed=42;triples=all|.0046 ± .0005|.0110 ± .0013|.0137 ± .0007|.0064 ± .0007|.0088 ± .0008|
+|TransR based model + cosine similarity;embedding_dim=150;relation_dim=90;scoring_fct_norm=2;entity_initializer=None;entity_constrainer=None;relation_initializer=None;relation_constrainer=None;epochs=25;seed=42;triples=all|.0013 ± .0002|.0030 ± .0006|.0041 ± .0005|.0021 ± .0005|.0028 ± .0005|
+|TransD based model + cosine similarity;embedding_dim=150;relation_dim=None;entity_initializer=None;entity_constrainer=None;relation_initializer=None;relation_constrainer=None;epochs=25;seed=42;triples=all|.0043 ± .0005|.0103 ± .0009|.0124 ± .0013|.0065 ± .0005|.0085 ± .0007|
+|TuckER based model + cosine similarity;embedding_dim=200;relation_dim=None;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;relation_initializer=None;core_tensor_initializer=None;epochs=25;seed=42;triples=all|.0030 ± .0002|.0071 ± .0006|.0096 ± .0010|.0035 ± .0003|.0051 ± .0004|
+|RESCAL based model + cosine similarity;embedding_dim=50;entity_initializer=None;relation_initializer=None;regularizer=None;epochs=25;seed=42;triples=all|.0049 ± .0004|.0116 ± .0009|.0149 ± .0006|.0061 ± .0005|.0086 ± .0006|
+|DistMult based model + cosine similarity;embedding_dim=50;entity_initializer=None;entity_constrainer=None;relation_initializer=None;regularizer=None;epochs=25;seed=42;triples=all|.0044 ± .0003|.0112 ± .0006|.0141 ± .0005|.0060 ± .0003|.0084 ± .0003|
+|ComplEx based model + cosine similarity;embedding_dim=100;entity_initializer=None;relation_initializer=None;regularizer=None;epochs=25;seed=42|.0048 ± .0005|.0114 ± .0009|.0141 ± .0012|.0064 ± .0005|.0088 ± .0007|
+|RotatE based model + cosine similarity;embedding_dim=200;entity_initializer=None;relation_initializer=None;relation_constrainer=None;regularizer=None;epochs=25;seed=42;triples=all|.0042 ± .0005|.0103 ± .0014|.0133 ± .0013|.0064 ± .0010|.0087 ± .0012|
+
+The complete configuration for the second experiment with half the recommended embedding dimension size can be found in `config_files\kge_parameters\kge_embedding-2.yml`, and the full results besides averages and standard deviations can be found in `experiment_results\kge_parameters\ml-100k_kge_embedding-2.csv`:
+
+| Model | MAP@10 | nDCG@10 | Precision@10 | Recall@10 | F-score@10 |
+|---------|----------|------------|--------------|-----------|-------------|
+|TransE based model + cosine similarity;embedding_dim=75;scoring_fct_norm=1;entity_initializer=None;relation_initializer=None;relation_constrainer=None;regularizer=None;epochs=25;seed=42;triples=all|.0032 ± .0005|.0076 ± .0009|.0094 ± .0010|.0046 ± .0006|.0062 ± .0006|
+|TransH based model + cosine similarity;embedding_dim=75;scoring_fct_norm=2;entity_initializer=None;relation_initializer=None;relation_regularizer=None;epochs=25;seed=42;triples=all|.0039 ± .0003|.0093 ± .0009|.0117 ± .0012|.0056 ± .0009|.0076 ± .0010|
+|TransR based model + cosine similarity;embedding_dim=75;relation_dim=90;scoring_fct_norm=2;entity_initializer=None;entity_constrainer=None;relation_initializer=None;relation_constrainer=None;epochs=25;seed=42;triples=all|.0011 ± .0002|.0029 ± .0006|.0039 ± .0006|.0021 ± .0005|.0027 ± .0005|
+|TransD based model + cosine similarity;embedding_dim=75;relation_dim=None;entity_initializer=None;entity_constrainer=None;relation_initializer=None;relation_constrainer=None;epochs=25;seed=42;triples=all|.0047 ± .0002|.0111 ± .0006|.0136 ± .0002|.0067 ± .0004|.0090 ± .0004|
+|TuckER based model + cosine similarity;embedding_dim=100;relation_dim=None;dropout_0=0.3;dropout_1=0.4;dropout_2=0.5;apply_batch_normalization=True;relation_initializer=None;core_tensor_initializer=None;epochs=25;seed=42;triples=all|.0022 ± .0004|.0055 ± .0006|.0076 ± .0009|.0029 ± .0003|.0042 ± .0004|
+|RESCAL based model + cosine similarity;embedding_dim=25;entity_initializer=None;relation_initializer=None;regularizer=None;epochs=25;seed=42;triples=all|.0049 ± .0006|.0118 ± .0013|.0148 ± .0014|.0068 ± .0012|.0093 ± .0014|
+|DistMult based model + cosine similarity;embedding_dim=25;entity_initializer=None;entity_constrainer=None;relation_initializer=None;regularizer=None;epochs=25;seed=42;triples=all|.0042 ± .0005|.0104 ± .0007|.0131 ± .0008|.0059 ± .0009|.0081 ± .0009|
+|ComplEx based model + cosine similarity;embedding_dim=50;entity_initializer=None;relation_initializer=None;regularizer=None;epochs=25;seed=42|.0054 ± .0003|.0126 ± .0011|.0149 ± .0015|.0069 ± .0007|.0095 ± .0009|
+|RotatE based model + cosine similarity;embedding_dim=100;entity_initializer=None;relation_initializer=None;relation_constrainer=None;regularizer=None;epochs=25;seed=42;triples=all|.0043 ± .0004|.0104 ± .0008|.0131 ± .0011|.0060 ± .0010|.0082 ± .0011|
+
+## ml-100k gnn_embedding
+
+Ablation experiment changin only the `embedding_dim` parameter for the KGE component of the CKE and KGAT GNN models on the ml-100k dataset. The complete configuration for the first experiment with the recommended embedding dimension size can be found in `config_files\kge_parameters\gnn_embedding-1.yml`, and the full results besides averages and standard deviations can be found in `experiment_results\kge_parameters\ml-100k_gnn_embedding-1.csv`:
+
+| Model | MAP@10 | nDCG@10 | Precision@10 | Recall@10 | F-score@10 |
+|---------|----------|------------|--------------|-----------|-------------|
+|CKE;epoch=1000;kge_size=64;embed_size=150;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0165 ± .0012|.0373 ± .0014|.0421 ± .0010|.0266 ± .0015|.0326 ± .0013|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi;embed_size=150|.0154 ± .0011|.0353 ± .0033|.0402 ± .0025|.0245 ± .0023|.0304 ± .0024|
+
+The complete configuration for the second experiment with half the recommended KGE embedding dimension size for CKE and KGAT can be found in `config_files\kge_parameters\gnn_embedding-2.yml`, and the full results besides averages and standard deviations can be found in `experiment_results\kge_parameters\ml-100k_gnn_embedding-2.csv`:
+
+| Model | MAP@10 | nDCG@10 | Precision@10 | Recall@10 | F-score@10 |
+|---------|----------|------------|--------------|-----------|-------------|
+|CKE;epoch=1000;kge_size=64;embed_size=75;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0165 ± .0012|.0373 ± .0014|.0421 ± .0010|.0266 ± .0015|.0326 ± .0013|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi;embed_size=75|.0154 ± .0011|.0353 ± .0033|.0402 ± .0025|.0245 ± .0023|.0304 ± .0024|
