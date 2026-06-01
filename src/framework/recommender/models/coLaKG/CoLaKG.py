@@ -37,15 +37,16 @@ class CoLaKG_model(BasicModel):
                  user_semantic_emb=None,):
         super(CoLaKG_model, self).__init__()
 
-        GPU = torch.cuda.is_available()
-        device = torch.device("cuda" if GPU else "cpu")
-        CORES = multiprocessing.cpu_count() // 2
+        # GPU = torch.cuda.is_available()
+        # MPS = torch.backends.mps.is_available()
+        # device = torch.device("cuda" if GPU else "mps" if MPS else "cpu")
+        # CORES = multiprocessing.cpu_count() // 2
 
         self.config = config
         self.dataset = dataset
-        self.adj_matrix = adj_matrix.to(device)
-        self.semantic_emb = semantic_emb.to(device)
-        self.user_semantic_emb = user_semantic_emb.to(device)
+        self.adj_matrix = adj_matrix#.to(device)
+        self.semantic_emb = semantic_emb#.to(device)
+        self.user_semantic_emb = user_semantic_emb#.to(device)
         self.semantic_hid = 32
         self.dropout_i = self.config['dropout_i']
         self.dropout_u = self.config['dropout_u']

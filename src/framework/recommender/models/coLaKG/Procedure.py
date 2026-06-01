@@ -2,15 +2,8 @@
 import numpy as np
 import torch
 import framework.recommender.models.coLaKG.colakg_utils as colakg_utils
-import dataloader
-from pprint import pprint
 from framework.recommender.models.coLaKG.colakg_utils import timer
-from time import time
-from tqdm import tqdm
-import model
 import multiprocessing
-from sklearn.metrics import roc_auc_score
-
 
 CORES = multiprocessing.cpu_count() // 2
 
@@ -71,15 +64,16 @@ def Test(dataset, Recmodel, epoch, w=None, multicore=0):
     u_batch_size = 32
     dataset: colakg_utils.BasicDataset
     testDict: dict = dataset.testDict
-    Recmodel: model.LightGCN
+    # Recmodel: model.LightGCN
     # eval mode with no dropout
     Recmodel = Recmodel.eval()
-    max_K = max(world.topks)
+    topks = [1, 10, 100]
+    max_K = max(topks)
     if multicore == 1:
         pool = multiprocessing.Pool(CORES)
-    results = {'precision': np.zeros(len(world.topks)),
-               'recall': np.zeros(len(world.topks)),
-               'ndcg': np.zeros(len(world.topks))}
+    results = {'precision': np.zeros(len(topks)),
+               'recall': np.zeros(len(topks)),
+               'ndcg': np.zeros(len(topks))}
     with torch.no_grad():
         users = list(testDict.keys())
         try:
@@ -96,7 +90,7 @@ def Test(dataset, Recmodel, epoch, w=None, multicore=0):
             allPos = dataset.getUserPosItems(batch_users)
             groundTrue = [testDict[u] for u in batch_users]
             batch_users_gpu = torch.Tensor(batch_users).long()
-            batch_users_gpu = batch_users_gpu.to(world.device)
+            batch_users_gpu = batch_users_gpu #.to(world.device)
 
             rating = Recmodel.getUsersRating(batch_users_gpu)
             #rating = rating.cpu()
@@ -140,13 +134,6 @@ def Test(dataset, Recmodel, epoch, w=None, multicore=0):
         results['precision'] /= float(len(users))
         results['ndcg'] /= float(len(users))
         # results['auc'] = np.mean(auc_record)
-        if world.tensorboard:
-            w.add_scalars(f'Test/Recall@{world.topks}',
-                          {str(world.topks[i]): results['recall'][i] for i in range(len(world.topks))}, epoch)
-            w.add_scalars(f'Test/Precision@{world.topks}',
-                          {str(world.topks[i]): results['precision'][i] for i in range(len(world.topks))}, epoch)
-            w.add_scalars(f'Test/NDCG@{world.topks}',
-                          {str(world.topks[i]): results['ndcg'][i] for i in range(len(world.topks))}, epoch)
         if multicore == 1:
             pool.close()
         print(results)

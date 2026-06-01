@@ -31,8 +31,8 @@ experiment:
         save_weights: True
       parameters:
         item_name: movie_title
-        # model_host: http://mac.fritz.box:11434
-        model_host: http://localhost:11434
+        model_host: http://mac.fritz.box:11434
+        # model_host: http://localhost:11434
         model_name: qwen3:1.7b
         emb_model_name: qwen3-embedding:0.6b
         walk_len: 10

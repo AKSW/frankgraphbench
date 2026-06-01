@@ -57,7 +57,7 @@ class CoLaKG(Recommender):
         self.validate_frac = validate_frac
         self.validate_seed = validate_seed
         self.epochs = epochs
-        self.config_dict = {
+        self.config = {
             "neighbor_k": neighbor_k,
             "dropout_i": dropout_i,
             "dropout_u": dropout_u,
@@ -102,10 +102,16 @@ class CoLaKG(Recommender):
         sorted_indices = torch.tensor(sorted_indices).long()
 
         ratings_triples = self.G_train.get_ratings_triples(return_type="int")
-        self.dataset = Loader(self.config_dict, ratings_triples, self.validate_frac, self.validate_seed)
+        self.dataset = Loader(self.config, ratings_triples, self.validate_frac, self.validate_seed)
 
-        self.model = CoLaKG_model(self.config_dict, self.dataset)
-        bpr = BPRLoss(self.model, self.config_dict)
+        self.model = CoLaKG_model(
+            self.config,
+            self.dataset,
+            sorted_indices,
+            torch.stack([torch.tensor(emb) for emb in self.semantic_embs_items_dict.values()]),
+            torch.stack([torch.tensor(emb) for emb in self.semantic_embs_users_dict.values()])
+        )
+        bpr = BPRLoss(self.model, self.config)
 
         for epoch in range(self.epochs):
             start = time.time()
