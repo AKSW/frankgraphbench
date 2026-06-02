@@ -495,5 +495,5 @@ The complete configuration for the second experiment with half the recommended K
 
 | Model | MAP@10 | nDCG@10 | Precision@10 | Recall@10 | F-score@10 |
 |---------|----------|------------|--------------|-----------|-------------|
-|CKE;epoch=1000;kge_size=64;embed_size=75;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0165 ± .0012|.0373 ± .0014|.0421 ± .0010|.0266 ± .0015|.0326 ± .0013|
-|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi;embed_size=75|.0154 ± .0011|.0353 ± .0033|.0402 ± .0025|.0245 ± .0023|.0304 ± .0024|
+|CKE;epoch=1000;kge_size=64;embed_size=75;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0172 ± .0010|.0390 ± .0016|.0427 ± .0015|.0271 ± .0007|.0332 ± .0009|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi;embed_size=75|.0175 ± .0009|.0392 ± .0018|.0430 ± .0022|.0272 ± .0015|.0333 ± .0017|
