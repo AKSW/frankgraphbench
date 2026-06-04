@@ -23,10 +23,10 @@ Experiment ran using the MovieLens-100k dataset with the following presented mod
 |EPHEN based model + cosine similarity;embedding_model=sentence-transformers/all-mpnet-base-v2;embed_with=movie_title;iterations=30;mi=0.5|.0017 ± .0003|.0039 ± .0005|
 |EPHEN based model + cosine similarity;embedding_model=deepwalk_based;embedding_model_kwargs={'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1};embed_with=graph;iterations=30;mi=0.5|.0985 ± .0041|.1761 ± .0058|
 |Entity2Rec;embedding_model=deepwalk_based;embedding_model_kwargs={'config': {'save_weights': True}, 'parameters': {'walk_len': 10, 'p': 1.0, 'q': 1.0, 'n_walks': 50, 'embedding_size': 64, 'epochs': 1}};run_all=False;workers=6;iterations=1;collab_only=False;content_only=False|.0069 ± .0004|.0158 ± .0006|
-|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.2897 ± .0073|.3874 ± .0098|
-|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0652 ± .0029|.1227 ± .0034|
-|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.2939 ± .0056|.3898 ± .0067|
-|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.2690 ± .0021|.3649 ± .0029|
+|BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|.0161 ± .0015|.0375 ± .0034|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0174 ± .0011|.0393 ± .0021|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|.0162 ± .0015|.0376 ± .0031|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|.0168 ± .0014|.0387 ± .0031|
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/ml-100k_times.csv` and `experiment_results/fixed_db16_runs/ml-100k_gnns_times.csv` (configuration: CPU: AMD EPYC 7502P 32-Core Processor; RAM: 94GB; GPUs: ['NVIDIA A2']):
 

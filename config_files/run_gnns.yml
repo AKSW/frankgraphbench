@@ -1,32 +1,32 @@
 experiment:
-  dataset:
-    name: ml-100k
-    item: # infos related to item dataset (mandatory, at least item_id)
-      path: datasets/ml-100k/processed/item.csv
-      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
-    user: # mandatory (at least user_id)
-      path: datasets/ml-100k/processed/user.csv
-      extra_features: [gender, occupation] # features beside user_id
-    ratings: # mandatory (at least [user_id, item_id, rating])
-      path: datasets/ml-100k/processed/rating.csv
-      timestamp: True
-    enrich:
-      map_path: datasets/ml-100k/processed/map.csv
-      enrich_path: datasets/ml-100k/processed/enriched.csv
-      remove_unmatched: False
-      properties: [subject, director, abstract]
   # dataset:
-  #   name: lastfm
+  #   name: ml-100k
   #   item: # infos related to item dataset (mandatory, at least item_id)
-  #     path: datasets/lastfm/processed/item.csv
-  #     extra_features: [name] # features(columns) beside item_id to be used
+  #     path: datasets/ml-100k/processed/item.csv
+  #     extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
   #   user: # mandatory (at least user_id)
-  #     path: datasets/lastfm/processed/user.csv
+  #     path: datasets/ml-100k/processed/user.csv
+  #     extra_features: [gender, occupation] # features beside user_id
   #   ratings: # mandatory (at least [user_id, item_id, rating])
-  #     path: datasets/lastfm/processed/rating.csv
-  #     timestamp: False
-  #   social:
-  #     path: datasets/lastfm/processed/social.csv
+  #     path: datasets/ml-100k/processed/rating.csv
+  #     timestamp: True
+  #   enrich:
+  #     map_path: datasets/ml-100k/processed/map.csv
+  #     enrich_path: datasets/ml-100k/processed/enriched.csv
+  #     remove_unmatched: False
+      # properties: [subject, director, abstract]
+  dataset:
+    name: lastfm
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/lastfm/processed/item.csv
+      extra_features: [name] # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/lastfm/processed/user.csv
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/lastfm/processed/rating.csv
+      timestamp: False
+    social:
+      path: datasets/lastfm/processed/social.csv
   #   enrich:
   #     map_path: datasets/lastfm/processed/map.csv
   #     enrich_path: datasets/lastfm/processed/enriched.csv
@@ -154,6 +154,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/gnns/ml-100k_enriched.csv"
+    file: "experiment_results/gnns/lastfm.csv"
     execution_times:
-      file: "experiment_results/gnns/ml-100k_enriched_times.csv"
+      file: "experiment_results/gnns/lastfm_times.csv"
