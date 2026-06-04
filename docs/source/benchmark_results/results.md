@@ -195,10 +195,12 @@ Experiment ran using the MovieLens-1m dataset with DBpedia enrichement and the f
 
 - Summarized execution time results from `experiment_results/fixed_db16_runs/ml-1m_enriched_bPRMF_times.csv`, `experiment_results/fixed_db16_runs/ml-1m_enriched_cFKG_times.csv`, `experiment_results/fixed_db16_runs/ml-1m_enriched_cKE_times.csv` and `experiment_results/fixed_db16_runs/ml-1m_enriched_kGAT_times.csv` (configuration: CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []):
 
+| Model | Execution Time (s) |
+|---------|----------------------|
 |BPRMF;embed_size=64;epoch=1000;regs[1e-05, 1e-05, 0.01]|13913 ± 230.0|
-|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|
-|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|
-|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|
+|CFKG;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|43210 ± 772.5|
+|CKE;epoch=1000;kge_size=64;embed_size=64;regs=[1e-05, 1e-05, 0.01];lr=0.0001|24348 ± 416.1|
+|KGAT;n_layers=3;adj_type=si;adj_uni_type=sum;alg_typebi|149675 ± 6930|
 
 ## lastfm
 

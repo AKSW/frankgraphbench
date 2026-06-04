@@ -19,7 +19,7 @@ py-cpuinfo
 gputil
 psutil
 sentence-transformers
-# graph-walker @ git+https://github.com/AlvaroJoseLopes/graph-walker
+graph-walker @ git+https://github.com/AlvaroJoseLopes/graph-walker
 SPARQLWrapper
 multiprocess
 tensorflow
