@@ -14,7 +14,7 @@ Currently the supported datasets are:
 |[Yelp-Dataset](https://www.yelp.com/dataset/download)|---|150348|yelp|
 |[Amazon-Video-Games-5](https://nijianmo.github.io/amazon/index.html)|---|21106|amazon-video_games-5|
 
-Dataset enrichment is done through a fixed DBpedia endpoint available at ..., with raw files download available at ...
+Dataset enrichment is done through a fixed DBpedia endpoint available at a [Virtuoso endpoint](https://dbfk25.aksw.org/sparql), with raw files download [available](https://dbfk25.aksw.org).
 
 ## Models
 
