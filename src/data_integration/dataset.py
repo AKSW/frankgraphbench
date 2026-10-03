@@ -9,6 +9,17 @@ from .datasets.worker import Worker
 from SPARQLWrapper import SPARQLWrapper, JSON
 from tqdm import tqdm
 
+MAX_RETRIES = 5
+
+
+class EndpointQueryError(Exception):
+    """Raised when a query to the SPARQL endpoint fails after all retries.
+
+    Propagated by the retrying ``_query`` helper so that an irrecoverable
+    endpoint failure can be surfaced instead of being silently swallowed.
+    """
+    pass
+
 
 class Dataset:
     def __init__(self, input_path, output_path, n_workers=1):
@@ -21,6 +32,7 @@ class Dataset:
 
         self.sparql_endpoint = "http://141.57.8.18:8896/sparql"
         self.timeout = 1000
+        self.max_retries = MAX_RETRIES
 
         # Output files
         self.item_filename = os.path.join(self.output_path, "item.csv")
@@ -162,15 +174,27 @@ class Dataset:
         return responses
 
     def _query(self, query, return_type=JSON) -> dict:
-        sparql = SPARQLWrapper(self.sparql_endpoint)
-        sparql.setTimeout(self.timeout)
-        sparql.setQuery(query)
-        sparql.setReturnFormat(return_type)
+        """
+        Query the SPARQL endpoint, retrying on any transient failure.
 
-        try:
-            return sparql.query().convert()
-        except Exception as e:
-            raise e
+        Retries up to ``self.max_retries`` times. If every attempt fails, the
+        last exception is raised as an ``EndpointQueryError``.
+        """
+        last_exception = None
+        for attempt in range(1, self.max_retries + 1):
+           try:
+               sparql = SPARQLWrapper(self.sparql_endpoint)
+               sparql.setTimeout(self.timeout)
+               sparql.setQuery(query)
+               sparql.setReturnFormat(return_type)
+               return sparql.query().convert()
+           except Exception as e:
+               last_exception = e
+               print(f"Query attempt {attempt}/{self.max_retries} failed: {e}")
+
+        raise EndpointQueryError(
+           f"Query failed after {self.max_retries} attempts: {last_exception}"
+        ) from last_exception
 
     def convert_item_data(self):
         """
