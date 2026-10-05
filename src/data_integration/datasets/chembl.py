@@ -53,34 +53,45 @@ class CHEMBL(Dataset):
          # raw CSV is comma separated
         self.item_separator = ","
         self.user_separator = ","
+        self.rating_separator = ","
 
          # Item (chemical compound) fields. Every column of mixed.csv except the
          # two target columns is kept; the standardized name keeps the original
          # ChEMBL column name and only appends the "::type" suffix, matching the
          # pattern used in dataset.py / lastfm.py.
         self.item_fields = {
-              "Molecule ChEMBL ID": "Molecule ChEMBL ID::string",
-              "Molecular Weight": "Molecular Weight::float",
-              "#RO5 Violations": "#RO5 Violations::float",
-              "AlogP": "AlogP::float",
-              "Smiles": "Smiles::string",
-              "Standard Relation": "Standard Relation::string",
-              "Value(nM)": "Value(nM)::float",
-              "Activity": "Activity::string",
-              "Unnamed: 0.2": "Unnamed: 0.2::integer",
-              "CID": "CID::integer",
-              "MolecularFormula": "MolecularFormula::string",
-              "MolecularWeight": "MolecularWeight::float",
-              "SMILES": "SMILES::string",
-              "InChI": "InChI::string",
-              "InChIKey": "InChIKey::string",
-              "IUPACName": "IUPACName::string",
-              "TPSA": "TPSA::float",
+              "Molecule ChEMBL ID": "molecule_chembl_id::string",
+              "Molecular Weight": "molecular_weight::float",
+              "#RO5 Violations": "#ro5_violations::float",
+              "AlogP": "alogp::float",
+              "Smiles": "smiles::string",
+              "Standard Relation": "standard_relation::string",
+              "Value(nM)": "value(nM)::float",
+            #   "Activity": "Activity::string",
+            #   "Unnamed: 0.2": "Unnamed: 0.2::integer",
+              "CID": "cid::integer",
+              "MolecularFormula": "molecular_formula::string",
+              "MolecularWeight": "molecular_weight::float",
+              "SMILES": "smiles::string",
+              "InChI": "inchi::string",
+              "InChIKey": "inchi_key::string",
+              "IUPACName": "iupac_name::string",
+              "TPSA": "tpsa::float",
          }
         # User (biological target) fields. Only the target identifier is kept as
         # a user attribute; the sequential user_id is added in load_user_data().
         self.user_fields = {
-              "Target ChEMBL ID": "Target ChEMBL ID::string",
+            "Target ChEMBL ID": "target_chembl_id::string",
+            "Target Type": "target_type::string",
+         }
+
+        # Rating (interaction) fields. A rating is the activity of a compound
+        # (item) in a target (user), derived from the Activity column of
+        # mixed.csv: ACTIVE -> 1, INACTIVE -> 0.
+        self.rating_fields = {
+            "user_id": "user_id::string",
+            "item_id": "item_id::string",
+            "rating": "rating::number",
          }
 
         self.map_fields = {
@@ -112,51 +123,51 @@ class CHEMBL(Dataset):
         self.enrich_fields = {
              "item_id": "item_id::string",
              "URI": "URI::string",
-             "moleculeName": "moleculeName::string",
-             "iupacName": "iupacName::string",
-             "canonicalSmiles": "canonicalSmiles::string",
-             "standardInchi": "standardInchi::string",
-             "standardInchiKey": "standardInchiKey::string",
-             "sugarFreeSmiles": "sugarFreeSmiles::string",
-             "moleculeIdentifier": "moleculeIdentifier::string",
-             "annotationLevel": "annotationLevel::string",
+             "moleculeName": "molecule_name::string",
+             "iupacName": "iupac_name::string",
+             "canonicalSmiles": "canonical_smiles::string",
+             "standardInchi": "standard_inchi::string",
+             "standardInchiKey": "standard_inchi_key::string",
+             "sugarFreeSmiles": "sugar_free_smiles::string",
+             "moleculeIdentifier": "molecule_identifier::string",
+             "annotationLevel": "annotation_level::string",
              "comment": "comment::string",
-             "nameTrustLevel": "nameTrustLevel::string",
-             "structuralComments": "structuralComments::string",
+             "nameTrustLevel": "name_trust_level::string",
+             "structuralComments": "structural_comments::string",
              "synonyms": "synonyms::string",
-             "hasStereo": "hasStereo::string",
-             "hasVariants": "hasVariants::string",
-             "isParent": "isParent::string",
-             "isTautomer": "isTautomer::string",
-             "parentMolecule": "parentMolecule::string",
-             "chemicalClass": "chemicalClass::string",
-             "chemicalSubClass": "chemicalSubClass::string",
-             "chemicalSuperClass": "chemicalSuperClass::string",
-             "molecularFormula": "molecularFormula::string",
-             "molecularWeight": "molecularWeight::float",
-             "npLikeness": "npLikeness::float",
+             "hasStereo": "has_stereo::string",
+             "hasVariants": "has_variants::string",
+             "isParent": "is_parent::string",
+             "isTautomer": "is_tautomer::string",
+             "parentMolecule": "parent_molecule::string",
+             "chemicalClass": "chemical_class::string",
+             "chemicalSubClass": "chemical_sub_class::string",
+             "chemicalSuperClass": "chemical_super_class::string",
+             "molecularFormula": "molecular_formula::string",
+             "molecularWeight": "molecular_weight::float",
+             "npLikeness": "np_likeness::float",
              "fractioncsp3": "fractioncsp3::float",
-             "directParentClassification": "directParentClassification::string",
-             "exactMolecularWeight": "exactMolecularWeight::float",
-             "heavyAtomCount": "heavyAtomCount::integer",
-             "totalAtomCount": "totalAtomCount::integer",
-             "vanDerWallsVolume": "vanDerWallsVolume::float",
+             "directParentClassification": "direct_parent_classification::string",
+             "exactMolecularWeight": "exact_molecular_weight::float",
+             "heavyAtomCount": "heavy_atom_count::integer",
+             "totalAtomCount": "total_atom_count::integer",
+             "vanDerWallsVolume": "van_der_walls_volume::float",
              "AlogP": "AlogP::float",
-             "formalCharge": "formalCharge::integer",
-             "hydrogenBondAcceptors": "hydrogenBondAcceptors::integer",
-             "hydrogenBondDonors": "hydrogenBondDonors::integer",
-             "qedDrugLikeliness": "qedDrugLikeliness::float",
-             "LipinskiRuleOfFiveViolations": "LipinskiRuleOfFiveViolations::integer",
-             "hydrogenBondAcceptorsLipinski": "hydrogenBondAcceptorsLipinski::integer",
-             "hydrogenBondDonorsLipinski": "hydrogenBondDonorsLipinski::integer",
-             "aromaticRingCount": "aromaticRingCount::integer",
-             "containsLinearSugars": "containsLinearSugars::boolean",
-             "containsRingSugars": "containsRingSugars::boolean",
-             "containsSugar": "containsSugar::boolean",
-             "murkoFramework": "murkoFramework::string",
-             "numberOfMinimalRings": "numberOfMinimalRings::integer",
-             "rotatableBondCount": "rotatableBondCount::integer",
-             "topologicalPolarSurfaceArea": "topologicalPolarSurfaceArea::float",
+             "formalCharge": "formal_charge::integer",
+             "hydrogenBondAcceptors": "hydrogen_bond_acceptors::integer",
+             "hydrogenBondDonors": "hydrogen_bond_donors::integer",
+             "qedDrugLikeliness": "qed_drug_likeliness::float",
+             "LipinskiRuleOfFiveViolations": "lipinski_rule_of_five_violations::integer",
+             "hydrogenBondAcceptorsLipinski": "hydrogen_bond_acceptors_lipinski::integer",
+             "hydrogenBondDonorsLipinski": "hydrogen_bond_donors_lipinski::integer",
+             "aromaticRingCount": "aromatic_ring_count::integer",
+             "containsLinearSugars": "contains_linear_sugars::boolean",
+             "containsRingSugars": "contains_ring_sugars::boolean",
+             "containsSugar": "contains_sugar::boolean",
+             "murkoFramework": "murko_framework::string",
+             "numberOfMinimalRings": "number_of_minimal_rings::integer",
+             "rotatableBondCount": "rotatable_bond_count::integer",
+             "topologicalPolarSurfaceArea": "topological_polar_surface_area::float",
         }
         self.enrich_query_template = Template(
             """
@@ -290,7 +301,7 @@ class CHEMBL(Dataset):
         df = pd.read_csv(filename, sep=self.user_separator)
 
             # extract the unique targets, each becoming a single user
-        df = df[["Target ChEMBL ID"]].drop_duplicates().reset_index(drop=True)
+        df = df[["Target ChEMBL ID", "Target Type"]].drop_duplicates(ignore_index=True)
 
             # sequential user_id following the dataframe index
         df["user_id::string"] = df.index.astype(str)
@@ -298,21 +309,82 @@ class CHEMBL(Dataset):
             # standardize the target identifier following the user_fields mapping
         df = df.rename(self.user_fields, axis=1)
 
-            # keep user_id as the first column
-        df = df[["user_id::string", self.user_fields["Target ChEMBL ID"]]]
+             # keep user_id as the first column
+        df = df[["user_id::string", self.user_fields["Target ChEMBL ID"], self.user_fields["Target Type"]]]
 
         return df
 
+    def load_rating_data(self) -> pd.DataFrame:
+        """
+        Loads the rating interactions of the CHEMBL dataset.
+
+        Each rating is the activity of a compound (item) in a target
+        (user), read from the ``Activity`` column of ``mixed.csv``:
+        ``ACTIVE`` maps to a rating of 1 and ``INACTIVE`` to 0. The
+        ``Molecule ChEMBL ID`` and ``Target ChEMBL ID`` of each row are
+        mapped to the sequential ``item_id`` and ``user_id`` assigned in
+        the processed ``item.csv`` and ``user.csv`` files, which must
+        therefore be created first. Rows whose molecule or target has no
+        assigned id are dropped.
+
+        :return: pd.DataFrame with columns ``user_id::string``,
+        ``item_id::string`` and ``rating::number``.
+        """
+        filename = os.path.join(self.input_path, "mixed.csv")
+        df = pd.read_csv(filename, sep=self.rating_separator)
+
+        # the processed item and user files must exist beforehand
+        user_filename = self.user_filename
+        item_filename = self.item_filename
+        if not os.path.exists(user_filename) or not os.path.exists(item_filename):
+            raise ValueError(
+                "User and Item files must be processed before processing the rating data."
+            )
+
+        df_user = pd.read_csv(user_filename)
+        df_item = pd.read_csv(item_filename)
+
+        # map the original ChEMBL identifiers to their sequential ids
+        user_dict = dict(
+            zip(
+                df_user[self.user_fields["Target ChEMBL ID"]].astype(str),
+                df_user["user_id::string"].astype(str),
+            )
+        )
+        item_dict = dict(
+            zip(
+                df_item[self.item_fields["Molecule ChEMBL ID"]].astype(str),
+                df_item["item_id::string"].astype(str),
+            )
+        )
+
+        # ACTIVE -> 1, INACTIVE -> 0
+        rating_dict = {field: [] for field in self.rating_fields.values()}
+        for _, row in tqdm(df.iterrows(), total=df.shape[0], desc="Processing ratings"):
+            user_id = user_dict.get(row["Target ChEMBL ID"])
+            item_id = item_dict.get(row["Molecule ChEMBL ID"])
+
+            # skip rows whose target or molecule has no assigned id
+            if user_id is None or item_id is None:
+                continue
+
+            rating = 1 if row["Activity"] == "ACTIVE" else 0
+
+            rating_dict["user_id::string"].append(user_id)
+            rating_dict["item_id::string"].append(item_id)
+            rating_dict["rating::number"].append(rating)
+
+        return pd.DataFrame(rating_dict)
     def entity_linking(self, df_item) -> pd.DataFrame():
          # drop duplicate inchi_keys
-        df_item = df_item.drop_duplicates("InChIKey", ignore_index=True)
+        df_item = df_item.drop_duplicates(self.item_fields["InChIKey"], ignore_index=True)
 
         q = queue.Queue()
-        for idx, row in df_item[["InChI", "InChIKey", "IUPACName"]].iterrows():
+        for idx, row in df_item[[self.item_fields["InChI"], self.item_fields["InChIKey"], self.item_fields["IUPACName"]]].iterrows():
             query = self.get_map_query(
-                inchi_key=row["InChIKey"],
-                inchi=row["InChI"],
-                iupac_name=row["IUPACName"],
+                inchi_key=row[self.item_fields["InChIKey"]],
+                inchi=row[self.item_fields["InChI"]],
+                iupac_name=row[self.item_fields["IUPACName"]],
             )
             q.put((idx, query))
 
@@ -332,7 +404,7 @@ class CHEMBL(Dataset):
             if candidate_URIs:
                 URI_mapping[idx] = candidate_URIs[0]
 
-        df_map = pd.DataFrame({"item_id": df_item.index, "inchi_key": df_item["InChIKey"]})
+        df_map = pd.DataFrame({"item_id": df_item.index, "inchi_key": df_item[self.item_fields["InChIKey"]]})
         df_map.set_index("item_id")
         df_map["URI"] = df_map["item_id"].apply(lambda id: URI_mapping.get(id))
         df_map = df_map.rename(self.map_fields, axis=1)
