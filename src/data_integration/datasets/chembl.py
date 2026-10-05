@@ -375,16 +375,16 @@ class CHEMBL(Dataset):
             rating_dict["rating::number"].append(rating)
 
         return pd.DataFrame(rating_dict)
+    
     def entity_linking(self, df_item) -> pd.DataFrame():
          # drop duplicate inchi_keys
-        df_item = df_item.drop_duplicates(self.item_fields["InChIKey"], ignore_index=True)
 
         q = queue.Queue()
-        for idx, row in df_item[[self.item_fields["InChI"], self.item_fields["InChIKey"], self.item_fields["IUPACName"]]].iterrows():
+        for idx, row in df_item[["inchi", "inchi_key", "iupac_name"]].iterrows():
             query = self.get_map_query(
-                inchi_key=row[self.item_fields["InChIKey"]],
-                inchi=row[self.item_fields["InChI"]],
-                iupac_name=row[self.item_fields["IUPACName"]],
+                inchi_key=row["inchi"],
+                inchi=row["inchi_key"],
+                iupac_name=row["iupac_name"],
             )
             q.put((idx, query))
 
