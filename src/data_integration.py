@@ -23,12 +23,14 @@ def main():
     parser.add_argument('-map', '--map_URIs', action='store_true', help='Use this flag if you want to map dataset items with DBpedia.')
     parser.add_argument('-enrich',  '--enrich_data', action='store_true', help='Use this flag if you want to enrich dataset with DBpedia.')
     parser.add_argument('-w',   '--n_workers', type=int, default=1, help='Choose the number of workers(threads) to be used for parallel queries.')
+    parser.add_argument('-e',    '--endpoint', type=str, default="http://141.57.8.18:8896/sparql", help='SPARQL endpoint URL used to query and enrich the data.')
 
 
     args = parser.parse_args()
     module_name, class_name = get_dataset_class(args.dataset)
     dataset = getattr(importlib.import_module(module_name), class_name)
-    dataset = dataset(args.input_path, args.output_path, n_workers=args.n_workers)
+    dataset = dataset(args.input_path, args.output_path, n_workers=args.n_workers,
+                     sparql_endpoint=args.endpoint)
     
     if args.convert_item:
         dataset.convert_item_data()

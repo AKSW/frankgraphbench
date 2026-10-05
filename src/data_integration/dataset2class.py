@@ -34,5 +34,9 @@ dataset2class = {
     'mind-small': {
         'submodule': 'datasets.mind',
         'class': 'MINDSmall'
+    },
+    'chembl': {
+        'submodule': 'datasets.chembl',
+        'class': 'CHEMBL'
     }
 }

@@ -1,3 +1,4 @@
+import os
 import queue
 import re
 from collections import defaultdict
@@ -5,6 +6,7 @@ from io import BytesIO
 from string import Template
 
 import pandas as pd
+from pandas.errors import EmptyDataError
 from SPARQLWrapper import CSV
 from tqdm import tqdm
 
@@ -44,9 +46,42 @@ def _get_template_query(param, p_type) -> str:
 
 
 class CHEMBL(Dataset):
-    def __init__(self, input_path, output_path, n_workers=1):
-        super().__init__(input_path, output_path, n_workers)
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
         self.dataset_name = "CHEMBL"
+
+         # raw CSV is comma separated
+        self.item_separator = ","
+        self.user_separator = ","
+
+         # Item (chemical compound) fields. Every column of mixed.csv except the
+         # two target columns is kept; the standardized name keeps the original
+         # ChEMBL column name and only appends the "::type" suffix, matching the
+         # pattern used in dataset.py / lastfm.py.
+        self.item_fields = {
+              "Molecule ChEMBL ID": "Molecule ChEMBL ID::string",
+              "Molecular Weight": "Molecular Weight::float",
+              "#RO5 Violations": "#RO5 Violations::float",
+              "AlogP": "AlogP::float",
+              "Smiles": "Smiles::string",
+              "Standard Relation": "Standard Relation::string",
+              "Value(nM)": "Value(nM)::float",
+              "Activity": "Activity::string",
+              "Unnamed: 0.2": "Unnamed: 0.2::integer",
+              "CID": "CID::integer",
+              "MolecularFormula": "MolecularFormula::string",
+              "MolecularWeight": "MolecularWeight::float",
+              "SMILES": "SMILES::string",
+              "InChI": "InChI::string",
+              "InChIKey": "InChIKey::string",
+              "IUPACName": "IUPACName::string",
+              "TPSA": "TPSA::float",
+         }
+        # User (biological target) fields. Only the target identifier is kept as
+        # a user attribute; the sequential user_id is added in load_user_data().
+        self.user_fields = {
+              "Target ChEMBL ID": "Target ChEMBL ID::string",
+         }
 
         self.map_fields = {
              "item_id": "item_id::string",
@@ -124,7 +159,7 @@ class CHEMBL(Dataset):
              "topologicalPolarSurfaceArea": "topologicalPolarSurfaceArea::float",
         }
         self.enrich_query_template = Template(
-             """
+            """
             PREFIX coco: <http://coconutKG.aksw.org/ontology#>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -201,8 +236,72 @@ class CHEMBL(Dataset):
                 OPTIONAL { ?properties coco:rotatableBondCount ?rotatableBondCount }
                 OPTIONAL { ?properties coco:topologicalPolarSurfaceArea ?topologicalPolarSurfaceArea }
             }
-         """
+        """
         )
+
+    def load_item_data(self) -> pd.DataFrame:
+        """
+        Loads the chemical compounds (items) of the CHEMBL dataset.
+
+        Reads ``mixed.csv`` (a drug--target binding table) and keeps every
+        column except the two target columns (``Target ChEMBL ID`` and
+        ``Target Type``), which describe the user side of the interactions.
+        Rows are deduplicated by their ``Molecule ChEMBL ID`` so that each
+        molecule becomes a single item, and a sequential ``item_id`` is
+        assigned following the resulting dataframe index.
+
+        :return: pd.DataFrame with one row per item (molecule) and a sequential
+        ``item_id::string`` column.
+        """
+        filename = os.path.join(self.input_path, "mixed.csv")
+        df = pd.read_csv(filename, sep=self.item_separator)
+
+            # keep only the item fields (i.e. drop the two target columns)
+        df = df[list(self.item_fields.keys())]
+
+            # each molecule is a single item: drop duplicate Molecule ChEMBL IDs
+        df = df.drop_duplicates("Molecule ChEMBL ID").reset_index(drop=True)
+
+            # sequential item_id following the dataframe index
+        df["item_id::string"] = df.index.astype(str)
+
+            # standardize the remaining columns following the item_fields mapping
+        df = df.rename(self.item_fields, axis=1)
+
+            # keep item_id as the first column
+        item_columns = [self.item_fields[k] for k in self.item_fields.keys()]
+        df = df[["item_id::string"] + item_columns]
+
+        return df
+
+    def load_user_data(self) -> pd.DataFrame:
+        """
+        Loads the biological targets (users) of the CHEMBL dataset.
+
+        The binding table has no dedicated user file, so the unique targets are
+        extracted from the ``Target ChEMBL ID`` column of ``mixed.csv``. A
+        sequential ``user_id`` is assigned following the resulting dataframe
+        index.
+
+        :return: pd.DataFrame with one row per user (target) and a sequential
+        ``user_id::string`` column.
+        """
+        filename = os.path.join(self.input_path, "mixed.csv")
+        df = pd.read_csv(filename, sep=self.user_separator)
+
+            # extract the unique targets, each becoming a single user
+        df = df[["Target ChEMBL ID"]].drop_duplicates().reset_index(drop=True)
+
+            # sequential user_id following the dataframe index
+        df["user_id::string"] = df.index.astype(str)
+
+            # standardize the target identifier following the user_fields mapping
+        df = df.rename(self.user_fields, axis=1)
+
+            # keep user_id as the first column
+        df = df[["user_id::string", self.user_fields["Target ChEMBL ID"]]]
+
+        return df
 
     def entity_linking(self, df_item) -> pd.DataFrame():
          # drop duplicate inchi_keys
@@ -270,14 +369,24 @@ class CHEMBL(Dataset):
         item_enriching = defaultdict(dict)
         for response in responses:
             idx, result = response
-            df = pd.read_csv(BytesIO(result))
+
+             # skip empty or malformed SPARQL responses instead of crashing
+            if not result:
+                print(f"Empty response for item {idx}, skipping.")
+                continue
+
+            try:
+                df = pd.read_csv(BytesIO(result))
+            except EmptyDataError:
+                print(f"Empty result for item {idx}, skipping.")
+                continue
 
             if df.shape[0] > 1:
                 print("At least one property has more than one value!")
                 print(df.value_counts(dropna=False))
 
             try:
-                item_enriching[idx] = df.iloc[0]   # getting pd.Series
+                item_enriching[idx] = df.iloc[0]    # getting pd.Series
             except Exception as e:
                 print(f"Error at item {idx}: {e}")
                 print(df)

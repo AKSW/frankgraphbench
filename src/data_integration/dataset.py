@@ -22,7 +22,8 @@ class EndpointQueryError(Exception):
 
 
 class Dataset:
-    def __init__(self, input_path, output_path, n_workers=1):
+    def __init__(self, input_path, output_path, n_workers=1,
+                sparql_endpoint="http://141.57.8.18:8896/sparql"):
         r"""
         Base class for Recommender System's datasets
         """
@@ -30,7 +31,7 @@ class Dataset:
         self.output_path = output_path
         self.n_workers = n_workers
 
-        self.sparql_endpoint = "http://141.57.8.18:8896/sparql"
+        self.sparql_endpoint = sparql_endpoint
         self.timeout = 1000
         self.max_retries = MAX_RETRIES
 
