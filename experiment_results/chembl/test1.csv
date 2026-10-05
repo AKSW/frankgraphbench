@@ -1,0 +1,2 @@
+model,fold-1_F1.0-score@100,fold-2_F1.0-score@100,F1.0-score@100_mean,F1.0-score@100_std
+Node2Vec based model + cosine similarity;q=1.0;p=1.0;embedding_size=64,0.11440424256475888,0.0763743353017457,0.0953892889332523,0.01901495363150659
