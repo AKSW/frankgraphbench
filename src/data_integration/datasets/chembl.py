@@ -402,7 +402,7 @@ class CHEMBL(Dataset):
             if candidate_URIs:
                 URI_mapping[idx] = candidate_URIs[0]
 
-        df_map = pd.DataFrame({"item_id": df_item.index, "inchi_key": df_item[self.item_fields["InChIKey"]]})
+        df_map = pd.DataFrame({"item_id": df_item.index, "inchi_key": df_item["inchi_key"]})
         df_map.set_index("item_id")
         df_map["URI"] = df_map["item_id"].apply(lambda id: URI_mapping.get(id))
         df_map = df_map.rename(self.map_fields, axis=1)
