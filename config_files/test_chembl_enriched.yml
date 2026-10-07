@@ -1,0 +1,94 @@
+experiment:
+  dataset:
+    name: chembl
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/chembl/processed/item.csv
+      extra_features: # number columns don't work with translation model
+        - molecular_weight # number
+        - number_ro5_violations # number
+        - alogp # number
+        - smiles
+        - standard_relation
+        - value(nM) # number
+        - cid # number
+        - molecular_formula
+        - inchi
+        - tpsa # nuber
+    # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/chembl/processed/user.csv
+      extra_features: [target_type] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/chembl/processed/rating.csv
+      timestamp: False
+    enrich:
+      map_path: datasets/chembl/processed/map.csv
+      enrich_path: datasets/chembl/processed/enriched.csv
+      remove_unmatched: False
+      properties:
+        - canonical_smiles
+        - sugar_free_smiles
+        - annotation_level
+        - name_trust_level
+        - synonyms
+        - has_stereo
+        - has_variants
+        - is_parent
+        - is_tautomer
+        - parent_molecule
+        - chemical_class
+        - chemical_sub_class
+        - chemical_super_class
+        - np_likeness # number
+        - fractioncsp3 # number
+        - direct_parent_classification
+        - exact_molecular_weight # number
+        - heavy_atom_count # number
+        - total_atom_count # number
+        - van_der_walls_volume # number
+        - formal_charge # number
+        - hydrogen_bond_acceptors # number
+        - hydrogen_bond_donors # number
+        - qed_drug_likeliness # number
+        - hydrogen_bond_acceptors_lipinski # number
+        - hydrogen_bond_donors_lipinski # number 
+        - aromatic_ring_count # number
+        - contains_linear_sugars # boolean
+        - contains_ring_sugars # boolean
+        - contains_sugar # boolean
+        - murko_framework
+        - number_of_minimal_rings # number
+        - rotatable_bond_count # number
+        - topological_polar_surface_area # number
+
+  preprocess:
+    - method: filter_kcore
+      parameters:
+        k: 20
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+    test:
+      method: k_fold
+      k: 2
+      level: "user"
+
+  models:
+    - name: ePHEN
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: seyonec/ChemBERTa-zinc-base-v1
+        embed_with: smiles
+        iterations: 30
+        mi: 0.3
+
+  evaluation:
+    k: 100
+    relevance_threshold: 1
+    metrics: [F-score]
+
+  report:
+    file: "experiment_results/chembl/test_chem_berta_enriched.csv"
