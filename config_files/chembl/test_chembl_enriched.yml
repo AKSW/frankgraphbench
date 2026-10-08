@@ -76,16 +76,16 @@ experiment:
       level: "user"
 
   models:
-    - name: deepwalk_based
-      config:
-        save_weights: True
-      parameters:
-        walk_len: 10
-        p: 1.0
-        q: 1.0
-        n_walks: 50
-        embedding_size: 64
-        epochs: 1
+    # - name: deepwalk_based
+    #   config:
+    #     save_weights: True
+    #   parameters:
+    #     walk_len: 10
+    #     p: 1.0
+    #     q: 1.0
+    #     n_walks: 50
+    #     embedding_size: 64
+    #     epochs: 1
     # - name: ePHEN
     #   config:
     #     save_weights: True
@@ -94,17 +94,17 @@ experiment:
     #     embed_with: smiles
     #     iterations: 30
     #     mi: 0.5
-    # - name: kGAT
-    #   config:
-    #     save_weights: True
-    #   parameters:
-    #     embed_size: 64
-    #     kge_size: 64
-    #     epoch: 1000
-    #     verbose: 10
-    #     validate_factor: 50
-    #     validate_frac: .001
-    #     test_flag: sort
+    - name: kGAT
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        kge_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
 
   evaluation:
     k: 100
@@ -112,4 +112,4 @@ experiment:
     metrics: [F-score, recall, precision]
 
   report:
-    file: "experiment_results/chembl/test_transE.csv"
+    file: "experiment_results/chembl/test_kGAT.csv"
