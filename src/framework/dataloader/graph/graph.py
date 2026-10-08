@@ -151,7 +151,51 @@ class Graph(nx.Graph):
                 if n in users:
                     self.rating_item2users[item].remove(n)
 
-    def convert_node_labels_to_integer(self):
+    def convert_node_labels_to_integer(self, int_id_map: bool = False):
+        if int_id_map:
+            # Canonical, per-type, 0-based integer ids for the KGAT-family loaders.
+            #
+            # These loaders index their embedding tables by these ids and are
+            # sensitive to the *layout* of the id space:
+            #   users           -> [0, n_users)
+            #   items          -> [0, n_items)            (offset by +n_users inside the
+            #                                             KGAT/cFKG adjacency via col_pre/row_pre)
+            #   property values -> [n_items, n_items + n_values)
+            # so that n_entities = n_items + n_values.
+            #
+            # The graph structure is intentionally left keyed by the original node
+            # objects (no networkx relabel): the int triples below only need the
+            # *integers*, and consumers that rely on structural identity (e.g.
+            # deep_walk_based) keep their original labels.
+            users = sorted(self.user_nodes, key=lambda n: n.get_id())
+            items = sorted(self.item_nodes, key=lambda n: n.get_id())
+            n_users = len(users)
+            n_items = len(items)
+
+            user_id = {u: i for i, u in enumerate(users)}
+            item_id = {it: i for i, it in enumerate(items)}
+
+            # Property (value) nodes are the remaining nodes; compact them just
+            # after the items so they occupy [n_items, n_items + n_values).
+            value_id = {}
+            for node in self.nodes():
+                if node in user_id or node in item_id:
+                    continue
+                value_id[node] = n_items + len(value_id)
+
+            # Deterministic, cached: idempotent for the lifetime of this graph.
+            self._int_id_map = {
+                "users": user_id,
+                "items": item_id,
+                "values": value_id,
+                "n_users": n_users,
+                "n_items": n_items,
+                "n_values": len(value_id),
+                "n_entities": n_items + len(value_id),
+            }
+
+            return self
+
         N = self.number_of_nodes()
         mapping = dict(zip(self.nodes(), range(0, N)))
         G = nx.relabel_nodes(self, mapping, copy=True)
@@ -202,16 +246,19 @@ class Graph(nx.Graph):
     
     def _get_ratings_triples_int(self):
         triples_return = {"head": [], "relation": [], "tail": []}
-        
+
+        user_id = self._int_id_map["users"]
+        item_id = self._int_id_map["items"]
+
         ratings = self.get_rating_edges()
         desc = "Generating ratings triples integer"
         for user, item in tqdm(ratings, desc=desc):
-            # user
-            triples_return["head"].append(int(user.get_id()))
+            # user -> canonical 0-based id in [0, n_users)
+            triples_return["head"].append(user_id[user])
             # relation
             triples_return["relation"].append(1)
-            # item
-            triples_return["tail"].append(int(item.get_id()))
+            # item -> canonical 0-based id in [0, n_items)
+            triples_return["tail"].append(item_id[item])
 
         return triples_return
     
@@ -285,29 +332,20 @@ class Graph(nx.Graph):
         triples_return = {"head": [], "relation": [], "tail": []}
 
         property_types = {'rating': relation_id_start}
-        mirror_G = self.convert_back()
-        int_edges_list = list(self.edges())
-        desc = "Generating item properties triples int"
-        for idx, pair in tqdm(enumerate(mirror_G.edges()), desc=desc):
-            if isinstance(pair[0], ItemNode) and isinstance(pair[1], PropertyNode):
-                if pair[1].get_property_type() not in property_types.keys():
-                    property_types[pair[1].get_property_type()] = max(property_types.values()) + 1
-                # user
-                triples_return["head"].append(int(int_edges_list[idx][0]))
-                # relation
-                triples_return["relation"].append(property_types[pair[1].get_property_type()])
-                # item
-                triples_return["tail"].append(int(int_edges_list[idx][1]))
+        item_id = self._int_id_map["items"]
+        value_id = self._int_id_map["values"]
 
-            elif isinstance(pair[0], PropertyNode) and isinstance(pair[1], ItemNode):
-                if pair[0].get_property_type() not in property_types.keys():
-                    property_types[pair[0].get_property_type()] = max(property_types.values()) + 1
-                # user
-                triples_return["head"].append(int(int_edges_list[idx][1]))
-                # relation
-                triples_return["relation"].append(property_types[pair[0].get_property_type()])
-                # item
-                triples_return["tail"].append(int(int_edges_list[idx][0]))
+        item_properties = self.get_item_property_edges()
+        desc = "Generating item properties triples int"
+        for item, value in tqdm(item_properties, desc=desc):
+            if value.get_property_type() not in property_types.keys():
+                property_types[value.get_property_type()] = max(property_types.values()) + 1
+             # head -> item, 0-based id in [0, n_items)
+            triples_return["head"].append(item_id[item])
+             # relation
+            triples_return["relation"].append(property_types[value.get_property_type()])
+             # tail -> property value, 0-based id in [n_items, n_items + n_values)
+            triples_return["tail"].append(value_id[value])
 
         return triples_return
 

@@ -197,9 +197,15 @@ def test_one_user_rank_list(x):
 
     return u, r, auc
 
-def test_rank_list(sess, model, users_to_test, data_generator, args, drop_flag=False, batch_test_flag=False):
-    
+def test_rank_list(sess, model, users_to_test, data_generator, args, drop_flag=False, batch_test_flag=False, k=None):
+
+     # ensure we retrieve at least k items so downstream @k metrics are not truncated short.
+     # idempotent: only extends ks when k exceeds the current maximum cutoff.
+    if k is not None and (not args.ks or k > max(args.ks)):
+        args.ks = list(args.ks) + [k]
+
     pool = multiprocess.Pool(cores)
+    all_results = []
 
     if args.model_type in ['ripple']:
 
@@ -260,9 +266,9 @@ def test_rank_list(sess, model, users_to_test, data_generator, args, drop_flag=F
         user_batch_rating_uid = zip(rate_batch, user_batch)
         full_wrap = [(user_wrap, data_generator, args) for user_wrap in user_batch_rating_uid]
         batch_result = pool.map(test_one_user_rank_list, full_wrap)
+        all_results.extend(batch_result)
         count += len(batch_result)
-
 
     assert count == n_test_users
     pool.close()
-    return batch_result
+    return all_results

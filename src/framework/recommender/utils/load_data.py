@@ -72,7 +72,20 @@ class Data(object):
             return kg, rd
 
         self.n_relations = len(item_property_triples['relation'].unique())
-        self.n_entities = len(item_property_triples['head'].unique()) + len(item_property_triples['tail'].unique())
+        # The canonical compact id layout places items in [0, n_items) (KG heads)
+        # and property values in [n_items, n_items + n_values) (KG tails), so the
+        # head and tail id sets are disjoint. Deriving n_entities as
+        # max(all head, all tail) + 1 both avoids double-counting any id that would
+        # appear on both sides and guarantees the entity embedding tables cover every
+        # index actually referenced (no out-of-bounds lookups).
+        if len(item_property_triples):
+            max_entity = int(max(
+                item_property_triples['head'].max(),
+                item_property_triples['tail'].max(),
+            ))
+            self.n_entities = max_entity + 1
+        else:
+            self.n_entities = 0
         self.n_triples = len(item_property_triples.index)
 
         kg_dict, relation_dict = _construct_kg(item_property_triples)

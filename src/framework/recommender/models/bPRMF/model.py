@@ -64,7 +64,7 @@ class BPRMF(Recommender):
     
     def train(self, G_train: Graph, ratings_train: Dict[UserNode, List[Tuple[ItemNode, float]]]):
         self.ratings_train = ratings_train
-        self.G_train = G_train.convert_node_labels_to_integer()
+        self.G_train = G_train.convert_node_labels_to_integer(int_id_map=True)
         self._ratings_triples = self.G_train.get_ratings_triples(return_type="int")
         self._item_property_triples = self.G_train.get_item_property_triples(return_type="int")
         
@@ -173,12 +173,14 @@ class BPRMF(Recommender):
 
 
     def get_recommendations(self, k : int = 5) -> Dict[UserNode, List[ItemNode]]:
-        users_dict = {key: value for key, value in [(int(x.get_id()), x) for x in self.G_train.get_user_nodes()]}
-        items_dict = {key: value for key, value in [(int(x.get_id()), x) for x in self.G_train.get_item_nodes()]}
+        # Key user/item dicts by the same canonical 0-based ids the loader uses.
+        int_id_map = self.G_train._int_id_map
+        users_dict = {int_id_map["users"][u]: u for u in self.G_train.get_user_nodes()}
+        items_dict = {int_id_map["items"][i]: i for i in self.G_train.get_item_nodes()}
 
         users_to_test = list(users_dict.keys()) 
         print('getting recommendations start...')
-        ret = test_rank_list(self._sess, self._model, users_to_test, self._data_generator, self._args, drop_flag=False, batch_test_flag=self._batch_test_flag)
+        ret = test_rank_list(self._sess, self._model, users_to_test, self._data_generator, self._args, drop_flag=False, batch_test_flag=self._batch_test_flag, k=k)
         print('getting recommendations end...')
 
         print('formatting rec for frankgraph evaluator...')
