@@ -36,7 +36,8 @@ def run(config_path):
     experiment = config['experiment']
 
     G = load(**experiment['dataset'])
-    preprocess(G, experiment['preprocess'])
+    if "preprocess" in experiment:
+        preprocess(G, experiment['preprocess'])
     print(f'Final graph: {G.info()}')
 
     # Extracting evaluation metrics

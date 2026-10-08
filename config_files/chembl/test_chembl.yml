@@ -4,16 +4,16 @@ experiment:
     item: # infos related to item dataset (mandatory, at least item_id)
       path: datasets/chembl/processed/item.csv
       extra_features: # number columns don't work with translation model
-        - molecular_weight
-        - number_ro5_violations
-        - alogp
+        - molecular_weight # number
+        - number_ro5_violations # number
+        - alogp # number
         - smiles
         - standard_relation
-        - value(nM)
-        - cid
+        - value(nM) # number
+        - cid # number
         - molecular_formula
         - inchi
-        - tpsa
+        - tpsa # nuber
     # features(columns) beside item_id to be used
     user: # mandatory (at least user_id)
       path: datasets/chembl/processed/user.csv
@@ -25,7 +25,7 @@ experiment:
   preprocess:
     - method: filter_kcore
       parameters:
-        k: 20
+        k: 5
         iterations: 1
         target: user # user or rating
 
@@ -33,7 +33,7 @@ experiment:
     seed: 42
     test:
       method: k_fold
-      k: 2
+      k: 5
       level: "user"
 
   models:
