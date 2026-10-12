@@ -276,7 +276,7 @@ class KGAT_loader(Data):
         return feed_dict
 
 
-    def generate_test_feed_dict(self, model, user_batch, item_batch, drop_flag=True):
+    def generate_test_feed_dict(self, model, user_batch, item_batch):
 
         feed_dict ={
             model.users: user_batch,

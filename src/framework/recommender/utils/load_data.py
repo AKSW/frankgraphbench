@@ -15,6 +15,13 @@ class Data(object):
 
         self.batch_size = batch_size
 
+        # Seed both RNGs so negative sampling (np.random / random) and the
+        # train/test split are reproducible across runs. random_state on the
+        # pandas split already uses random_seed; extend the same seed to the
+        # samplers that build training batches.
+        np.random.seed(random_seed)
+        rd.seed(random_seed)
+
         # ----------get number of users and items & then load rating data from train_file & test_file------------.
         self.n_train, self.n_test = 0, 0
         self.n_users, self.n_items = 0, 0

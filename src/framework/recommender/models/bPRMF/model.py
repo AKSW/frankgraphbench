@@ -1,20 +1,20 @@
-from typing import Dict, List, Tuple
-from framework.dataloader.graph.graph import Graph
-from framework.dataloader.graph.node import ItemNode, UserNode
-from framework.recommender.models.bPRMF.helper import early_stopping
-from framework.recommender.models.bPRMF.batch_test import test, test_rank_list
-from framework.recommender.models.bPRMF.loader_bprmf import BPRMF_loader
-from framework.recommender.models.bPRMF.BPRMF import BPRMF_model
-
-from ...recommender import Recommender
+import argparse
+import sys
+from time import time
 
 import numpy as np
 import tensorflow as tf
-from time import time
 from tqdm import tqdm
 
-import argparse
-import sys
+from framework.dataloader.graph.graph import Graph
+from framework.dataloader.graph.node import ItemNode, UserNode
+from framework.recommender.models.bPRMF.batch_test import test, test_rank_list
+from framework.recommender.models.bPRMF.BPRMF import BPRMF_model
+from framework.recommender.models.bPRMF.helper import early_stopping
+from framework.recommender.models.bPRMF.loader_bprmf import BPRMF_loader
+
+from ...recommender import Recommender
+
 
 class BPRMF(Recommender):
     def __init__(
@@ -62,7 +62,7 @@ class BPRMF(Recommender):
         text += f";embed_size={self.embed_size};epoch={self.epoch};regs{self.regs}"
         return text
     
-    def train(self, G_train: Graph, ratings_train: Dict[UserNode, List[Tuple[ItemNode, float]]]):
+    def train(self, G_train: Graph, ratings_train: dict[UserNode, list[tuple[ItemNode, float]]]):
         self.ratings_train = ratings_train
         self.G_train = G_train.convert_node_labels_to_integer(int_id_map=True)
         self._ratings_triples = self.G_train.get_ratings_triples(return_type="int")
@@ -129,7 +129,7 @@ class BPRMF(Recommender):
             t2 = time()
             users_to_test = list(self._data_generator.test_user_dict.keys())
             print('validation start...')
-            ret = test(self._sess, self._model, users_to_test, self._data_generator, self._args, drop_flag=False, batch_test_flag=self._batch_test_flag)
+            ret = test(self._sess, self._model, users_to_test, self._data_generator, self._args, batch_test_flag=self._batch_test_flag)
             print('\nvalidation end...')
 
             # performance logging
@@ -172,7 +172,7 @@ class BPRMF(Recommender):
         print(final_perf)
 
 
-    def get_recommendations(self, k : int = 5) -> Dict[UserNode, List[ItemNode]]:
+    def get_recommendations(self, k : int = 5) -> dict[UserNode, list[ItemNode]]:
         # Key user/item dicts by the same canonical 0-based ids the loader uses.
         int_id_map = self.G_train._int_id_map
         users_dict = {int_id_map["users"][u]: u for u in self.G_train.get_user_nodes()}
@@ -180,7 +180,7 @@ class BPRMF(Recommender):
 
         users_to_test = list(users_dict.keys()) 
         print('getting recommendations start...')
-        ret = test_rank_list(self._sess, self._model, users_to_test, self._data_generator, self._args, drop_flag=False, batch_test_flag=self._batch_test_flag, k=k)
+        ret = test_rank_list(self._sess, self._model, users_to_test, self._data_generator, self._args, batch_test_flag=self._batch_test_flag, k=k)
         print('getting recommendations end...')
 
         print('formatting rec for frankgraph evaluator...')
