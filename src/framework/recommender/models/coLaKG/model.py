@@ -1,21 +1,29 @@
+from __future__ import annotations
+
 import time
-import torch
-import walker
+from typing import Optional
 
 import numpy as np
-import scipy.sparse as sp
-
+import torch
 from ollama import Client
-from tqdm import tqdm
-from typing import Optional
 from sklearn.metrics.pairwise import cosine_similarity
+from tqdm import tqdm
 
-from .CoLaKG import CoLaKG_model
-from .dataloader import Loader
-from .colakg_utils import BPRLoss
-from .Procedure import Test, BPR_train_original
+from ....dataloader.graph.graph import Graph
+from ....dataloader.graph.node import ItemNode, PropertyNode, UserNode
 from ...recommender import Recommender
-from ....dataloader.graph.node import PropertyNode, ItemNode
+from .CoLaKG import CoLaKG_model
+from .colakg_utils import BPRLoss
+from .dataloader import Loader
+from .Procedure import BPR_train_original, Test
+from .walker import random_walks
+
+
+def _batch(iterable, batch_size):
+    """Yield successive slices of ``iterable`` of at most ``batch_size`` items."""
+    for i in range(0, len(iterable), batch_size):
+        yield iterable[i:i + batch_size]
+
 
 class CoLaKG(Recommender):
     def __init__(
@@ -39,7 +47,7 @@ class CoLaKG(Recommender):
             lr: float = 0.001,
             decay: float = 1e-4,
             pretrain: int = 0,
-            A_split: int = 100,
+            A_split: bool = False,
             bigdata: int = 0,
             neighbor_k: int = 10,
             dropout_i: float = 0.6,
@@ -47,6 +55,10 @@ class CoLaKG(Recommender):
             dropout_n: float = 0.6,
             seed: int = 2020,
             epochs: int = 1000,
+            semantic_hid_dim: int = 32,
+            item_llm_limit: int | None = None,
+            user_llm_limit: int | None = None,
+            device: str = "cpu",
         ):
         super().__init__(config)
         self.item_name = item_name
@@ -57,60 +69,106 @@ class CoLaKG(Recommender):
         self.validate_frac = validate_frac
         self.validate_seed = validate_seed
         self.epochs = epochs
+        self.device = torch.device(
+             device if device != "auto" else ("cuda" if torch.cuda.is_available() else "cpu")
+        )
+        self.item_llm_limit = item_llm_limit
+        self.user_llm_limit = user_llm_limit
         self.config = {
-            "neighbor_k": neighbor_k,
-            "dropout_i": dropout_i,
-            "dropout_u": dropout_u,
-            "dropout_n": dropout_n,
-            "bpr_batch_size": bpr_batch_size,
-            "latent_dim_rec": latent_dim_rec,
-            "lightGCN_n_layers": lightGCN_n_layers,
-            "use_drop_edge": use_drop_edge,
-            "keep_prob": keep_prob,
-            "A_n_fold": A_n_fold,
-            "test_u_batch_size": test_u_batch_size,
-            "multicore": multicore,
-            "lr": lr,
-            "decay": decay,
-            "pretrain": pretrain,
-            "A_split": A_split,
-            "bigdata": bigdata,
-            "seed": seed,
+             "neighbor_k": neighbor_k,
+             "dropout_i": dropout_i,
+             "dropout_u": dropout_u,
+             "dropout_n": dropout_n,
+             "bpr_batch_size": bpr_batch_size,
+             "latent_dim_rec": latent_dim_rec,
+             "lightGCN_n_layers": lightGCN_n_layers,
+             "use_drop_edge": use_drop_edge,
+             "keep_prob": keep_prob,
+             "A_n_fold": A_n_fold,
+             "test_u_batch_size": test_u_batch_size,
+             "multicore": multicore,
+             "lr": lr,
+             "decay": decay,
+             "pretrain": pretrain,
+             "A_split": A_split,
+             "bigdata": bigdata,
+             "seed": seed,
+             "semantic_hid_dim": semantic_hid_dim,
         }
 
     def name(self):
         text = "CoLaKG"
         text += f";model={self.model_name};emb_model={self.emb_model_name};walk_len={self.walk_len}"
         return text
-    
-    def train(self, G_train, ratings_train):
+
+    def train(self, G_train: Graph, ratings_train):
         self.ratings_train = ratings_train
-        self.G_train = G_train
-        
+         # Keep the original-node graph for prompt building but register the
+         # canonical 0-based int id-map that get_ratings_triples("int") requires.
+        self.G_train = G_train.convert_node_labels_to_integer(int_id_map=True)
+        self._int_id_map = self.G_train._int_id_map
+
         self.item_property_dict = {item: [] for item in self.G_train.get_item_nodes()}
         for item, property in self.G_train.get_item_property_edges():
             self.item_property_dict[item].append(property)
-        
+
         self.semantic_embs_items_dict, self.semantic_embs_users_dict = self._pre_train()
+
+         # The semantic embedding dimension (drives the semantic maps in the model).
+        self.semantic_dim = None
+        for emb in self.semantic_embs_items_dict.values():
+            self.semantic_dim = len(emb)
+            break
+        if self.semantic_dim is None:
+            for emb in self.semantic_embs_users_dict.values():
+                self.semantic_dim = len(emb)
+                break
+        if self.semantic_dim is None:
+            raise RuntimeError("No semantic embeddings were produced; check model_host and the LLM/embedding limits.")
 
         self.fit()
 
     def fit(self):
-        cosine_sim_matrix = cosine_similarity(list(self.semantic_embs_items_dict.values()))
+        import random
+        random.seed(self.config["seed"])
+        np.random.seed(self.config["seed"])
+
+        n_items = self._int_id_map["n_items"]
+        n_users = self._int_id_map["n_users"]
+        item_id = self._int_id_map["items"]
+        user_id = self._int_id_map["users"]
+
+         # Align the LLM-generated embeddings to the model's 0-based int id space.
+         # Pad any node that missed an embedding (LLM/embed limit) with zeros so
+         # that node index i <-> semantic row i, matching get_ratings_triples("int").
+        item_rows = [np.zeros(self.semantic_dim, dtype=np.float32) for _ in range(n_items)]
+        for item, emb in self.semantic_embs_items_dict.items():
+            item_rows[item_id[item]] = np.asarray(emb, dtype=np.float32)
+
+        user_rows = [np.zeros(self.semantic_dim, dtype=np.float32) for _ in range(n_users)]
+        for user, emb in self.semantic_embs_users_dict.items():
+            user_rows[user_id[user]] = np.asarray(emb, dtype=np.float32)
+
+        item_semantic_emb = torch.tensor(np.asarray(item_rows)).to(self.device)
+        user_semantic_emb = torch.tensor(np.asarray(user_rows)).to(self.device)
+
+         # Global information: k-nearest semantic neighbors over item embeddings.
+        cosine_sim_matrix = cosine_similarity(item_semantic_emb.detach().cpu().numpy())
         sorted_indices = np.argsort(-cosine_sim_matrix, axis=1)
-        sorted_indices = sorted_indices[:, 1:self.config['neighbor_k']+1] # does not include itself
-        sorted_indices = torch.tensor(sorted_indices).long()
+        sorted_indices = sorted_indices[:, 1:self.config["neighbor_k"] + 1]   # does not include itself
+        sorted_indices = torch.tensor(sorted_indices).long().to(self.device)
 
         ratings_triples = self.G_train.get_ratings_triples(return_type="int")
         self.dataset = Loader(self.config, ratings_triples, self.validate_frac, self.validate_seed)
 
         self.model = CoLaKG_model(
-            self.config,
-            self.dataset,
-            sorted_indices,
-            torch.stack([torch.tensor(emb) for emb in self.semantic_embs_items_dict.values()]),
-            torch.stack([torch.tensor(emb) for emb in self.semantic_embs_users_dict.values()])
-        )
+             self.config,
+             self.dataset,
+             sorted_indices,
+             item_semantic_emb,
+             user_semantic_emb,
+             self.device,
+         )
         bpr = BPRLoss(self.model, self.config)
 
         for epoch in range(self.epochs):
@@ -118,54 +176,98 @@ class CoLaKG(Recommender):
 
             if epoch % 5 == 0:
                 print("[TEST]")
-                test_results = Test(self.dataset, self.model, epoch)
+                test_results = Test(
+                     self.dataset, self.model, epoch,
+                     topks=(1, 10, 100),
+                     u_batch_size=self.config["test_u_batch_size"],
+                )
                 print(f"TEST RESULTS at EPOCH[{epoch+1}/{self.epochs}]: {test_results}")
 
-            output_information = BPR_train_original(self.dataset, self.model, bpr, epoch)
+            output_information = BPR_train_original(
+                 self.dataset, self.model, bpr, epoch,
+                 batch_size=self.config["bpr_batch_size"],
+            )
 
             end = time.time()
             epoch_time = end - start
 
             print(f"Epoch [{epoch+1}/{self.epochs}] {output_information} - completed in {epoch_time:.2f} seconds")
 
+    def get_recommendations(self, k: int = 5) -> dict[UserNode, list[ItemNode]]:
+         # Reverse maps: canonical int id -> original Node object.
+        item_id = self._int_id_map["items"]
+        user_id = self._int_id_map["users"]
+        int_to_user = {int_id: u for u, int_id in user_id.items()}
+        int_to_item = {int_id: i for i, int_id in item_id.items()}
+
+         # Items each user has seen in training, keyed by int id for fast masking.
+        seen_by_user = {}
+        for user in self.G_train.get_user_nodes():
+            seen_by_user[user_id[user]] = {item_id[i] for i in self.G_train.get_user_rated_items(user)}
+
+        all_int_users = list(user_id.values())
+        u_batch_size = self.config["test_u_batch_size"]
+        recommendations = {int_to_user[u]: [] for u in all_int_users}
+
+        self.model.eval()
+        with torch.no_grad():
+            for batch in _batch(all_int_users, u_batch_size):
+                batch_int = torch.tensor(batch, dtype=torch.long).to(self.device)
+                rating = self.model.getUsersRating(batch_int)    # (batch, n_items)
+                rating = rating.detach().cpu().numpy()
+
+                for idx, u_int in enumerate(batch):
+                    scores = rating[idx].copy()
+                       # Mask items the user has already seen in training.
+                    for item_int in seen_by_user.get(u_int, ()):
+                        scores[item_int] = -1e10
+                       # Top-k by score, then back to original ItemNode objects.
+                    topk = np.argsort(-scores)[:k]
+                    recommendations[int_to_user[u_int]] = [int_to_item[i] for i in topk]
+
+        return recommendations
+
+    def get_user_recommendation(self, user: UserNode, k: int = 5) -> list[ItemNode]:
+        recs = self.get_recommendations(k=k)
+        return recs.get(user, [])
+
     def _pre_train(self):
         print("building input...")
 
         system_prompt = {
-            "item": ("Assume you are an expert in recommendation. "
-                    "You will be given some information about an item. "
-                    "Based on this information and your world knowledge, "
-                    "please analyze and summarize the characteristics of this item, "
-                    "and analyze what kind of users would like this item. "
-                    "Your response should be a coherent paragraph with no more than 200 words."
-            ),
-            "user": ("Assume you are an expert in recommendation. "
-                    "You will be given some information about a user. "
-                    "Based on this information and your world knowledge, "
-                    "please analyze and summarize the characteristics of this user, "
-                    "and analyze what kind of items this user would like. "
-                    "Your response should be a coherent paragraph with no more than 200 words."
-            ),
+             "item": ("Assume you are an expert in recommendation. "
+                     "You will be given some information about an item. "
+                     "Based on this information and your world knowledge, "
+                     "please analyze and summarize the characteristics of this item, "
+                     "and analyze what kind of users would like this item. "
+                     "Your response should be a coherent paragraph with no more than 200 words."
+             ),
+             "user": ("Assume you are an expert in recommendation. "
+                     "You will be given some information about a user. "
+                     "Based on this information and your world knowledge, "
+                     "please analyze and summarize the characteristics of this user, "
+                     "and analyze what kind of items this user would like. "
+                     "Your response should be a coherent paragraph with no more than 200 words."
+             ),
         }
 
         messages_items_dict = self.__build_input_item(system_prompt["item"])
         messages_users_dict = self.__build_input_user(system_prompt["user"])
-        
-        client = Client(host=self.model_host)
-        llm_responses_items_dict = self.__get_ollama(client, messages_items_dict, "item", count_limit=10)
-        llm_responses_users_dict = self.__get_ollama(client, messages_users_dict, "user", count_limit=10)
 
-        semantic_embs_items_dict = self.__get_emb_ollama(client, llm_responses_items_dict, "item", count_limit=10)
-        semantic_embs_users_dict = self.__get_emb_ollama(client, llm_responses_users_dict, "user", count_limit=10)
+        client = Client(host=self.model_host)
+        llm_responses_items_dict = self.__get_ollama(client, messages_items_dict, "item", count_limit=self.item_llm_limit)
+        llm_responses_users_dict = self.__get_ollama(client, messages_users_dict, "user", count_limit=self.user_llm_limit)
+
+        semantic_embs_items_dict = self.__get_emb_ollama(client, llm_responses_items_dict, "item", count_limit=self.item_llm_limit)
+        semantic_embs_users_dict = self.__get_emb_ollama(client, llm_responses_users_dict, "user", count_limit=self.user_llm_limit)
 
         print("pre-training finished...")
 
         return semantic_embs_items_dict, semantic_embs_users_dict
-    
+
     def _get_sparse_graph(self):
         pass
 
-        
     def __build_input_item(self, system_prompt):
         messages_dict = {}
         for item, property_list in self.item_property_dict.items():
@@ -177,69 +279,88 @@ class CoLaKG(Recommender):
                 user_content = f"{item} is first degree related to the property nodes: "
             for prop in property_list:
                 user_content += f"called {prop.get_property_type()} and defined by {prop.get_id()}; "
-            
+
             messages_dict[item] = [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_content}
-                ]
+                 {"role": "system", "content": system_prompt},
+                 {"role": "user", "content": user_content}
+             ]
 
         return messages_dict
 
     def __build_input_user(self, system_prompt):
-        graph = self.G_train.convert_node_labels_to_integer()
-        users = graph.get_user_nodes()
-        users_int = {graph.nodes[node]["old_label"]: node for node in graph.nodes() if graph.nodes[node]["old_label"] in users}
-        # creates one random walk for each item where first from the list is the item_node id
-        walks = walker.random_walks(graph, n_walks=1, walk_len=self.walk_len, start_nodes=[users_int[user] for user in users])
-        input_dict = {}
+         # G_train was converted with int_id_map=True, so its nodes are the
+         # original Node objects and carry no "old_label". Run one random walk
+         # per user node on the graph itself to build a user-centered context.
+        users = list(self.G_train.get_user_nodes())
+        walks = random_walks(
+             self.G_train,
+             n_walks=1,
+             walk_len=self.walk_len,
+             start_nodes=users,
+        )
+
+          # Map each walk back to its starting user node so that the LLM/embed
+          # calls are keyed by the same Node objects as the item prompts (the
+          # int id is only used inside the prompt text for readability).
+        user_walks = {}
         for walk in walks:
-            input_dict[graph.nodes[int(walk[0])]["old_label"]] = [graph.nodes[int(w)]["old_label"] for w in walk[1:]]
-        
+            start_user = walk[0]
+              # The walk may repeat the start node; keep the rest as context.
+            context = [n for n in walk[1:] if n is not start_user]
+            user_walks[start_user] = context
+
         messages_dict = {}
-        for user, walk in input_dict.items():
-            user_content = f"{user} is related, according a random walk of length {self.walk_len}: "
-            for node in walk:
-                if isinstance(node, PropertyNode):
-                    user_content += f"to the property {node.get_property_type()} defined as {node.get_id()}; "
-                elif isinstance(node, ItemNode):
-                    types_list = [prop.get_property_type() for prop in self.item_property_dict[node]]
-                    if self.item_name in types_list:
-                        idx = types_list.index(self.item_name)
-                        user_content += f"to the item {node.get_id()}, named {self.item_property_dict[node][idx].get_id()}; "
-                    else:
-                        user_content += f"to the item {node.get_id()}; "
-                else:   
-                    user_content += f"to the user {node.get_id()}; "
-            
-            messages_dict[user] = [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_content}
-                ]
-        
+        for user_node, context in user_walks.items():
+            user_int = self._int_id_map["users"][user_node]
+            user_content = f"user {user_int} is related, according to a random walk of length {self.walk_len}: "
+            if not context:
+               user_content += " no neighborhood was found."
+            for node in context:
+               if isinstance(node, PropertyNode):
+                   user_content += f"to the property {node.get_property_type()} defined as {node.get_id()}; "
+               elif isinstance(node, ItemNode):
+                   if node in self.item_property_dict:
+                       types_list = [prop.get_property_type() for prop in self.item_property_dict[node]]
+                       if self.item_name in types_list:
+                           idx = types_list.index(self.item_name)
+                           user_content += f"to the item {node.get_id()}, named {self.item_property_dict[node][idx].get_id()}; "
+                       else:
+                           user_content += f"to the item {node.get_id()}; "
+                   else:
+                       user_content += f"to the item {node.get_id()}; "
+               else:
+                    # Another user in the walk; reference it by its canonical int id.
+                   user_content += f"to user {self._int_id_map['users'][node]}; "
+
+            messages_dict[user_node] = [
+                 {"role": "system", "content": system_prompt},
+                 {"role": "user", "content": user_content}
+             ]
+
         return messages_dict
-    
-    def __get_ollama(self, client: Client, messages_dict: dict, target_type: str, count_limit: Optional[int] = None):
-        count = 0
+
+    def __get_ollama(self, client: Client, messages_dict: dict, target_type: str, count_limit: int | None = None):
         llm_responses_dict = {}
-        for node in tqdm(messages_dict, total=len(messages_dict), desc=f"requesting llm model {self.model_name} with host {self.model_host} for '{target_type}' semantic description..."):
+        for count, node in tqdm(enumerate(messages_dict), total=len(messages_dict), desc=f"requesting llm model {self.model_name} with host {self.model_host} for '{target_type}' semantic description..."):
             response = client.chat(model=self.model_name, messages=messages_dict[node])
             llm_responses_dict[node] = response["message"]["content"]
-            
-            count += 1
+
             if count_limit is not None and count >= count_limit:
                 break
-        
+
         return llm_responses_dict
-    
-    def __get_emb_ollama(self, client: Client, llm_responses_dict: dict, target_type: str, count_limit: Optional[int] = None):
-        count = 0
+
+    def __get_emb_ollama(self, client: Client, llm_responses_dict: dict, target_type: str, count_limit: int | None = None):
         semantic_embs_dict = {}
-        for node in tqdm(llm_responses_dict, total=len(llm_responses_dict), desc=f"generating embedding for '{target_type}' with model {self.emb_model_name}..."):
+        for count, node in tqdm(enumerate(llm_responses_dict), total=len(llm_responses_dict), desc=f"generating embedding for '{target_type}' with model {self.emb_model_name}..."):
             response = client.embed(model=self.emb_model_name, input=llm_responses_dict[node])
-            semantic_embs_dict[node] = response["embeddings"][0]
-            
-            count += 1
+            try:
+                semantic_embs_dict[node] = response["embeddings"][0]
+            except IndexError as e:
+                print(f"error: {e}")
+                print(response)
+
             if count_limit is not None and count >= count_limit:
                 break
-        
+
         return semantic_embs_dict

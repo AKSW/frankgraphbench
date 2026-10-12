@@ -23,7 +23,7 @@ setup(
         'gensim', 'joblib', 'networkx', 'numpy<2', 'pandas', 'python-dateutil', 'pytz', 'PyYAML', 'scikit-learn', 'scipy', 'six', 'smart-open',
         'threadpoolctl', 'tqdm', 'tzdata', 'pykeen', 'torch==2.2', 'py-cpuinfo', 'gputil', 'psutil', 'tf-keras', 'sentence-transformers', 'graph-walker', 'isodate',
         'Levenshtein', 'pyparsing', 'python-Levenshtein', 'rapidfuzz', 'rdflib', 'SPARQLWrapper', 'thefuzz', 'tzdata',
-        'beautifulsoup4', 'matplotlib', 'contourpy', 'SPARQLWrapper', 'multiprocess', 'tensorflow'
+        'beautifulsoup4', 'matplotlib', 'contourpy', 'SPARQLWrapper', 'multiprocess', 'tensorflow', 'ollama'
     ],
     entry_points={
         'console_scripts': [

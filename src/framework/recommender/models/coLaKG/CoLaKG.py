@@ -7,6 +7,13 @@ import torch.nn.functional as F
 
 from .dataloader import Loader
 
+def _move_graph(graph, device):
+    """Move a sparse LightGCN adjacency tensor (or a list of split tensors) to ``device``."""
+    if isinstance(graph, (list, tuple)):
+        return [g.to(device) for g in graph]
+    return graph.to(device) if graph is not None else graph
+
+
 class BasicModel(nn.Module):    
     def __init__(self):
         super(BasicModel, self).__init__()
@@ -30,28 +37,30 @@ class PairWiseModel(BasicModel):
 
 class CoLaKG_model(BasicModel):
     def __init__(self, 
-                 config: dict,
-                 dataset: Loader,
-                 adj_matrix=None, 
-                 semantic_emb=None, 
-                 user_semantic_emb=None,):
+               config: dict,
+               dataset: Loader,
+               adj_matrix=None, 
+               semantic_emb=None, 
+               user_semantic_emb=None,
+               device=None,):
         super(CoLaKG_model, self).__init__()
-
-        # GPU = torch.cuda.is_available()
-        # MPS = torch.backends.mps.is_available()
-        # device = torch.device("cuda" if GPU else "mps" if MPS else "cpu")
-        # CORES = multiprocessing.cpu_count() // 2
 
         self.config = config
         self.dataset = dataset
-        self.adj_matrix = adj_matrix#.to(device)
-        self.semantic_emb = semantic_emb#.to(device)
-        self.user_semantic_emb = user_semantic_emb#.to(device)
-        self.semantic_hid = 32
+        self.device = device if device is not None else torch.device("cpu")
+        self.adj_matrix = adj_matrix
+        self.semantic_emb = semantic_emb
+        self.user_semantic_emb = user_semantic_emb
+        self.semantic_dim = semantic_emb.shape[1] if semantic_emb is not None else 1024
+        self.semantic_hid = self.config.get('semantic_hid_dim', 32)
         self.dropout_i = self.config['dropout_i']
         self.dropout_u = self.config['dropout_u']
         self.dropout_neighbor = self.config['dropout_n']
         self.__init_weight()
+          # Put every parameter, buffer, and prebuilt tensor on the same device.
+        self.to(self.device)
+        if self.adj_matrix is not None:
+            self.adj_matrix = self.adj_matrix.to(self.device)
 
     def __init_weight(self):
         self.num_users  = self.dataset.n_users # get a graph and info object here
@@ -72,17 +81,18 @@ class CoLaKG_model(BasicModel):
    
         self.f = nn.Sigmoid()
         self.Graph = self.dataset.getSparseGraph()
-        self.semantic_map = nn.Linear(1024, self.latent_dim)
-        self.user_semantic_map = nn.Linear(1024, self.latent_dim)
+        self.Graph = _move_graph(self.Graph, self.device)
+        self.semantic_map = nn.Linear(self.semantic_dim, self.latent_dim)
+        self.user_semantic_map = nn.Linear(self.semantic_dim, self.latent_dim)
         print(f"lgn is already to go(drop_edge:{self.config['use_drop_edge']})")
-        self.W = nn.Parameter(torch.empty(size=(1024, 32)))
+        self.W = nn.Parameter(torch.empty(size=(self.semantic_dim, self.semantic_hid)))
         nn.init.xavier_uniform_(self.W.data, gain=1.414)
-        self.a = nn.Parameter(torch.empty(size=(2*32, 1)))
+        self.a = nn.Parameter(torch.empty(size=(2*self.semantic_hid, 1)))
         nn.init.xavier_uniform_(self.a.data, gain=1.414)
-        
-        self.W_u = nn.Parameter(torch.empty(size=(1024, 32)))
+
+        self.W_u = nn.Parameter(torch.empty(size=(self.semantic_dim, self.semantic_hid)))
         nn.init.xavier_uniform_(self.W_u.data, gain=1.414)
-        self.a_u = nn.Parameter(torch.empty(size=(2*32, 1)))
+        self.a_u = nn.Parameter(torch.empty(size=(2*self.semantic_hid, 1)))
         nn.init.xavier_uniform_(self.a_u.data, gain=1.414)
         self.alpha=0.2
         self.leakyrelu = nn.LeakyReLU(self.alpha)
@@ -208,22 +218,27 @@ class CoLaKG_model(BasicModel):
         return users_emb, pos_emb, neg_emb, users_emb_ego, pos_emb_ego, neg_emb_ego, pos_emb_ego0, neg_emb_ego0, users_emb_ego0
     
     def bpr_loss(self, users, pos, neg):
-        (users_emb, pos_emb, neg_emb, 
-        userEmb0,  posEmb0, negEmb0, pos_emb_ego0, neg_emb_ego0, users_emb_ego0) = self.getEmbedding(users.long(), pos.long(), neg.long())
-        reg_loss = (1/2)*(userEmb0.norm(2).pow(2) + 
-                         posEmb0.norm(2).pow(2)  +
-                         negEmb0.norm(2).pow(2) + 
-                         pos_emb_ego0.norm(2).pow(2) + 
-                         neg_emb_ego0.norm(2).pow(2) + 
-                         users_emb_ego0.norm(2).pow(2)
-                         )/float(len(users))
+        # getEmbedding returns, in order: propagated (users, pos, neg) embeddings
+        # followed by their ego embeddings (users, pos, neg) and the semantic
+        # ego embeddings (pos, neg, users).
+        (users_emb, pos_emb, neg_emb,
+        users_emb_ego, pos_emb_ego, neg_emb_ego,
+        pos_emb_sem, neg_emb_sem, users_emb_sem) = self.getEmbedding(users.long(), pos.long(), neg.long())
+        reg_loss = (1/2) * (
+           users_emb_ego.norm(2).pow(2) +
+           pos_emb_ego.norm(2).pow(2) +
+           neg_emb_ego.norm(2).pow(2) +
+           pos_emb_sem.norm(2).pow(2) +
+           neg_emb_sem.norm(2).pow(2) +
+           users_emb_sem.norm(2).pow(2)
+        ) / float(len(users))
         pos_scores = torch.mul(users_emb, pos_emb)
         pos_scores = torch.sum(pos_scores, dim=1)
         neg_scores = torch.mul(users_emb, neg_emb)
         neg_scores = torch.sum(neg_scores, dim=1)
-        
+
         loss = torch.mean(torch.nn.functional.softplus(neg_scores - pos_scores))
-        
+
         return loss, reg_loss
        
     def forward(self, users, items):

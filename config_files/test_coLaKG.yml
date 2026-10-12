@@ -36,6 +36,23 @@ experiment:
         model_name: qwen3:1.7b
         emb_model_name: qwen3-embedding:0.6b
         walk_len: 10
+        latent_dim_rec: 64
+        lightGCN_n_layers: 3
+        use_drop_edge: 1
+        keep_prob: 0.8
+        bpr_batch_size: 2048
+        test_u_batch_size: 100
+        neighbor_k: 10
+        dropout_i: 0.6
+        dropout_u: 0.6
+        dropout_n: 0.6
+        semantic_hid_dim: 32
+        device: auto
+        # Limits for the LLM/embedding calls; null => use every node.
+        # Set a small integer (e.g. 10) to smoke-test the pipeline quickly.
+        item_llm_limit: null
+        user_llm_limit: null
+        epochs: 1000
 
   evaluation:
     k: 10
