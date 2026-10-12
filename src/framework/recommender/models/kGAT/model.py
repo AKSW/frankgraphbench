@@ -42,7 +42,7 @@ class KGAT(Recommender):
                     use_kge: bool = True,
                     report: int = 0,
                     ks: list = [10],
-                    random_seed : int = 42
+                    random_seed: int = 42
                  ):
         super().__init__(config)
         args_dict = {
