@@ -24,9 +24,9 @@ This project was designed to support further contributions, whether adding new s
         pip install .
         ```
    * **Notes**:
-     - Use `requirements.txt` for non-Apple platforms and `requirements_apple.txt` for Apple Silicon (macOS arm64) when installing dependencies manually.
-     - Both requirements files cover every module (data integration, framework and chart generation).
-     - When you add a new dependency, add it to `requirements.txt` and, when the dependency is platform-specific, mirror the change in `requirements_apple.txt` and in `setup.py`.
+     - Use `requirements.txt` when installing dependencies manually.
+     - `requirements.txt` covers every module (data integration, framework and chart generation).
+     - When you add a new dependency, add it to `requirements.txt` and in `setup.py`.
 
 3. Develop your contribution:
     * Pull the latest changes from upstream:

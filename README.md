@@ -36,7 +36,7 @@ source venv_data_integration/bin/activate
 pip install .
 ```
 
-On Apple Silicon (macOS arm64) `pip install .` selects the correct TensorFlow builds automatically. To install the exact Apple-Silicon dependency set manually, use `pip install -r requirements_apple.txt` instead; on every other platform use `pip install -r requirements.txt`.
+To install the exact dependency set manually, use `pip install -r requirements.txt`.
 
 Install the full dataset using bash scripts located at `datasets/`:
 
@@ -96,9 +96,9 @@ Dataset enrichment, except for the MIND-small dataset, is done through a fixed D
 
 ## pip
 
-We recommend using a python 3.11 virtual environment for all platforms. Note that the `deep_walk_based` embedding method does not work on Apple Silicon.
+We recommend using a python 3.11 virtual environment for all platforms.
 
-`pip install frankgraphbench` selects the correct TensorFlow variant for your platform automatically: on Apple Silicon (macOS arm64) it installs `tensorflow-macos` and `tensorflow-metal`, and on every other platform (Linux, Windows, x86 macOS) it installs the regular `tensorflow` package. No manual install is therefore required:
+`pip install frankgraphbench` installs the regular `tensorflow` package on every platform. No manual install is therefore required:
 
 ```shell
 pip install frankgraphbench
@@ -107,8 +107,7 @@ pip install frankgraphbench
 If you run into trouble with the automatic install, you can still install manually with the matching requirements file:
 
 ```shell
-pip install -r requirements_apple.txt   # Apple Silicon (installs tensorflow-macos + tensorflow-metal)
-pip install -r requirements.txt         # other platforms (installs tensorflow)
+pip install -r requirements.txt
 ```
 
 ## source
@@ -119,16 +118,6 @@ Install from the repository root using `pip install .`. We recommend a python 3.
 python3 -m venv venv_framework/
 source venv_framework/bin/activate
 pip install .
-```
-
-### Apple silicon
-
-On Apple Silicon `pip install .` automatically selects `tensorflow-macos` and `tensorflow-metal`. To install the exact Apple-Silicon dependency set manually:
-
-```shell
-python3 -m venv venv_framework/
-source venv_framework/bin/activate
-pip install -r requirements_apple.txt
 ```
 
 ## Usage 

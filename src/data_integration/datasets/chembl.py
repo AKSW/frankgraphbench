@@ -112,8 +112,6 @@ class CHEMBL(Dataset):
             "cas": "cas::string",
         }
 
-        self.old_new_string_list_separator = ("|", "::")
-
 class CHEMBLTrypanosoma(CHEMBL):
     def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
         super().__init__(input_path, output_path, n_workers, sparql_endpoint)
@@ -282,12 +280,10 @@ class CHEMBLTrypanosoma(CHEMBL):
             .set_index("item_id::string")
         )
         # putting string_list separator to the standard
-        for col in self.enrich_fields.values():
-            if "string_list" in col:
-                df_enrich[col] = (
-                    df_enrich[col].apply(
-                            lambda x: x.replace(self.old_new_string_list_separator[0], self.old_new_string_list_separator[1])
-                        )
-                )
+        string_list_cols = [col for col in self.enrich_fields.values() if "string_list" in col]
+        if string_list_cols:
+            df_enrich[string_list_cols] = df_enrich[string_list_cols].apply(
+                lambda s: s.str.replace("|", "::", regex=False)
+            )
 
         return df_enrich

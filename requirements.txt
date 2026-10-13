@@ -1,11 +1,10 @@
 # Full dependency set for all FranKGraphBench modules
-# (data integration, framework, chart generation) on non-Apple platforms
-# (Linux, Windows, x86 macOS). For Apple Silicon use requirements_apple.txt.
+# (data integration, framework, chart generation).
 
 gensim
 joblib
 networkx
-numpy
+numpy>2
 pandas
 python-dateutil
 pytz
