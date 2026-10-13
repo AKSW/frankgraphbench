@@ -278,7 +278,7 @@ class CHEMBL(Dataset):
         df = df.rename(self.item_fields, axis=1)
 
             # keep item_id as the first column
-        item_columns = [self.item_fields[k] for k in self.item_fields.keys()]
+        item_columns = [self.item_fields[k] for k in self.item_fields]
         df = df[["item_id::string"] + item_columns]
 
         return df
