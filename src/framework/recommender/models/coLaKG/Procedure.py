@@ -1,9 +1,11 @@
 
+import multiprocessing
+
 import numpy as np
 import torch
-import framework.recommender.models.coLaKG.colakg_utils as colakg_utils
+
+from framework.recommender.models.coLaKG import colakg_utils
 from framework.recommender.models.coLaKG.colakg_utils import timer
-import multiprocessing
 
 CORES = multiprocessing.cpu_count() // 2
 

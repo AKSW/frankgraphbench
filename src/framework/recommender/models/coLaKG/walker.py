@@ -8,8 +8,6 @@
     prompt, so no biased (node2vec p/q) sampling is needed.
 """
 import numpy as np
-import networkx as nx
-
 from tqdm import tqdm
 
 

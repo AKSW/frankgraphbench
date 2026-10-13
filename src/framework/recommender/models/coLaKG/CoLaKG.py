@@ -1,11 +1,12 @@
 import multiprocessing
 
-import torch
-from torch import nn
 import numpy as np
+import torch
 import torch.nn.functional as F
+from torch import nn
 
 from .dataloader import Loader
+
 
 def _move_graph(graph, device):
     """Move a sparse LightGCN adjacency tensor (or a list of split tensors) to ``device``."""

@@ -1,10 +1,12 @@
 
-import torch
-import numpy as np
-from torch.utils.data import Dataset
-from scipy.sparse import csr_matrix
-import scipy.sparse as sp
 from time import time
+
+import numpy as np
+import scipy.sparse as sp
+import torch
+from scipy.sparse import csr_matrix
+from torch.utils.data import Dataset
+
 
 class BasicDataset(Dataset):
     def __init__(self):
