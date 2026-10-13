@@ -9,6 +9,83 @@ import networkx as nx
 from tqdm import tqdm
 
 
+def random_walks(graph, n_walks: int = 1, walk_len: int = 10, start_nodes=None,
+                 p: float = 1.0, q: float = 1.0):
+    """Run truncated random walks on ``graph``.
+
+    This is a dependency-free replacement for the external ``graph-walker``
+    library: it relies only on ``numpy`` / ``networkx`` / ``tqdm`` and returns
+    native node ids -- whatever the graph uses as labels (integers, strings, or
+    the framework's ``Node`` objects).
+
+    :param graph: a NetworkX graph (undirected, weighted or unweighted)
+    :param n_walks: number of walks to sample from each start node
+    :param walk_len: number of *hops* per walk; a walk stops early at a dead
+        end, so it may be shorter than ``walk_len``
+    :param start_nodes: optional iterable of start nodes; defaults to every node
+    :param p: return parameter of the Node2Vec second-order walk
+    :param q: in-out parameter of the Node2Vec second-order walk
+        (``p == q == 1`` -- the default -- yields a first-order uniform walk)
+    :return: a list of walks, each a list of node ids beginning with its
+        start node
+    """
+    if start_nodes is None:
+        start_nodes = list(graph.nodes())
+
+    biased = p != 1.0 or q != 1.0
+    walks = []
+    for node in tqdm(start_nodes, total=len(start_nodes), desc="running random walks"):
+        for _ in range(n_walks):
+            walks.append(_do_walk(graph, node, walk_len, p, q, biased))
+
+    return walks
+
+
+def _do_walk(graph, node, walk_len: int, p: float, q: float, biased: bool) -> list:
+    """A single truncated random walk of up to ``walk_len`` hops at ``node``.
+
+    With ``biased=False`` (``p == q == 1``) this is a first-order uniform walk.
+    Otherwise it is a Node2Vec second-order walk with return probability ``1/p``
+    and in-out probability ``1/q``.
+    """
+    walk = [node]
+    if not biased:
+        for _ in range(walk_len):
+            neighbors = list(graph.neighbors(walk[-1]))
+            if not neighbors:
+                 # Dead end: stop early. Callers tolerate short walks.
+                break
+            walk.append(np.random.choice(neighbors))
+        return walk
+
+    edge_fn = _get_edge_fn(graph)
+    weight_fn = _get_weight_fn(graph)
+    previous_node = None
+    previous_node_neighbors = []
+    for _ in range(walk_len):
+        current_node = walk[-1]
+        edges = edge_fn(current_node)
+        if not edges:
+             # Dead end: stop early.
+            break
+        current_node_neighbors = np.array([edge[1] for edge in edges])
+        weights = weight_fn(edges)
+        probability = np.piecewise(
+            weights,
+            [
+                current_node_neighbors == previous_node,
+                np.isin(current_node_neighbors, previous_node_neighbors),
+            ],
+            [lambda w: w / p, lambda w: w, lambda w: w / q],
+        )
+        norm_probability = probability / sum(probability)
+        walk.append(np.random.choice(current_node_neighbors, 1, p=norm_probability)[0])
+        previous_node_neighbors = current_node_neighbors
+        previous_node = current_node
+
+    return walk
+
+
 class RandomWalker:
     """
     Class to do fast first-order random walks.

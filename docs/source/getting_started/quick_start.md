@@ -6,10 +6,9 @@
 
 #### pip
 
-We recommend using a python 3.8 virtual environment:
+We recommend using a python 3.11 virtual environment:
 
 ```shell
-pip install pybind11
 pip install frankgraphbench
 ```
 
@@ -47,13 +46,15 @@ data_integration -d 'ml-100k' -i 'datasets/ml-100k' -o 'datasets/ml-100k/process
 ```
 
 #### source
-Install the require packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
+Install from the repository root using `pip install .`. We recommend a python 3.11 virtual environment:
 
 ```shell
 python3 -m venv venv_data_integration/
 source venv_data_integration/bin/activate
-pip3 install -r requirements_data_integration.txt 
+pip install .
 ```
+
+On Apple Silicon (macOS arm64) `pip install .` selects the correct TensorFlow builds automatically. To install the exact Apple-Silicon dependency set manually, use `pip install -r requirements_apple.txt` instead; on every other platform use `pip install -r requirements.txt`.
 
 Install the full dataset using bash scripts located at `datasets/`:
 
@@ -95,11 +96,19 @@ Check [Makefile](https://github.com/AlvaroJoseLopes/Knowledge-Graph-aware-Recomm
 
 #### pip
 
-For x86 windows and linux PCs we recommend using a python 3.8 virtual environment. For Apple Silicon we recommend a python 3.11 virtual environment and using the manual install with `requirements_framework_apple.txt`, however the deep_walk_based embedding method does not work in this version:
+We recommend using a python 3.11 virtual environment for all platforms. The `deep_walk_based` embedding method does not work on Apple Silicon.
+
+`pip install frankgraphbench` selects the correct TensorFlow variant for your platform automatically: on Apple Silicon (macOS arm64) it installs `tensorflow-macos` and `tensorflow-metal`, and on every other platform it installs the regular `tensorflow` package. No manual install is therefore required:
 
 ```shell
-pip install pybind11
 pip install frankgraphbench
+```
+
+If you run into trouble with the automatic install, you can still install manually with the matching requirements file:
+
+```shell
+pip install -r requirements_apple.txt   # Apple Silicon (installs tensorflow-macos + tensorflow-metal)
+pip install -r requirements.txt         # other platforms (installs tensorflow)
 ```
 
 Usage: 
@@ -176,20 +185,22 @@ experiment:
 See the [config_files/](/config_files/) directory for more examples.
 
 #### source
-Install the require packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
+Install from the repository root using `pip install .`. We recommend a python 3.11 virtual environment:
 
 ```shell
 python3 -m venv venv_framework/
 source venv_framework/bin/activate
-pip3 install -r requirements_framework.txt 
+pip install .
 ```
 
 Apple silicon:
 
+On Apple Silicon `pip install .` automatically selects `tensorflow-macos` and `tensorflow-metal`. To install the exact Apple-Silicon dependency set manually:
+
 ```shell
 python3 -m venv venv_framework/
 source venv_framework/bin/activate
-pip3 install -r requirements_framework_apple.txt
+pip install -r requirements_apple.txt
 ```
 
 Usage:
@@ -270,10 +281,9 @@ Chart generation module based on: https://github.com/hfawaz/cd-diagram
 
 #### pip
 
-We recommend using a python 3.8 virtual environment
+We recommend using a python 3.11 virtual environment
 
 ```shell
-pip install pybind11
 pip install frankgraphbench
 ```
 
@@ -300,13 +310,16 @@ chart_generation -c 'cd-diagram' -p 'MAP@5' -f "['ml-100k.csv', 'ml-1m.csv', 'la
 
 #### source
 
-Install the required packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
+Install from the repository root using `pip install .`. We recommend a python 3.11 virtual environment:
 
 ```shell
 python3 -m venv venv_chart_generation/
 source venv_chart_generation/bin/activate
-pip3 install -r requirements_chart_generation.txt 
+pip install .
 ```
+
+On Apple Silicon (macOS arm64) `pip install .` selects the correct TensorFlow builds automatically. To install the exact Apple-Silicon dependency set manually, use `pip install -r requirements_apple.txt` instead; on every other platform use `pip install -r requirements.txt`.
+
 After obtaining results from some experiments
 
 Usage:

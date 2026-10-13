@@ -1,8 +1,35 @@
+import platform
+import sys
+
 from setuptools import setup
 from setuptools import find_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+
+# TensorFlow is installed differently depending on the platform.
+#
+# * Apple Silicon (macOS, arm64): the regular `tensorflow` wheel does not ship a
+#   usable arm64 build, so we install `tensorflow-macos` (the Apple-Silicon build
+#   of the tensorflow runtime) together with `tensorflow-metal` (the Metal
+#   accelerator). The plain `tensorflow` package is *not* installed so it cannot
+#   shadow `tensorflow-macos`.
+# * Every other platform (Linux, Windows, x86 macOS): install the regular
+#   `tensorflow` package as normal.
+#
+# This is evaluated at install time, so `pip install frankgraphbench` picks the
+# correct TensorFlow variant automatically for the machine it runs on.
+is_apple_silicon = sys.platform == "darwin" and platform.machine() == "arm64"
+
+if is_apple_silicon:
+    tensorflow_requires = [
+        "tensorflow-macos",
+        "tensorflow-metal",
+    ]
+else:
+    tensorflow_requires = [
+        "tensorflow",
+    ]
 
 setup(
     name="FranKGraphBench",
@@ -21,9 +48,10 @@ setup(
     },
     install_requires=[
         'gensim', 'joblib', 'networkx', 'numpy<2', 'pandas', 'python-dateutil', 'pytz', 'PyYAML', 'scikit-learn', 'scipy', 'six', 'smart-open',
-        'threadpoolctl', 'tqdm', 'tzdata', 'pykeen', 'torch==2.2', 'py-cpuinfo', 'gputil', 'psutil', 'tf-keras', 'sentence-transformers', 'graph-walker', 'isodate',
+        'threadpoolctl', 'tqdm', 'tzdata', 'pykeen', 'torch==2.2', 'py-cpuinfo', 'gputil', 'psutil', 'tf-keras', 'sentence-transformers', 'isodate',
         'Levenshtein', 'pyparsing', 'python-Levenshtein', 'rapidfuzz', 'rdflib', 'SPARQLWrapper', 'thefuzz', 'tzdata',
-        'beautifulsoup4', 'matplotlib', 'contourpy', 'SPARQLWrapper', 'multiprocess', 'tensorflow', 'ollama'
+        'beautifulsoup4', 'matplotlib', 'contourpy', 'SPARQLWrapper', 'multiprocess', 'ollama',
+        *tensorflow_requires,
     ],
     entry_points={
         'console_scripts': [

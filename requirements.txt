@@ -1,0 +1,40 @@
+# Full dependency set for all FranKGraphBench modules
+# (data integration, framework, chart generation) on non-Apple platforms
+# (Linux, Windows, x86 macOS). For Apple Silicon use requirements_apple.txt.
+
+gensim
+joblib
+networkx
+numpy<2
+pandas
+python-dateutil
+pytz
+PyYAML
+scikit-learn
+scipy
+six
+smart-open
+threadpoolctl
+tqdm
+tzdata
+pykeen
+torch==2.2
+py-cpuinfo
+gputil
+psutil
+tf-keras
+sentence-transformers
+isodate
+Levenshtein
+pyparsing
+python-Levenshtein
+rapidfuzz
+rdflib
+SPARQLWrapper
+thefuzz
+beautifulsoup4
+matplotlib
+contourpy
+multiprocess
+ollama
+tensorflow
