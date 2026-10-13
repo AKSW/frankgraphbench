@@ -35,6 +35,24 @@ experiment:
         # model_host: http://localhost:11434
         model_name: qwen3:1.7b
         emb_model_name: qwen3-embedding:0.6b
+        # MANDATORY: item_system_prompt and user_system_prompt are required (no defaults).
+        # They are the instructions sent to the LLM and drive how it writes the
+        # semantic descriptions (item and user) that are then embedded and used for
+        # recommendations. Tune them to steer the generated descriptions.
+        item_system_prompt: >-
+          Assume you are an expert in recommendation.
+          You will be given some information about an item.
+          Based on this information and your world knowledge,
+          please analyze and summarize the characteristics of this item,
+          and analyze what kind of users would like this item.
+          Your response should be a coherent paragraph with no more than 200 words.
+        user_system_prompt: >-
+          Assume you are an expert in recommendation.
+          You will be given some information about a user.
+          Based on this information and your world knowledge,
+          please analyze and summarize the characteristics of this user,
+          and analyze what kind of items this user would like.
+          Your response should be a coherent paragraph with no more than 200 words.
         walk_len: 10
         latent_dim_rec: 64
         lightGCN_n_layers: 3

@@ -32,6 +32,8 @@ class CoLaKG(Recommender):
             model_host: str,
             model_name: str,
             emb_model_name: str,
+            item_system_prompt: str,
+            user_system_prompt: str,
             walk_len: int = 10,
             validate_frac: float = 0.01,
             validate_seed: int = 42,
@@ -64,6 +66,8 @@ class CoLaKG(Recommender):
         self.model_host = model_host
         self.model_name = model_name
         self.emb_model_name = emb_model_name
+        self.item_system_prompt = item_system_prompt
+        self.user_system_prompt = user_system_prompt
         self.walk_len = walk_len
         self.validate_frac = validate_frac
         self.validate_seed = validate_seed
@@ -233,25 +237,8 @@ class CoLaKG(Recommender):
     def _pre_train(self):
         print("building input...")
 
-        system_prompt = {
-             "item": ("Assume you are an expert in recommendation. "
-                     "You will be given some information about an item. "
-                     "Based on this information and your world knowledge, "
-                     "please analyze and summarize the characteristics of this item, "
-                     "and analyze what kind of users would like this item. "
-                     "Your response should be a coherent paragraph with no more than 200 words."
-             ),
-             "user": ("Assume you are an expert in recommendation. "
-                     "You will be given some information about a user. "
-                     "Based on this information and your world knowledge, "
-                     "please analyze and summarize the characteristics of this user, "
-                     "and analyze what kind of items this user would like. "
-                     "Your response should be a coherent paragraph with no more than 200 words."
-             ),
-        }
-
-        messages_items_dict = self.__build_input_item(system_prompt["item"])
-        messages_users_dict = self.__build_input_user(system_prompt["user"])
+        messages_items_dict = self.__build_input_item(self.item_system_prompt)
+        messages_users_dict = self.__build_input_user(self.user_system_prompt)
 
         client = Client(host=self.model_host)
         llm_responses_items_dict = self.__get_ollama(client, messages_items_dict, "item", count_limit=self.item_llm_limit)
