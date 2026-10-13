@@ -47,10 +47,10 @@ setup(
         "": "src",
     },
     install_requires=[
-        'gensim', 'joblib', 'networkx', 'numpy<2', 'pandas', 'python-dateutil', 'pytz', 'PyYAML', 'scikit-learn', 'scipy', 'six', 'smart-open',
+        'gensim', 'joblib', 'networkx', 'numpy', 'pandas', 'python-dateutil', 'pytz', 'PyYAML', 'scikit-learn', 'scipy', 'six', 'smart-open',
         'threadpoolctl', 'tqdm', 'tzdata', 'pykeen', 'torch==2.2', 'py-cpuinfo', 'gputil', 'psutil', 'tf-keras', 'sentence-transformers', 'isodate',
         'Levenshtein', 'pyparsing', 'python-Levenshtein', 'rapidfuzz', 'rdflib', 'SPARQLWrapper', 'thefuzz', 'tzdata',
-        'beautifulsoup4', 'matplotlib', 'contourpy', 'SPARQLWrapper', 'multiprocess', 'ollama',
+        'beautifulsoup4', 'matplotlib', 'contourpy', 'SPARQLWrapper', 'multiprocess', 'ollama', 'polars', 'pyarrow',
         *tensorflow_requires,
     ],
     entry_points={

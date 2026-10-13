@@ -35,8 +35,8 @@ dataset2class = {
         'submodule': 'datasets.mind',
         'class': 'MINDSmall'
     },
-    'chembl': {
+    'chembl-trypanosoma': {
         'submodule': 'datasets.chembl',
-        'class': 'CHEMBL'
+        'class': 'CHEMBLTrypanosoma'
     }
 }

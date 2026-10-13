@@ -115,7 +115,9 @@ class MINDSmall(MIND):
         abstract_entities = df[["item_id::string", "abstract_entities"]][(df["abstract_entities"] != "[]") & (df["abstract_entities"].notna())]
         abstract_entities = abstract_entities.rename(columns={"item_id::string": "item_id::string", "abstract_entities": "entities::string"})
 
-        entities_mapping = pd.concat([title_entities, abstract_entities], ignore_index=True).drop_duplicates(subset=['item_id::string', 'entities::string']).reset_index(drop=True)
+        entities_mapping = pd.concat(
+            [title_entities, abstract_entities], ignore_index=True
+        ).drop_duplicates(subset=['item_id::string', 'entities::string'], ignore_index=True)
 
         return entities_mapping
 

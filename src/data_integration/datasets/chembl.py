@@ -1,48 +1,15 @@
 import os
 import queue
-import re
 from collections import defaultdict
 from io import BytesIO
 from string import Template
 
 import pandas as pd
+import polars as pl
 from pandas.errors import EmptyDataError
-from SPARQLWrapper import CSV
 from tqdm import tqdm
 
 from ..dataset import Dataset
-
-
-def _add_sparql_escape(name_str) -> str:
-    escaped = re.escape(name_str)
-    return escaped.replace("\\", "\\\\")
-
-
-def _get_template_query(param, p_type) -> str:
-    templates = {
-        "inchi_key": Template(
-             """
-             ?molecule_id coco:standardInchiKey ?inchi_key .
-            FILTER regex(?inchi_key, "$inchi_key", "i")
-             """
-         ),
-        "inchi": Template(
-             """
-             ?molecule_id coco:standardInchi ?inchi .
-            FILTER regex(?inchi, "$inchi", "i")
-             """
-         ),
-        "iupac_name": Template(
-             """
-             ?molecule_id coco:iupacName ?iupacName .
-            FILTER regex(?iupacName, "$iupac_name", "i")
-             """
-         ),
-    }
-    if isinstance(param, str):
-        return templates[p_type].substitute({p_type: _add_sparql_escape(param)})
-    else:
-        return ""
 
 
 class CHEMBL(Dataset):
@@ -75,13 +42,13 @@ class CHEMBL(Dataset):
               "InChIKey": "inchi_key::string",
               "IUPACName": "iupac_name::string",
               "TPSA": "tpsa::number",
-         }
+        }
         # User (biological target) fields. Only the target identifier is kept as
         # a user attribute; the sequential user_id is added in load_user_data().
         self.user_fields = {
             "Target ChEMBL ID": "target_chembl_id::string",
             "Target Type": "target_type::string",
-         }
+        }
 
         # Rating (interaction) fields. A rating is the activity of a compound
         # (item) in a target (user), derived from the Activity column of
@@ -90,163 +57,66 @@ class CHEMBL(Dataset):
             "user_id": "user_id::string",
             "item_id": "item_id::string",
             "rating": "rating::number",
-         }
+        }
 
         self.map_fields = {
              "item_id": "item_id::string",
-             "URI": "URI::string",
+             "URI": "coco_id::string",
              "inchi_key": "inchi_key::string",
         }
-        self.map_query_template = Template(
-             """
-            PREFIX coco: <http://coconutKG.aksw.org/ontology#>
-            PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            PREFIX owl:  <http://www.w3.org/2002/07/owl#>
-            PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
-
-            SELECT DISTINCT ?molecule WHERE {
-                ?molecule a coco:Molecule .
-                ?molecule coco:labeledBy ?molecule_id .
-                {
-                    $inchi_key_template
-                } UNION {
-                    $inchi_template
-                } UNION {
-                    $iupac_name_template
-                }
-            }
-         """
-        )
         self.enrich_fields = {
-             "item_id": "item_id::string",
-             "URI": "URI::string",
-             "moleculeName": "molecule_name::string",
-             "iupacName": "iupac_name::string",
-             "canonicalSmiles": "canonical_smiles::string",
-             "standardInchi": "standard_inchi::string",
-             "standardInchiKey": "standard_inchi_key::string",
-             "sugarFreeSmiles": "sugar_free_smiles::string",
-             "moleculeIdentifier": "molecule_identifier::string",
-             "annotationLevel": "annotation_level::string",
-             "comment": "comment::string",
-             "nameTrustLevel": "name_trust_level::string",
-             "structuralComments": "structural_comments::string",
-             "synonyms": "synonyms::string",
-             "hasStereo": "has_stereo::string",
-             "hasVariants": "has_variants::string",
-             "isParent": "is_parent::string",
-             "isTautomer": "is_tautomer::string",
-             "parentMolecule": "parent_molecule::string",
-             "chemicalClass": "chemical_class::string",
-             "chemicalSubClass": "chemical_sub_class::string",
-             "chemicalSuperClass": "chemical_super_class::string",
-             "molecularFormula": "molecular_formula::string",
-             "molecularWeight": "molecular_weight::number",
-             "npLikeness": "np_likeness::number",
-             "fractioncsp3": "fractioncsp3::number",
-             "directParentClassification": "direct_parent_classification::string",
-             "exactMolecularWeight": "exact_molecular_weight::number",
-             "heavyAtomCount": "heavy_atom_count::number",
-             "totalAtomCount": "total_atom_count::number",
-             "vanDerWallsVolume": "van_der_walls_volume::number",
-             "AlogP": "AlogP::number",
-             "formalCharge": "formal_charge::number",
-             "hydrogenBondAcceptors": "hydrogen_bond_acceptors::number",
-             "hydrogenBondDonors": "hydrogen_bond_donors::number",
-             "qedDrugLikeliness": "qed_drug_likeliness::number",
-             "LipinskiRuleOfFiveViolations": "lipinski_rule_of_five_violations::number",
-             "hydrogenBondAcceptorsLipinski": "hydrogen_bond_acceptors_lipinski::number",
-             "hydrogenBondDonorsLipinski": "hydrogen_bond_donors_lipinski::number",
-             "aromaticRingCount": "aromatic_ring_count::number",
-             "containsLinearSugars": "contains_linear_sugars::boolean",
-             "containsRingSugars": "contains_ring_sugars::boolean",
-             "containsSugar": "contains_sugar::boolean",
-             "murkoFramework": "murko_framework::string",
-             "numberOfMinimalRings": "number_of_minimal_rings::number",
-             "rotatableBondCount": "rotatable_bond_count::number",
-             "topologicalPolarSurfaceArea": "topological_polar_surface_area::number",
+            "item_id::string": "item_id::string",
+            "identifier": "coco_id::string",
+            "canonical_smiles": "canonical_smiles::string",
+            "standard_inchi": "standard_inchi::string",
+            "standard_inchi_key": "standard_inchi_key::string",
+            "name": "name::string",
+            "iupac_name": "iupac_name::string",
+            "annotation_level": "annotation_level::string",
+            "total_atom_count": "total_atom_count::number",
+            "heavy_atom_count": "heavy_atom_count::number",
+            "molecular_weight": "molecular_weight::number",
+            "exact_molecular_weight": "exact_molecular_weight::number",
+            "molecular_formula": "molecular_formula::string",
+            "alogp": "alogp::number",
+            "topological_polar_surface_area": "topological_polar_surface_area::number",
+            "rotatable_bond_count": "rotatable_bond_count::number",
+            "hydrogen_bond_acceptors": "hydrogen_bond_acceptors::number",
+            "hydrogen_bond_donors": "hydrogen_bond_donors::number",
+            "hydrogen_bond_acceptors_lipinski": "hydrogen_bond_acceptors_lipinski::number",
+            "hydrogen_bond_donors_lipinski": "hydrogen_bond_donors_lipinski::number",
+            "lipinski_rule_of_five_violations": "lipinski_rule_of_five_violations::number",
+            "aromatic_rings_count": "aromatic_rings_count::number",
+            "qed_drug_likeliness": "qed_drug_likeliness::number",
+            "formal_charge": "formal_charge::number",
+            "fractioncsp3": "fractioncsp3::number",
+            "number_of_minimal_rings": "number_of_minimal_rings::number",
+            "van_der_walls_volume": "van_der_walls_volume::number",
+            "contains_sugar": "contains_sugar::boolean",
+            "contains_ring_sugars": "contains_ring_sugars::boolean",
+            "contains_linear_sugars": "contains_linear_sugars::boolean",
+            "murcko_framework": "murcko_framework::string",
+            "np_likeness": "np_likeness::number",
+            "chemical_class": "chemical_class::string",
+            "chemical_sub_class": "chemical_sub_class::string",
+            "chemical_super_class": "chemical_super_class::string",
+            "direct_parent_classification": "direct_parent_classification::string",
+            "np_classifier_pathway": "np_classifier_pathway::string",
+            "np_classifier_superclass": "np_classifier_superclass::string",
+            "np_classifier_class": "np_classifier_class::string",
+            "np_classifier_is_glycoside": "np_classifier_is_glycoside::boolean",
+            "organisms": "organisms::string_list",
+            "collections": "collections::string_list",
+            "dois": "dois::string_list",
+            "synonyms": "synonyms::string_list",
+            "cas": "cas::string",
         }
-        self.enrich_query_template = Template(
-            """
-            PREFIX coco: <http://coconutKG.aksw.org/ontology#>
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-            SELECT DISTINCT
-                 ?moleculeName ?iupacName ?canonicalSmiles ?standardInchi ?standardInchiKey ?sugarFreeSmiles ?moleculeIdentifier
-                 ?annotationLevel ?comment ?nameTrustLevel ?structuralComments ?synonyms
-                 ?hasStereo ?hasVariants ?isParent ?isTautomer ?parentMolecule
-                 ?chemicalClass ?chemicalSubClass ?chemicalSuperClass ?molecularFormula ?molecularWeight ?npLikeness ?fractioncsp3 ?directParentClassification
-                 ?exactMolecularWeight ?heavyAtomCount ?totalAtomCount ?vanDerWallsVolume
-                 ?AlogP ?formalCharge ?hydrogenBondAcceptors ?hydrogenBondDonors ?qedDrugLikeliness ?LipinskiRuleOfFiveViolations ?hydrogenBondAcceptorsLipinski ?hydrogenBondDonorsLipinski
-                 ?aromaticRingCount ?containsLinearSugars ?containsRingSugars ?containsSugar ?murkoFramework ?numberOfMinimalRings ?rotatableBondCount ?topologicalPolarSurfaceArea
-            WHERE {
-                VALUES ?molecule { <$URI> }
 
-                OPTIONAL { ?molecule coco:labeledBy ?identifier }
-                OPTIONAL { ?identifier coco:moleculeName ?moleculeName }
-                OPTIONAL { ?identifier coco:iupacName ?iupacName }
-                OPTIONAL { ?identifier coco:canonicalSmiles ?canonicalSmiles }
-                OPTIONAL { ?identifier coco:standardInchi ?standardInchi }
-                OPTIONAL { ?identifier coco:standardInchiKey ?standardInchiKey }
-                OPTIONAL { ?identifier coco:sugarFreeSmiles ?sugarFreeSmiles }
-                OPTIONAL { ?identifier coco:moleculeIdentifier ?moleculeIdentifier }
+        self.old_new_string_list_separator = ("|", "::")
 
-                OPTIONAL { ?molecule coco:isExplainedThrough ?descriptiveInfo }
-                OPTIONAL { ?descriptiveInfo coco:annotationLevel ?annotationLevel }
-                OPTIONAL { ?descriptiveInfo coco:comment ?comment }
-                OPTIONAL { ?descriptiveInfo coco:nameTrustLevel ?nameTrustLevel }
-                OPTIONAL { ?descriptiveInfo coco:structuralComments ?structuralComments }
-                OPTIONAL { ?descriptiveInfo coco:synonyms ?synonyms }
-
-                OPTIONAL { ?molecule coco:classifiedBy ?classification }
-                OPTIONAL { ?classification coco:hasStereo ?hasStereo }
-                OPTIONAL { ?classification coco:hasVariants ?hasVariants }
-                OPTIONAL { ?classification coco:isParent ?isParent }
-                OPTIONAL { ?classification coco:isTautomer ?isTautomer }
-                OPTIONAL { ?classification coco:parentMolecule ?parentMolecule }
-
-                OPTIONAL { ?molecule coco:describedBy ?properties }
-
-                OPTIONAL { ?properties rdf:type coco:ConstitutionalDescriptor }
-                OPTIONAL { ?properties coco:chemicalClass ?chemicalClass }
-                OPTIONAL { ?properties coco:chemicalSubClass ?chemicalSubClass }
-                OPTIONAL { ?properties coco:chemicalSuperClass ?chemicalSuperClass }
-                OPTIONAL { ?properties coco:molecularFormula ?molecularFormula }
-                OPTIONAL { ?properties coco:molecularWeight ?molecularWeight }
-                OPTIONAL { ?properties coco:npLikeness ?npLikeness }
-                OPTIONAL { ?properties coco:fractioncsp3 ?fractioncsp3 }
-                OPTIONAL { ?properties coco:directParentClassification ?directParentClassification }
-
-                OPTIONAL { ?properties rdf:type coco:GeometricalDescriptor }
-                OPTIONAL { ?properties coco:exactMolecularWeight ?exactMolecularWeight }
-                OPTIONAL { ?properties coco:heavyAtomCount ?heavyAtomCount }
-                OPTIONAL { ?properties coco:totalAtomCount ?totalAtomCount }
-                OPTIONAL { ?properties coco:vanDerWallsVolume ?vanDerWallsVolume }
-
-                OPTIONAL { ?properties rdf:type coco:ElectronicDescriptor }
-                OPTIONAL { ?properties coco:AlogP ?AlogP }
-                OPTIONAL { ?properties coco:formalCharge ?formalCharge }
-                OPTIONAL { ?properties coco:hydrogenBondAcceptors ?hydrogenBondAcceptors }
-                OPTIONAL { ?properties coco:hydrogenBondDonors ?hydrogenBondDonors }
-                OPTIONAL { ?properties coco:qedDrugLikeliness ?qedDrugLikeliness }
-                OPTIONAL { ?properties coco:LipinskiRuleOfFiveViolations ?LipinskiRuleOfFiveViolations }
-                OPTIONAL { ?properties coco:hydrogenBondAcceptorsLipinski ?hydrogenBondAcceptorsLipinski }
-                OPTIONAL { ?properties coco:hydrogenBondDonorsLipinski ?hydrogenBondDonorsLipinski }
-
-                OPTIONAL { ?properties rdf:type coco:TopologicalDescriptor }
-                OPTIONAL { ?properties coco:aromaticRingCount ?aromaticRingCount }
-                OPTIONAL { ?properties coco:containsLinearSugars ?containsLinearSugars }
-                OPTIONAL { ?properties coco:containsRingSugars ?containsRingSugars }
-                OPTIONAL { ?properties coco:containsSugar ?containsSugar }
-                OPTIONAL { ?properties coco:murkoFramework ?murkoFramework }
-                OPTIONAL { ?properties coco:numberOfMinimalRings ?numberOfMinimalRings }
-                OPTIONAL { ?properties coco:rotatableBondCount ?rotatableBondCount }
-                OPTIONAL { ?properties coco:topologicalPolarSurfaceArea ?topologicalPolarSurfaceArea }
-            }
-        """
-        )
+class CHEMBLTrypanosoma(CHEMBL):
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
 
     def load_item_data(self) -> pd.DataFrame:
         """
@@ -307,7 +177,7 @@ class CHEMBL(Dataset):
             # standardize the target identifier following the user_fields mapping
         df = df.rename(self.user_fields, axis=1)
 
-             # keep user_id as the first column
+                # keep user_id as the first column
         df = df[["user_id::string", self.user_fields["Target ChEMBL ID"], self.user_fields["Target Type"]]]
 
         return df
@@ -375,95 +245,49 @@ class CHEMBL(Dataset):
         return pd.DataFrame(rating_dict)
     
     def entity_linking(self, df_item) -> pd.DataFrame():
-         # drop duplicate inchi_keys
+        filename = os.path.join(self.input_path, "coconut_csv-10-2026.csv")
+        lf = pl.scan_csv(filename)
 
-        q = queue.Queue()
-        for idx, row in df_item[["inchi", "inchi_key", "iupac_name"]].iterrows():
-            query = self.get_map_query(
-                inchi_key=row["inchi"],
-                inchi=row["inchi_key"],
-                iupac_name=row["iupac_name"],
-            )
-            q.put((idx, query))
+        lf_item = pl.from_pandas(df_item).lazy()
+        lazy_merge = lf_item.join(
+            lf,
+            left_on="inchi_key",
+            right_on="standard_inchi_key",
+            how="left"  # Options: 'inner', 'left', 'outer', 'semi'
+        )
 
-        if self.n_workers > 1:
-            responses = self.parallel_queries(q)
-        else:
-            responses = self.sequential_queries(q)
-
-        URI_mapping = {}
-        for response in tqdm(responses, desc="Disambiguating query return"):
-            candidate_URIs = []
-            idx, result = response
-            for binding in result["results"]["bindings"]:
-                URI = binding["molecule"]["value"]
-                candidate_URIs.append(URI)
-
-            if candidate_URIs:
-                URI_mapping[idx] = candidate_URIs[0]
-
-        df_map = pd.DataFrame({"item_id": df_item.index, "inchi_key": df_item["inchi_key"]})
-        df_map.set_index("item_id")
-        df_map["URI"] = df_map["item_id"].apply(lambda id: URI_mapping.get(id))
-        df_map = df_map.rename(self.map_fields, axis=1)
-
+        df_map = lazy_merge.collect().to_pandas()
+        df_map = df_map[["item_id", "identifier", "inchi_key"]].rename(columns={"identifier": "URI"})
+        df_map = df_map.rename(columns=self.map_fields)
+        
         return df_map
 
-    def get_map_query(self, inchi_key, inchi, iupac_name) -> str:
-        params = {
-             "inchi_key_template": _get_template_query(inchi_key, "inchi_key"),
-             "inchi_template": _get_template_query(inchi, "inchi"),
-             "iupac_name_template": _get_template_query(iupac_name, "iupac_name"),
-        }
-        query = self.map_query_template.substitute(**params)
-        return query
-
-    def get_enrich_query(self, URI) -> str:
-        params = {"URI": URI}
-        query = self.enrich_query_template.substitute(**params)
-        return query
-
     def enrich(self, df_map) -> pd.DataFrame():
-        df_map = df_map[df_map[self.map_fields["URI"]].notna()]
+        filename = os.path.join(self.input_path, "coconut_csv-10-2026.csv")
+        lf = pl.scan_csv(filename)
 
-        q = queue.Queue()
-        for _, row in df_map[[self.map_fields["URI"], self.map_fields["item_id"]]].iterrows():
-            query = self.get_enrich_query(row[self.map_fields["URI"]])
-            q.put((row[self.map_fields["item_id"]], query))
+        lf_map = pl.from_pandas(df_map).lazy()
+        lazy_merge = lf.join(
+            lf_map,
+            left_on="identifier",
+            right_on="coco_id::string",
+            how="inner"  # Options: 'inner', 'left', 'outer', 'semi'
+        )
 
-        if self.n_workers > 1:
-            responses = self.parallel_queries(q, CSV)
-        else:
-            responses = self.sequential_queries(q, CSV)
-
-        item_enriching = defaultdict(dict)
-        for response in responses:
-            idx, result = response
-
-             # skip empty or malformed SPARQL responses instead of crashing
-            if not result:
-                print(f"Empty response for item {idx}, skipping.")
-                continue
-
-            try:
-                df = pd.read_csv(BytesIO(result))
-            except EmptyDataError:
-                print(f"Empty result for item {idx}, skipping.")
-                continue
-
-            if df.shape[0] > 1:
-                print("At least one property has more than one value!")
-                print(df.value_counts(dropna=False))
-
-            try:
-                item_enriching[idx] = df.iloc[0]    # getting pd.Series
-            except Exception as e:
-                print(f"Error at item {idx}: {e}")
-                print(df)
-                continue
-
-        df_enrich = pd.DataFrame.from_dict(item_enriching, orient="index")
-        df_enrich = df_enrich.rename(self.enrich_fields, axis=1)
-        df_enrich.index.name = self.enrich_fields["item_id"]
+        df_enrich = lazy_merge.collect().to_pandas()
+        df_enrich = (
+            df_enrich[self.enrich_fields.keys()]
+            .rename(columns=self.enrich_fields)
+            .sort_values("item_id::string")
+            .set_index("item_id::string")
+        )
+        # putting string_list separator to the standard
+        for col in self.enrich_fields.values():
+            if "string_list" in col:
+                df_enrich[col] = (
+                    df_enrich[col].apply(
+                            lambda x: x.replace(self.old_new_string_list_separator[0], self.old_new_string_list_separator[1])
+                        )
+                )
 
         return df_enrich

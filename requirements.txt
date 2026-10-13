@@ -5,7 +5,7 @@
 gensim
 joblib
 networkx
-numpy<2
+numpy
 pandas
 python-dateutil
 pytz
@@ -37,4 +37,6 @@ matplotlib
 contourpy
 multiprocess
 ollama
+polars
+pyarrow
 tensorflow

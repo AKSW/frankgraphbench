@@ -1,17 +1,16 @@
 import os
-import re
 import queue
-from io import BytesIO
+import re
 from collections import defaultdict
-
-
+from io import BytesIO
 from string import Template
-from ..dataset import Dataset
 
 import pandas as pd
-from tqdm import tqdm
-from thefuzz import process
 from SPARQLWrapper import CSV
+from thefuzz import process
+from tqdm import tqdm
+
+from ..dataset import Dataset
 
 
 class MovieLens(Dataset):

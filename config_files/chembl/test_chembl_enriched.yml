@@ -2,7 +2,7 @@ experiment:
   dataset:
     name: chembl
     item: # infos related to item dataset (mandatory, at least item_id)
-      path: datasets/chembl/processed/item.csv
+      path: datasets/chembl-trypanosoma/processed/item.csv
       extra_features: # number columns don't work with translation model
         - molecular_weight # number
         - number_ro5_violations # number
@@ -16,14 +16,14 @@ experiment:
         - tpsa # number
     # features(columns) beside item_id to be used
     user: # mandatory (at least user_id)
-      path: datasets/chembl/processed/user.csv
+      path: datasets/chembl-trypanosoma/processed/user.csv
       extra_features: [target_type] # features beside user_id
     ratings: # mandatory (at least [user_id, item_id, rating])
-      path: datasets/chembl/processed/rating.csv
+      path: datasets/chembl-trypanosoma/processed/rating.csv
       timestamp: False
     enrich:
-      map_path: datasets/chembl/processed/map.csv
-      enrich_path: datasets/chembl/processed/enriched.csv
+      map_path: datasets/chembl-trypanosoma/processed/map.csv
+      enrich_path: datasets/chembl-trypanosoma/processed/enriched.csv
       remove_unmatched: False
       properties:
         - canonical_smiles
