@@ -1,8 +1,9 @@
-import torch
-from torch import optim
-import numpy as np
 from time import time
+
+import numpy as np
+import torch
 from sklearn.metrics import roc_auc_score
+from torch import optim
 
 from .CoLaKG import PairWiseModel
 from .dataloader import BasicDataset
