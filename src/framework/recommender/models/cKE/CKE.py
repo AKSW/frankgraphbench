@@ -82,10 +82,17 @@ class CKE_model(nn.Module):
         # relation transform weights: batch_size * kge_dim * emb_dim
         trans_M = self.weights['trans_W'][r]
 
-        # batch_size * 1 * kge_dim -> batch_size * kge_dim
-        h_e = torch.matmul(h_e, trans_M)
-        pos_t_e = torch.matmul(pos_t_e, trans_M)
-        neg_t_e = torch.matmul(neg_t_e, trans_M)
+        # The entity embedding table is (n_entities, 1, emb_dim), so the matmul
+        # yields (batch, 1, kge_dim). Collapse the spurious middle dimension to
+        # (batch, kge_dim) before combining with the 2-D relation embedding r_e;
+        # otherwise (h_e + r_e - t_e) broadcasts the two operands into
+        # (batch, batch, kge_dim) and materialises a batch^2 x kge_dim
+        # intermediate (hundreds of GiB for this dataset). This matches the
+        # ``.reshape(-1, emb_dim)`` already used in predict/_get_cf_inference and
+        # the original TF model.
+        h_e = torch.matmul(h_e, trans_M).reshape(-1, self.kge_dim)
+        pos_t_e = torch.matmul(pos_t_e, trans_M).reshape(-1, self.kge_dim)
+        neg_t_e = torch.matmul(neg_t_e, trans_M).reshape(-1, self.kge_dim)
 
         # l2-normalize (epsilon=1e-12 matches tf.math.l2_normalize default)
         h_e = torch.nn.functional.normalize(h_e, p=2, dim=1, eps=1e-12)

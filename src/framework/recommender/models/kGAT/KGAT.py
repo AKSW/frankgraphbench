@@ -292,14 +292,21 @@ class KGAT_model(nn.Module):
         # relation transform weights: batch_size * kge_dim * emb_dim
         trans_M = self.weights['trans_W'][r]
 
-        # batch_size * 1 * kge_dim -> batch_size * kge_dim
-        h_e = torch.matmul(h_e, trans_M)
-        pos_t_e = torch.matmul(pos_t_e, trans_M)
+        # ``h_e``/``pos_t_e``/``neg_t_e`` come out of the matmul as
+        # (batch, 1, kge_dim) because ``embeddings`` was unsqueezed. The relation
+        # embedding ``r_e`` is 2-D (batch, kge_dim), so without reshaping the
+        # (h_e + r_e - t_e) term in ``_get_kg_score`` would broadcast the two
+        # operands into (batch, batch, kge_dim) and materialise a batch^2 x kge_dim
+        # intermediate (hundreds of GiB for this dataset). Collapse the spurious
+        # middle dimension to (batch, kge_dim) so the transE score is computed
+        # per-sample, matching ``_generate_transE_score`` and the original TF model.
+        h_e = torch.reshape(torch.matmul(h_e, trans_M), [-1, self.kge_dim])
+        pos_t_e = torch.reshape(torch.matmul(pos_t_e, trans_M), [-1, self.kge_dim])
 
         neg_t_e = None
         if neg_t is not None:
             neg_t_e = embeddings[neg_t]
-            neg_t_e = torch.matmul(neg_t_e, trans_M)
+            neg_t_e = torch.reshape(torch.matmul(neg_t_e, trans_M), [-1, self.kge_dim])
 
         return h_e, r_e, pos_t_e, neg_t_e
 
