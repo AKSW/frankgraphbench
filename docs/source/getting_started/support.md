@@ -193,12 +193,38 @@ Currently the supported Recommender System models are:
   - Main parameters
     - `embed_size`: the embedding vector size.
     - `kge_size`: vector size of the knowledge graph embedding.
+    - `layer_size`: list with the embedding size of each GNN layer.
+    - `batch_size_kg`: batch size used for the knowledge graph (phase II) part.
+    - `node_dropout`: per-layer node dropout rate.
+    - `mess_dropout`: per-layer message dropout rate.
+    - `use_att`: when `True`, the attentive laplacian matrix A is re-estimated every epoch.
+    - `use_kge`: when `True`, the knowledge graph embedding (TransE) part is trained.
+    - `adj_type`: type of adjacency (`si`, `bi`, ...); `adj_uni_type`: how adjacency variants are combined (`sum`, ...).
+    - `alg_type`: GNN aggregation variant (`bi`, `gcn`, `graphsage`, ...).
+    - `device`: execution device, `auto` (CUDA -> Metal/MPS -> CPU), `cpu`, `cuda`, or `mps`.
     - `epoch`: the amount of epochs to be used during the training of the graph neural network.
     - `validate_factor`: the amount of epochs where a validation for possible early stopping is triggered.
     - `validate_frac`: the fraction amount of the training triples to be used for validation.
     - `random_seed`: the seed for separating the validation set.
     - `test_flag`: the type of testing to be executed during validation.
     - `ks`: the evaluation type for validation.
+  - Attentive matrix A (Oct 2026):
+    - KGAT re-estimates the attentive adjacency A at every epoch from the current
+      embeddings (`update_attentive_A`) and feeds the updated A back into the GNN
+      for the next forward pass. This is the intended KGAT behaviour and is what
+      allows the attention over the knowledge-graph edges to evolve as training
+      progresses.
+    - The original TensorFlow port captured the GNN's sparse adjacency *once* at
+      graph-construction time, so the per-epoch re-estimation of A was computed but
+      never re-plugged into the already-built GNN computation graph; the GNN
+      effectively kept operating on the *initial* adjacency. That mismatch is a
+      likely explanation for the lower-than-expected KGAT scores observed in the
+      previous version.
+    - The PyTorch implementation fixes this: `update_attentive_A` rebuilds the
+      sparse tensor consumed by the GNN (`_A_sparse`) at the end of every call, so
+      each epoch's message passing runs on the freshly re-estimated attentive
+      adjacency. This applies to `use_att=True` and to the `gcn`/`graphsage`
+      aggregation variants, which read the same adjacency.
 
 
 ## Pre-processing Methods

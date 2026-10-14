@@ -1,14 +1,20 @@
 experiment:
   dataset:
-    name: mind-small
-    item:
-      path: datasets/mind-small/processed/item.csv
-      extra_features: [category, subcategory, title, abstract, url]
-    user:
-      path: datasets/mind-small/processed/user.csv
-    ratings:
-      path: datasets/mind-small/processed/rating.csv
-      timestamp: False
+    name: ml-100k
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/ml-100k/processed/item.csv
+      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/ml-100k/processed/user.csv
+      extra_features: [gender, occupation] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/ml-100k/processed/rating.csv
+      timestamp: True
+    enrich:
+      map_path: datasets/ml-100k/processed/map.csv
+      enrich_path: datasets/ml-100k/processed/enriched.csv
+      remove_unmatched: False
+      properties: [subject, director]
 
   preprocess:
     # - method: filter_by_rating

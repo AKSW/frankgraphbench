@@ -5,12 +5,15 @@ Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In
 @author: Xiang Wang (xiangwang@u.nus.edu)
 @modifiedBy: Paulo do Carmo on Dec, 2025
 '''
-import numpy as np
-from framework.recommender.utils.load_data import Data
-from time import time
-import scipy.sparse as sp
-import random as rd
 import collections
+import random as rd
+from time import time
+
+import numpy as np
+import scipy.sparse as sp
+
+from framework.recommender.utils.load_data import Data
+
 
 class KGAT_loader(Data):
     def __init__(self, ratings_triples, item_property_triples, args, batch_size, random_seed):
@@ -57,13 +60,22 @@ class KGAT_loader(Data):
         adj_r_list.append(self.n_relations + 1)
         print('\tconvert ratings into adj mat done.')
 
-        for r_id in self.relation_dict.keys():
-            K, K_inv = _np_mat2sp_adj(np.array(self.relation_dict[r_id]), row_pre=self.n_users, col_pre=self.n_users)
+        # ``relation_dict`` is keyed by the raw relation ids coming from the
+        # dataset, which need not be a contiguous 0-indexed block. The
+        # attentional-adjacency scheme below, however, hands every relation its own
+        # slot by *position* (``pos + 1`` for the forward edge and
+        # ``pos + 2 + n_relations`` for the inverse edge), so iterating by position
+        # keeps every slot inside the ``n_relations``-sized relation embedding
+        # tables. Keying the slot on the raw id instead would push inverse edges to
+        # ``r_id + 2 + n_relations`` and overflow those tables whenever the raw ids
+        # are not exactly ``0..n_relations - 1``.
+        for pos, r_key in enumerate(self.relation_dict.keys()):
+            K, K_inv = _np_mat2sp_adj(np.array(self.relation_dict[r_key]), row_pre=self.n_users, col_pre=self.n_users)
             adj_mat_list.append(K)
-            adj_r_list.append(r_id + 1)
+            adj_r_list.append(pos + 1)
 
             adj_mat_list.append(K_inv)
-            adj_r_list.append(r_id + 2 + self.n_relations)
+            adj_r_list.append(pos + 2 + self.n_relations)
         print('\tconvert %d relational triples into adj mat done. @%.4fs' %(len(adj_mat_list), time()-t1))
 
         self.n_relations = len(adj_r_list)
@@ -242,16 +254,10 @@ class KGAT_loader(Data):
         return batch_data
 
     def generate_train_feed_dict(self, model, batch_data):
-        feed_dict = {
-            model.users: batch_data['users'],
-            model.pos_items: batch_data['pos_items'],
-            model.neg_items: batch_data['neg_items'],
+        # PyTorch version: hand the numpy batch straight through to the model.
+        # Dropout is handled inside the model via nn.Module training mode.
+        return batch_data
 
-            model.mess_dropout: self.args.mess_dropout,
-            model.node_dropout: self.args.node_dropout,
-        }
-
-        return feed_dict
 
     def generate_train_A_batch(self):
         heads, relations, pos_tails, neg_tails = self._generate_train_A_batch()
@@ -266,11 +272,10 @@ class KGAT_loader(Data):
 
     def generate_train_A_feed_dict(self, model, batch_data):
         feed_dict = {
-            model.h: batch_data['heads'],
-            model.r: batch_data['relations'],
-            model.pos_t: batch_data['pos_tails'],
-            model.neg_t: batch_data['neg_tails'],
-
+            'h': batch_data['heads'],
+            'r': batch_data['relations'],
+            'pos_t': batch_data['pos_tails'],
+            'neg_t': batch_data['neg_tails'],
         }
 
         return feed_dict
@@ -278,12 +283,9 @@ class KGAT_loader(Data):
 
     def generate_test_feed_dict(self, model, user_batch, item_batch):
 
-        feed_dict ={
-            model.users: user_batch,
-            model.pos_items: item_batch,
-            model.mess_dropout: [0.] * len(self.args.layer_size),
-            model.node_dropout: [0.] * len(self.args.layer_size),
-
+        feed_dict = {
+            'users': user_batch,
+            'pos_items': item_batch,
         }
 
         return feed_dict

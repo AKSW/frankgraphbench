@@ -4,7 +4,7 @@
 gensim
 joblib
 networkx
-numpy>2
+numpy
 pandas
 python-dateutil
 pytz
@@ -17,11 +17,10 @@ threadpoolctl
 tqdm
 tzdata
 pykeen
-torch==2.2
+torch
 py-cpuinfo
 gputil
 psutil
-tf-keras
 sentence-transformers
 isodate
 Levenshtein
@@ -38,4 +37,3 @@ multiprocess
 ollama
 polars
 pyarrow
-tensorflow

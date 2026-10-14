@@ -47,7 +47,7 @@ def dcg_at_k(r, k, method=1):
     Returns:
         Discounted cumulative gain
     """
-    r = np.asfarray(r)[:k]
+    r = np.asarray(r, dtype=float)[:k]
     if r.size:
         if method == 0:
             return r[0] + np.sum(r[1:] / np.log2(np.arange(2, r.size + 1)))
@@ -72,7 +72,7 @@ def ndcg_at_k(r, k, method=1):
 
 
 def recall_at_k(r, k, all_pos_num):
-    r = np.asfarray(r)[:k]
+    r = np.asarray(r, dtype=float)[:k]
     return np.sum(r) / all_pos_num
 
 

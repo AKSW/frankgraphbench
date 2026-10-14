@@ -5,10 +5,12 @@ Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In
 @author: Xiang Wang (xiangwang@u.nus.edu)
 @modifiedBy: Paulo do Carmo on Dec, 2025
 '''
-import framework.recommender.models.cKE.metrics as metrics
-import multiprocess
 import heapq
+
+import multiprocess
 import numpy as np
+
+from framework.recommender.models.cKE import metrics
 
 cores = multiprocess.cpu_count() // 2
 

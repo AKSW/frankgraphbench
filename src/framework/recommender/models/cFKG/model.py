@@ -3,7 +3,6 @@ import sys
 from time import time
 
 import numpy as np
-import tensorflow as tf
 from tqdm import tqdm
 
 from framework.dataloader.graph.graph import Graph
@@ -41,7 +40,8 @@ class CFKG(Recommender):
                     alg_type: str = 'bi',
                     report: int = 0,
                     ks: list = [10],
-                    random_seed: int = 42
+                    random_seed: int = 42,
+                    device: str = 'auto'
                  ):
         super().__init__(config)
         args_dict = {
@@ -75,6 +75,7 @@ class CFKG(Recommender):
         self.alg_type = alg_type
         self.random_seed = random_seed
         self.batch_size = batch_size
+        self.device = device
 
     def name(self):
         text = "CFKG"
@@ -108,22 +109,20 @@ class CFKG(Recommender):
 
         self._pretrain_data = None
 
-        self._model = CFKG_model(data_config=self._config, pretrain_data=self._pretrain_data, args=self._args)
-        
+        self._model = CFKG_model(data_config=self._config, pretrain_data=self._pretrain_data, args=self._args, device=self.device)
+
         self.fit(t0)
 
     def fit(self, t0):
-        config = tf.compat.v1.ConfigProto()
-        config.gpu_options.allow_growth = True
-        self._sess = tf.compat.v1.Session(config=config)
-
-        self._sess.run(tf.compat.v1.global_variables_initializer())
         cur_best_pre_0 = 0.
 
         loss_loger, pre_loger, rec_loger, ndcg_loger, hit_loger = [], [], [], [], []
         stopping_step = 0
         should_stop = False
         self._batch_test_flag = False
+        # The eager PyTorch model keeps no external session; the (unused)
+        # argument passed to batch_test is kept as None for a stable call surface.
+        self._sess = None
 
         # train
         for epoch in range(self._args.epoch):
@@ -217,6 +216,4 @@ class CFKG(Recommender):
         for user, rec_items, _ in tqdm(ret, desc="generating return dict from recommendations"):
             recommendations[users_dict[user]] = list(set(recommendations[users_dict[user]]+[items_dict[item] for item in rec_items]))
 
-        self._sess.close()
-        
         return recommendations

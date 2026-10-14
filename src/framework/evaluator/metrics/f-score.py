@@ -1,6 +1,7 @@
-from ..metric import Metric 
+from ..metric import Metric
 from .precision import Precision
 from .recall import Recall
+
 
 class FScore(Metric):
     def __init__(self, k: int, relevance_threshold: int = 0, beta: float = 1.0):

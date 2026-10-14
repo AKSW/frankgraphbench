@@ -7,6 +7,7 @@ Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In
 '''
 from framework.recommender.utils.load_data import Data
 
+
 class BPRMF_loader(Data):
     def __init__(self, ratings_triples, item_property_triples, args, batch_size, random_seed):
         super().__init__(ratings_triples, item_property_triples, args, batch_size, random_seed)
@@ -22,19 +23,14 @@ class BPRMF_loader(Data):
         return batch_data
 
     def generate_train_feed_dict(self, model, batch_data):
-        feed_dict = {
-            model.users: batch_data['users'],
-            model.pos_items: batch_data['pos_items'],
-            model.neg_items: batch_data['neg_items']
-        }
-
-        return feed_dict
+        # PyTorch version: hand the numpy batch straight through to the model.
+        return batch_data
 
 
     def generate_test_feed_dict(self, model, user_batch, item_batch):
         feed_dict = {
-            model.users: user_batch,
-            model.pos_items: item_batch
+            'users': user_batch,
+            'items': item_batch
         }
         return feed_dict
 

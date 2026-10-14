@@ -1,9 +1,10 @@
-from __future__ import print_function
-import numpy as np
-import networkx as nx
+
+import argparse
 import random
 import time
-import argparse
+
+import networkx as nx
+import numpy as np
 from gensim.models import Word2Vec
 
 
@@ -241,7 +242,7 @@ class Node2Vec(object):
         """
         K = len(probs)
         q = np.zeros(K)
-        J = np.zeros(K, dtype=np.int)
+        J = np.zeros(K, dtype=np.int_)
 
         smaller = []
         larger = []

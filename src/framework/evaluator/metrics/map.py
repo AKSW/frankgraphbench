@@ -1,6 +1,7 @@
+import numpy as np
+
 from ..metric import Metric
 
-import numpy as np
 
 class MAP(Metric):
     # reference: https://github.com/benhamner/Metrics/blob/master/Python/ml_metrics/average_precision.py
