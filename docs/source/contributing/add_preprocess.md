@@ -2,7 +2,7 @@
 
 To add a pre-processing method follow these steps:
 
-1. Fork the dataset, pull the latest changes and create a new branch ***add-preprocess-{method_name}***
+1. Fork the repository, pull the latest changes and create a new branch ***add-preprocess-{method_name}***
 
 2. In the `framework/dataloader/preprocess/methods.py` implement a function that performs the pre-processing method.
 

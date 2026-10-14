@@ -2,7 +2,7 @@
 
 To add a new edge splitting method follow these steps:
 
-1. Fork the dataset, pull the latest changes and create a new branch 
+1. Fork the repository, pull the latest changes and create a new branch 
 ***add-splitting-{split_name}***
 
 2. In the `framework/dataloader/edge_splitter/edge_splitter.py` implement a function that performs the splitting.

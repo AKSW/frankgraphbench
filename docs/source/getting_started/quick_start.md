@@ -1,4 +1,4 @@
-# Quick Start 
+# Quick Start
 
 ## Installation and usage
 
@@ -64,7 +64,7 @@ bash ml-100k.sh # Downloaded at `datasets/ml-100k` folder
 bash ml-1m.sh   # Downloaded at `datasets/ml-1m` folder
 ```
 
-Usage: 
+Usage:
 
 ```shell
 python3 src/data_integration.py [-h] -d DATASET -i INPUT_PATH -o OUTPUT_PATH [-ci] [-cu] [-cr] [-cs] [-map] [-enrich] [-w]
@@ -110,7 +110,7 @@ If you run into trouble with the automatic install, you can still install manual
 pip install -r requirements.txt
 ```
 
-Usage: 
+Usage:
 
 ```shell
 framework -c 'config_files/test.yml'
@@ -122,16 +122,16 @@ The experiment config file should be a .yaml file like this:
 
 ```yaml
 experiment:
-  dataset: 
+  dataset:
     name: ml-100k
     item:
-      path: datasets/ml-100k/processed/item.csv 
-      extra_features: [movie_year, movie_title] 
+      path: datasets/ml-100k/processed/item.csv
+      extra_features: [movie_year, movie_title]
     user:
-      path: datasets/ml-100k/processed/user.csv 
-      extra_features: [gender, occupation] 
-    ratings: 
-      path: datasets/ml-100k/processed/rating.csv 
+      path: datasets/ml-100k/processed/user.csv
+      extra_features: [gender, occupation]
+    ratings:
+      path: datasets/ml-100k/processed/rating.csv
       timestamp: True
     enrich:
       map_path: datasets/ml-100k/processed/map.csv
@@ -171,7 +171,7 @@ experiment:
         n_walks: 50
         embedding_size: 64
         epochs: 1
-  
+
   evaluation:
     k: 5
     relevance_threshold: 3
@@ -204,16 +204,16 @@ The experiment config file should be a .yaml file like this:
 
 ```yaml
 experiment:
-  dataset: 
+  dataset:
     name: ml-100k
     item:
-      path: datasets/ml-100k/processed/item.csv 
-      extra_features: [movie_year, movie_title] 
+      path: datasets/ml-100k/processed/item.csv
+      extra_features: [movie_year, movie_title]
     user:
-      path: datasets/ml-100k/processed/user.csv 
-      extra_features: [gender, occupation] 
-    ratings: 
-      path: datasets/ml-100k/processed/rating.csv 
+      path: datasets/ml-100k/processed/user.csv
+      extra_features: [gender, occupation]
+    ratings:
+      path: datasets/ml-100k/processed/rating.csv
       timestamp: True
     enrich:
       map_path: datasets/ml-100k/processed/map.csv
@@ -253,7 +253,7 @@ experiment:
         n_walks: 50
         embedding_size: 64
         epochs: 1
-  
+
   evaluation:
     k: 5
     relevance_threshold: 3

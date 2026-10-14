@@ -1,12 +1,12 @@
-# FranKGraphBench: Knowledge Graph Aware Recommender Systems Framework for Benchmarking
+# FranKGraphBench: Reproducible Benchmarking for Knowledge Graph-based Recommendation
 [![DOI](https://zenodo.org/badge/646290327.svg)](https://doi.org/10.5281/zenodo.14513776)
 
-The FranKGraphBench is a framework to allow KG Aware RSs to be benchmarked in a reproducible and easy to implement manner. 
-It was first created on Google Summer of Code 2023 for Data Integration between DBpedia and some standard RS datasets in a reproducible framework.
+FranKGraphBench is a framework for reproducible benchmarking of Knowledge Graph-based recommender systems.
+It was first created on Google Summer of Code 2023 for Data Integration between DBpedia and some standard RS datasets in a reproducible framework and was accepted at the Resource Track from the 35th ACM International Conference on Information and Knowledge Management in Rome, Italy from the 7th to 11th November 2026.
 
 Check the [docs](https://frankgraphbench.readthedocs.io/en/latest/index.html) for more information.
 
-* This repository was first created for Data Integration between DBpedia and some standard Recommender Systems datasets and a framework for reproducible experiments. For more info, check the [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and the project progress with weekly (as possible) [updates](https://github.com/AKSW/frankgraphbench/wiki).
+* For more info, check the [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and the project progress with weekly (as possible) [updates](https://github.com/AKSW/frankgraphbench/wiki).
 
 # Data Integration
 
@@ -120,7 +120,7 @@ source venv_framework/bin/activate
 pip install .
 ```
 
-## Usage 
+## Usage
 
 pip:
 ```shell
@@ -139,16 +139,16 @@ The experiment config file should be a .yaml file like this:
 
 ```yaml
 experiment:
-  dataset: 
+  dataset:
     name: ml-100k
     item:
-      path: datasets/ml-100k/processed/item.csv 
-      extra_features: [movie_year, movie_title] 
+      path: datasets/ml-100k/processed/item.csv
+      extra_features: [movie_year, movie_title]
     user:
-      path: datasets/ml-100k/processed/user.csv 
-      extra_features: [gender, occupation] 
-    ratings: 
-      path: datasets/ml-100k/processed/rating.csv 
+      path: datasets/ml-100k/processed/user.csv
+      extra_features: [gender, occupation]
+    ratings:
+      path: datasets/ml-100k/processed/rating.csv
       timestamp: True
     enrich:
       map_path: datasets/ml-100k/processed/map.csv
@@ -188,7 +188,7 @@ experiment:
         n_walks: 50
         embedding_size: 64
         epochs: 1
-  
+
   evaluation:
     k: 5
     relevance_threshold: 3
@@ -208,7 +208,7 @@ Those are the currently supported pre-processing methods:
 
 ## Supported Splitting Methods
 
-Currently the supported Splitting method are:
+Currently the supported Splitting methods are:
 * Random by Ratio
 * Timestamp by Ratio
 * Fixed Timestamp

@@ -22,15 +22,15 @@ Currently the supported Recommender System models are:
 
 ### deepwalk_based
 - Node embedding based model (Node2Vec) + cosine similarity. (DeepWalk equivalent model can be run by setting the parameters `p` and `q` to `1.0`)
-  - References: 
+  - References:
     - DeepWalk: Bryan Perozzi, Rami Al-Rfou, and Steven Skiena. 2014. Deepwalk: Online learning of social representations. In Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining. 701–710.
     - node2vec: Aditya Grover and Jure Leskovec. 2016. node2vec: Scalable feature learning for networks. In Proceedings of the 22nd ACM SIGKDD international conference on Knowledge discovery and data mining. 855–864.
   - Main parameters
-    - `walk_len`: random walk length that determines how many nodes will be explore in a single walk.
+    - `walk_len`: random walk length that determines how many nodes will be explored in a single walk.
     - `n_walks`: number of random walks for each node.
     - `p`: likelihood of returning to the previous node, promoting more exploration of local structures.
     - `q`: likelihood of moving away from the previous node, promoting more exploration of different parts of the graph.
-    - `embedding_size`: embedding size, usually between 64 and 128. 
+    - `embedding_size`: embedding size, usually between 64 and 128.
     - `window_size`: word2vec window size, where it determines how many of the "words" within the walk length will impact the skipgram model calculation. Usually is a smaller value than the walk length.
 
 ### transE
@@ -40,7 +40,7 @@ Currently the supported Recommender System models are:
     - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
     - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
     - `epochs`: number of training iterations.
-    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### transH
@@ -50,7 +50,7 @@ Currently the supported Recommender System models are:
     - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
     - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
     - `epochs`: number of training iterations.
-    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### transR
@@ -61,7 +61,7 @@ Currently the supported Recommender System models are:
     - `relation_dim`: the relation embedding dimension, usually equal or smaller than `embedding_dim`.
     - `scoring_fct_norm`: the norm applied in the interaction function, usually `1` or `2`.
     - `epochs`: number of training iterations.
-    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### transD
@@ -71,7 +71,7 @@ Currently the supported Recommender System models are:
     - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
     - `relation_dim`: the relation embedding dimension, usually equal or smaller than `embedding_dim`.
     - `epochs`: number of training iterations.
-    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### tuckER
@@ -83,9 +83,9 @@ Currently the supported Recommender System models are:
     - `dropout_0`: the first dropout, `cf.formula`.
     - `dropout_1`: the second dropout, `cf.formula`.
     - `dropout_2`: the third dropout, `cf.formula`.
-    - `apply_batch_normalization`: wheter to apply batch normalization (`bool`).
+    - `apply_batch_normalization`: whether to apply batch normalization (`bool`).
     - `epochs`: number of training iterations.
-    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### rESCAL
@@ -94,7 +94,7 @@ Currently the supported Recommender System models are:
   - Main parameters
     - `embedding_dim`: the entity embedding dimension, usually between `50` and `300`.
     - `epochs`: number of training iterations.
-    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### distMult
@@ -103,7 +103,7 @@ Currently the supported Recommender System models are:
   - Main parameters
     - `embedding_dim`: the entity embedding dimension.
     - `epochs`: number of training iterations.
-    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### complEx
@@ -112,23 +112,23 @@ Currently the supported Recommender System models are:
   - Main parameters
     - `embedding_dim`: the entity embedding dimension.
     - `epochs`: number of training iterations.
-    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### rotatE
 - RotatE graph embedding + cosine similarity.
   - Reference: Zhiqing Sun, Zhi-Hong Deng, Jian-Yun Nie, and Jian Tang. 2019. RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space. In Int. Conference on Learning Representations. Openreview, Louisiana, United States, 1–18.
   - Main parameters
-   - `embedding_dim`: the entity embedding dimension.
+    - `embedding_dim`: the entity embedding dimension.
     - `epochs`: number of training iterations.
-    - `seed`: seed for the sampling of the triples during, training, testing and validation.
+    - `seed`: seed for the sampling of the triples during training, testing and validation.
     - `triples`: if the model is going to be trained using all triples or just rating typed triples, either `"all"` or `"ratings"`.
 
 ### ePHEN
 - EPHEN embedding propagation + start embedding model + cosine similarity.
   - Reference: Paulo do Carmo and Ricardo Marcacini. 2021. Embedding propagation over heterogeneous event networks for link prediction. In 2021 IEEE International Conference on Big Data (Big Data). 4812–4821.
   - Main parameters
-    - `embedding_model`: the start embedding model name, either a hugginface sentence transformer model or a previously implemented graph embedding model.
+    - `embedding_model`: the start embedding model name, either a Hugging Face sentence transformer model or a previously implemented graph embedding model.
     - `embedding_model_kwargs`: arguments for the starting embedding model.
     - `embed_with`: either the `column_name` for the item property that contains text data, or `"graph"` when using a previously implemented graph embedding model.
     - `iterations`: the number of iterations for the regularization propagation.
@@ -235,7 +235,7 @@ Those are the currently supported pre-processing methods:
 
 ## Splitting Methods
 
-Currently the supported Splitting method are:
+Currently the supported Splitting methods are:
 * Random by Ratio
 * Timestamp by Ratio
 * Fixed Timestamp
