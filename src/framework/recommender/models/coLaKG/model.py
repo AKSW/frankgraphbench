@@ -328,7 +328,7 @@ class CoLaKG(Recommender):
     def __get_ollama(self, client: Client, messages_dict: dict, target_type: str, count_limit: int | None = None):
         llm_responses_dict = {}
         for count, node in tqdm(enumerate(messages_dict), total=len(messages_dict), desc=f"requesting llm model {self.model_name} with host {self.model_host} for '{target_type}' semantic description..."):
-            response = client.chat(model=self.model_name, messages=messages_dict[node])
+            response = client.chat(model=self.model_name, messages=messages_dict[node], think=None)
             llm_responses_dict[node] = response["message"]["content"]
 
             if count_limit is not None and count >= count_limit:
