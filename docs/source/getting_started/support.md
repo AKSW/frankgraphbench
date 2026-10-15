@@ -228,6 +228,8 @@ Currently the supported Recommender System models are:
       aggregation variants, which read the same adjacency.
 
 ### coLaKG
+- CoLaKG: Comprehending knowledge graphs with large language models for recommender systems
+- Reference: Cui, Z., Weng, Y., Tang, X., Lyu, F., Liu, D., He, X., & Ma, C. (2025, July). Comprehending knowledge graphs with large language models for recommender systems. In Proceedings of the 48th international ACM SIGIR conference on research and development in information retrieval (pp. 1229-1239).
 - Large-language-model augmented knowledge-graph recommender. Items and users are
   described by an LLM (an Ollama chat model) using the knowledge graph, the
   descriptions are embedded by an LLM embedding model, and these *semantic*
