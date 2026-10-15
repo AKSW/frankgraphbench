@@ -1,6 +1,6 @@
 from framework.dataloader.graph.node import UserNode
 from ...recommender import Recommender
-from ...utils.walker import random_walks
+from ...utils.walker import parallel_random_walks
 
 import numpy as np
 import networkx as nx
@@ -101,7 +101,7 @@ class DeepWalkBased(Recommender):
         # Seed the random walks so the sampled walks (and thus the Word2Vec
         # training sequences) are reproducible run-to-run. The same ``seed`` is
         # also passed to Word2Vec below.
-        self.walks = random_walks(
+        self.walks = parallel_random_walks(
             graph,
             n_walks=self.n_walks,
             walk_len=self.walk_len,

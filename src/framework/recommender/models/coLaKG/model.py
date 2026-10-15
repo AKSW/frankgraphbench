@@ -20,7 +20,7 @@ from .CoLaKG import CoLaKG_model
 from .colakg_utils import BPRLoss
 from .dataloader import Loader
 from .Procedure import BPR_train_original, Test
-from .walker import random_walks
+from .walker import parallel_random_walks
 
 
 def _batch(iterable, batch_size):
@@ -30,6 +30,12 @@ def _batch(iterable, batch_size):
 
 
 class CoLaKG(Recommender):
+    # Random-walk variant used to build the user prompts. The parallel walker
+    # derives a per-node RNG from ``(walk_seed, node_index)``, which is not
+    # byte-identical to the legacy sequential single-RNG stream, so it is part of
+    # the cache key to stop an old-seed cache being served under new walk content.
+    _WALK_VARIANT = "parallel-cow-v1"
+
     def __init__(
             self,
             config: dict,
@@ -303,7 +309,8 @@ class CoLaKG(Recommender):
         Returns (cache_dict, compatible) where cache_dict is the parsed JSON
         (or {} if the file is missing) and compatible is False when the cache
         must be regenerated -- either because it is absent, its stored system
-        prompt no longer matches, or it was generated for a different dataset.
+        prompt no longer matches, it was generated for a different dataset, or it
+        was produced by a different random-walk variant.
         """
         path = self._cache_path(target_type)
         if not os.path.exists(path):
@@ -327,6 +334,13 @@ class CoLaKG(Recommender):
         if target_type == "user" and cache.get("walk_seed") != self.walk_seed:
             print("Walk-seed mismatch for 'user': regenerating cache.")
             return cache, False
+        # The user prompts are derived from random walks. A different walker
+        # variant produces different walks for the same seed, so the stored
+        # variant must match to avoid serving stale prompts. Caches written
+        # before this guard carried no ``walk_variant`` and are regenerated.
+        if target_type == "user" and cache.get("walk_variant") != self._WALK_VARIANT:
+            print(f"Walk-variant mismatch for 'user': regenerating cache.")
+            return cache, False
         return cache, True
 
     def _write_cache(self, target_type: str, system_prompt: str, responses: dict,
@@ -340,6 +354,7 @@ class CoLaKG(Recommender):
              "emb_model": self.emb_model_name,
              "system_prompt": system_prompt,
              "walk_seed": self.walk_seed,
+             "walk_variant": self._WALK_VARIANT,
              "computer": computer,
              "cache_time_seconds": cache_time_seconds,
              "count_limit": count_limit,
@@ -456,7 +471,7 @@ class CoLaKG(Recommender):
          # original Node objects and carry no "old_label". Run one random walk
          # per user node on the graph itself to build a user-centered context.
         users = list(self.G_train.get_user_nodes())
-        walks = random_walks(
+        walks = parallel_random_walks(
              self.G_train,
              n_walks=1,
              walk_len=self.walk_len,
