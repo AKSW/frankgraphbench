@@ -162,3 +162,5 @@ experiment:
 
   report:
     file: "experiment_results/chembl/test_chembl-trypanosoma.csv"
+    execution_times:
+      file: "experiment_results/chembl/test_chembl-trypanosoma_times.csv"
