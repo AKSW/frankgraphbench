@@ -32,6 +32,7 @@ Currently the supported Recommender System models are:
     - `q`: likelihood of moving away from the previous node, promoting more exploration of different parts of the graph.
     - `embedding_size`: embedding size, usually between 64 and 128.
     - `window_size`: word2vec window size, where it determines how many of the "words" within the walk length will impact the skipgram model calculation. Usually is a smaller value than the walk length.
+    - `seed`: seed (default `42`) for the random walks and the Word2Vec initialization, so the sampled walks and resulting embeddings are reproducible run-to-run.
 
 ### transE
 - TransE graph embedding + cosine similarity.
@@ -226,6 +227,79 @@ Currently the supported Recommender System models are:
       adjacency. This applies to `use_att=True` and to the `gcn`/`graphsage`
       aggregation variants, which read the same adjacency.
 
+### coLaKG
+- Large-language-model augmented knowledge-graph recommender. Items and users are
+  described by an LLM (an Ollama chat model) using the knowledge graph, the
+  descriptions are embedded by an LLM embedding model, and these *semantic*
+  embeddings are combined with a LightGCN-style graph neural network (with an
+  attentive neighborhood aggregation) trained with BPR loss.
+  - Main parameters
+    - `item_name`: the property type used to name items in the item prompts (e.g. `movie_title`).
+    - `model_host`: base URL of the Ollama server (e.g. `http://localhost:11434`).
+    - `model_name`: chat LLM model name used to generate the item/user semantic descriptions.
+    - `emb_model_name`: LLM embedding model name used to embed the generated descriptions.
+    - `item_system_prompt`: system prompt sent to the LLM for item descriptions (mandatory, no default).
+    - `user_system_prompt`: system prompt sent to the LLM for user descriptions (mandatory, no default).
+    - `walk_len`: length of the random walk used to build the user-centered prompt context.
+    - `walk_seed`: seed (default `42`) for the user random walks, so the user prompts (and their cache) are reproducible run-to-run.
+    - `latent_dim_rec`: size of the learned LightGCN embedding (`latent_dim`).
+    - `lightGCN_n_layers`: number of LightGCN propagation layers.
+    - `semantic_hid_dim`: hidden dimension of the attention over semantic neighbors.
+    - `neighbor_k`: number of semantic nearest neighbors used to build the neighbor adjacency.
+    - `use_drop_edge`: when truthy, drops edges during training.
+    - `keep_prob`: edge keep probability used by the dropout.
+    - `dropout_i`, `dropout_u`, `dropout_n`: item, user, and neighbor dropout rates.
+    - `bpr_batch_size`: batch size for BPR training.
+    - `test_u_batch_size`: number of users per batch during evaluation.
+    - `lr`: learning rate; `decay`: weight decay.
+    - `epochs`: number of training epochs.
+    - `validate_frac`: fraction of the training triples used for the internal validation.
+    - `validate_seed`: seed for splitting the validation set.
+    - `item_llm_limit` / `user_llm_limit`: optional cap on the number of LLM/embedding calls per target (`null` uses every node); useful for smoke-testing.
+    - `device`: execution device (`auto` (CUDA -> CPU), `cpu`, or `cuda`).
+  - LLM response cache:
+    - coLaKG sends item and user prompts to an LLM to produce semantic
+      descriptions, then embeds them. To avoid re-running this expensive step, the
+      LLM *responses* are cached on disk under:
+
+        ```
+        datasets/<dataset>/colakg-cache/<llm_model>-item.json
+        datasets/<dataset>/colakg-cache/<llm_model>-user-walkseed-<walk_seed>.json
+        ```
+
+      where `<llm_model>` is the chat model name (e.g. `qwen3:1.7b` becomes
+      `qwen3_1.7b`). Each JSON file stores the target node ids, the LLM responses,
+      the system prompt used, the LLM/embedding model names, the walk seed, the
+      generation time, and the computer information of the host that produced it.
+    - coLaKG builds user prompts from a random walk over the graph, so it is made
+      reproducible with a `walk_seed` model parameter (default `42`). The walk seed
+      is part of the **user** cache filename (`-walkseed-42`); item prompts do not
+      use the walk, so the item filename stays seed-independent and a single item
+      file is reused across walk seeds.
+    - *Recovering the cache.* The cache is recovered automatically, keyed by the LLM
+      model and target type (and, for users, the walk seed). To reuse a previous
+      run's responses: keep the same `dataset`, `model_name`,
+      `item_system_prompt`/`user_system_prompt`, and `walk_seed` -- the run will
+      load the matching `colakg-cache` file and skip the LLM calls. The user cache
+      path is `.../<llm_model>-user-walkseed-<walk_seed>.json`, so **changing the
+      walk seed selects a different (empty) cache**, forcing a fresh user
+      generation; the old seed's file is left untouched. `walk_seed` is also stored
+      in the JSON and re-checked on load as a defensive guard.
+    - *When the cache is regenerated.* Before every run the cache is checked and
+      reused when present. A cached file is reused only when it matches the current
+      run; it is regenerated automatically when any of the following holds:
+      - `reset_cache: True` is set in the model `config` block,
+      - the cache file does not exist,
+      - the stored **system prompt no longer matches** the current one (this always
+        forces a re-cache, ignoring `reset_cache`),
+      - the **walk seed no longer matches** for the user cache (a different
+        `walk_seed` points at a different, absent file), or
+      - the cache does not cover the nodes the run will request (e.g. a previously
+        limited run followed by a full run); in this case only the missing nodes
+        are generated and merged back into the existing cache.
+    - The random-walk seed is also used by **deepwalk_based** (`seed`, default
+      `42`), which seeds its random walks (and Word2Vec) so the sampled walks and
+      embeddings are reproducible run-to-run.
 
 ## Pre-processing Methods
 

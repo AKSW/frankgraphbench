@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+import os
+import re
 import time
 
 import numpy as np
@@ -10,6 +13,8 @@ from tqdm import tqdm
 
 from ....dataloader.graph.graph import Graph
 from ....dataloader.graph.node import ItemNode, PropertyNode, UserNode
+from ....reporter.report import get_host_info
+from ....utils import get_optional_argument
 from ...recommender import Recommender
 from .CoLaKG import CoLaKG_model
 from .colakg_utils import BPRLoss
@@ -35,6 +40,7 @@ class CoLaKG(Recommender):
             item_system_prompt: str,
             user_system_prompt: str,
             walk_len: int = 10,
+            walk_seed: int = 42,
             validate_frac: float = 0.01,
             validate_seed: int = 42,
             bpr_batch_size: int = 2048,
@@ -69,6 +75,7 @@ class CoLaKG(Recommender):
         self.item_system_prompt = item_system_prompt
         self.user_system_prompt = user_system_prompt
         self.walk_len = walk_len
+        self.walk_seed = walk_seed
         self.validate_frac = validate_frac
         self.validate_seed = validate_seed
         self.epochs = epochs
@@ -77,6 +84,11 @@ class CoLaKG(Recommender):
         )
         self.item_llm_limit = item_llm_limit
         self.user_llm_limit = user_llm_limit
+        # Optional flag (read from the model `config:` block, like save_weights)
+        # that forces the LLM response cache to be regenerated. A cache is also
+        # regenerated automatically when its stored system prompt no longer
+        # matches the current one, regardless of this flag.
+        self.reset_cache = get_optional_argument(config, 'reset_cache', False)
         self.config = {
              "neighbor_k": neighbor_k,
              "dropout_i": dropout_i,
@@ -237,12 +249,19 @@ class CoLaKG(Recommender):
     def _pre_train(self):
         print("building input...")
 
-        messages_items_dict = self.__build_input_item(self.item_system_prompt)
-        messages_users_dict = self.__build_input_user(self.user_system_prompt)
-
         client = Client(host=self.model_host)
-        llm_responses_items_dict = self.__get_ollama(client, messages_items_dict, "item", count_limit=self.item_llm_limit)
-        llm_responses_users_dict = self.__get_ollama(client, messages_users_dict, "user", count_limit=self.user_llm_limit)
+
+        # Get (or reuse cached) LLM responses for items and users, then embed
+        # them. The cache lives under datasets/<dataset>/colakg-cache/ and is
+        # keyed by the LLM model and target type; see _get_or_cache_responses.
+        llm_responses_items_dict = self._get_or_cache_responses(
+             client, "item",
+             self.__build_input_item, self.item_system_prompt, self.item_llm_limit,
+        )
+        llm_responses_users_dict = self._get_or_cache_responses(
+             client, "user",
+             self.__build_input_user, self.user_system_prompt, self.user_llm_limit,
+        )
 
         semantic_embs_items_dict = self.__get_emb_ollama(client, llm_responses_items_dict, "item", count_limit=self.item_llm_limit)
         semantic_embs_users_dict = self.__get_emb_ollama(client, llm_responses_users_dict, "user", count_limit=self.user_llm_limit)
@@ -250,6 +269,165 @@ class CoLaKG(Recommender):
         print("pre-training finished...")
 
         return semantic_embs_items_dict, semantic_embs_users_dict
+
+    def _dataset_name(self) -> str:
+        return self.G_train.name if hasattr(self.G_train, "name") else "unknown"
+
+    @staticmethod
+    def _sanitize_name(name: str) -> str:
+        return re.sub(r"[^A-Za-z0-9._-]+", "_", str(name)).strip("_") or "unknown"
+
+    def _cache_dir(self) -> str:
+        # <repo_root>/datasets/<dataset>/colakg-cache
+        # repo root = 4 levels up from this file
+        #   model.py -> coLaKG -> models -> recommender -> framework -> src -> root
+        src_root = os.path.abspath(
+             os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, os.pardir)
+        )
+        dataset_root = os.path.join(src_root, "datasets", self._dataset_name())
+        return os.path.join(dataset_root, "colakg-cache")
+
+    def _cache_path(self, target_type: str) -> str:
+        # The user prompts depend on the random-walk seed, so it is part of the
+        # user cache filename -- changing the seed yields a different path, so an
+        # old-seed cache is naturally not reused. Item prompts don't use the walk,
+        # so the item filename stays seed-independent (one item file per model).
+        filename = f"{self._sanitize_name(self.model_name)}-{target_type}"
+        if target_type == "user":
+            filename += f"-walkseed-{self.walk_seed}"
+        return os.path.join(self._cache_dir(), f"{filename}.json")
+
+    def _load_cache(self, target_type: str, system_prompt: str):
+        """Load a cached response file, validating compatibility.
+
+        Returns (cache_dict, compatible) where cache_dict is the parsed JSON
+        (or {} if the file is missing) and compatible is False when the cache
+        must be regenerated -- either because it is absent, its stored system
+        prompt no longer matches, or it was generated for a different dataset.
+        """
+        path = self._cache_path(target_type)
+        if not os.path.exists(path):
+            return {}, False
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                cache = json.load(f)
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"Warning: could not read cache '{path}': {e}. Regenerating.")
+            return {}, False
+
+        if cache.get("system_prompt") != system_prompt:
+            print(f"Prompt mismatch for '{target_type}': regenerating cache (ignoring reset_cache).")
+            return cache, False
+        if cache.get("dataset") != self._dataset_name():
+            print(f"Dataset mismatch for '{target_type}': regenerating cache.")
+            return cache, False
+        # The user cache filename already encodes the walk seed, so a seed change
+        # naturally points at a different (absent) file. This is a defensive
+        # guard for any pre-existing cache that predates the seed in the name.
+        if target_type == "user" and cache.get("walk_seed") != self.walk_seed:
+            print("Walk-seed mismatch for 'user': regenerating cache.")
+            return cache, False
+        return cache, True
+
+    def _write_cache(self, target_type: str, system_prompt: str, responses: dict,
+                     count_limit, cache_time_seconds, computer):
+        path = self._cache_path(target_type)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        payload = {
+             "dataset": self._dataset_name(),
+             "target_type": target_type,
+             "llm_model": self.model_name,
+             "emb_model": self.emb_model_name,
+             "system_prompt": system_prompt,
+             "walk_seed": self.walk_seed,
+             "computer": computer,
+             "cache_time_seconds": cache_time_seconds,
+             "count_limit": count_limit,
+             "responses": responses,
+        }
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2, ensure_ascii=False)
+        print(f"Saved LLM response cache for '{target_type}' to {path}")
+
+    def _build_ordered_nodes(self, build_fn, system_prompt, target_type: str):
+        """Build the per-node LLM prompts and return (ordered_node_ids, messages_by_id).
+
+        Iterating by ``id`` reproduces the same LLM call order (and hence the
+        same ``count_limit`` truncation) as the original implementation.
+        """
+        messages_by_id = {}
+        for node, messages in build_fn(system_prompt).items():
+            messages_by_id[id(node)] = {"node": node, "messages": messages}
+        ordered_node_ids = sorted(messages_by_id, key=lambda nid: messages_by_id[nid]["node"].get_id())
+        return ordered_node_ids, messages_by_id
+
+    def _get_or_cache_responses(self, client: Client, target_type: str,
+                                build_fn, system_prompt: str, count_limit: int | None):
+        """Return LLM responses for ``target_type``, reusing the cache when
+        possible and (re)generating + persisting it otherwise.
+
+        The cache is *forced* to regenerate when ``reset_cache`` is set or when
+        the stored cache is not compatible (missing file, or its stored system
+        prompt / dataset no longer match -- a prompt mismatch always wins over
+        ``reset_cache``). Otherwise cached responses are reused and only the
+        missing nodes are sent to the LLM, then the merged set is written back.
+        Generation time is measured separately and stored with the computer info.
+        """
+        cache, compatible = self._load_cache(target_type, system_prompt)
+        force_regenerate = self.reset_cache or not compatible
+        # When forcing a regenerate we ignore any cached responses entirely.
+        cached_responses = {} if force_regenerate else cache.get("responses", {})
+
+        ordered_node_ids, messages_by_id = self._build_ordered_nodes(
+             build_fn, system_prompt, target_type,
+        )
+
+        # Walk nodes in the canonical (id) order -- the same order the LLM loop
+        # uses -- and serve each from the cache where possible, otherwise mark
+        # it for generation. Stopping at count_limit reproduces the original
+        # truncation semantics.
+        selected = []
+        for nid in ordered_node_ids:
+            node = messages_by_id[nid]["node"]
+            node_id = str(node.get_id())
+            if count_limit is not None and len(selected) >= count_limit:
+                break
+            if cached_responses.get(node_id) is not None:
+                selected.append((node, "cache", cached_responses[node_id]))
+            else:
+                selected.append((node, "gen", None))
+
+        result = {node: text for node, source, text in selected if source == "cache"}
+        nodes_to_generate = [node for node, source, _ in selected if source == "gen"]
+
+        cache_time_seconds = 0.0
+        generated = {}
+        if nodes_to_generate:
+            generate_messages = {messages_by_id[id(n)]["node"]: messages_by_id[id(n)]["messages"]
+                                 for n in nodes_to_generate}
+            start = time.time()
+            generated = self.__get_ollama(client, generate_messages, target_type, count_limit=None)
+            cache_time_seconds = time.time() - start
+
+        if generated:
+            for node, text in generated.items():
+                result[node] = text
+            # Merge new responses into the previously cached ones (force mode
+            # starts from an empty dict, so this writes a fresh cache).
+            merged = dict(cached_responses)
+            merged.update({str(n.get_id()): t for n, t in result.items()})
+            self._write_cache(
+                 target_type, system_prompt, merged,
+                 count_limit, cache_time_seconds, get_host_info(),
+            )
+            print(f"Generated LLM responses for '{target_type}' "
+                  f"({len(generated)} generated, {len(result)} total, "
+                  f"{cache_time_seconds:.2f}s).")
+        else:
+            print(f"Reusing LLM response cache for '{target_type}' "
+                  f"({len(result)} responses).")
+
+        return result
 
     def _get_sparse_graph(self):
         pass
@@ -283,6 +461,7 @@ class CoLaKG(Recommender):
              n_walks=1,
              walk_len=self.walk_len,
              start_nodes=users,
+             seed=self.walk_seed,
         )
 
           # Map each walk back to its starting user node so that the LLM/embed

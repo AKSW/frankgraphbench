@@ -98,12 +98,16 @@ class DeepWalkBased(Recommender):
 
     def fit(self):
         graph = self.G_train.convert_node_labels_to_integer()
+        # Seed the random walks so the sampled walks (and thus the Word2Vec
+        # training sequences) are reproducible run-to-run. The same ``seed`` is
+        # also passed to Word2Vec below.
         self.walks = random_walks(
             graph,
             n_walks=self.n_walks,
             walk_len=self.walk_len,
             p=self.p,
             q=self.q,
+            seed=self.seed,
         )
         print(f'Number of random walks: {len(self.walks)}')
 

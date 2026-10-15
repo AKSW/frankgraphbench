@@ -307,6 +307,7 @@ Where,
   - `name`: model name (mandatory)
   - `config`: metadata config
     - _save_weights_: boolean that indicates if the model parameters must be saved after training.
+    - _reset_cache_: optional boolean (coLaKG only) that forces the LLM response cache to be regenerated. See the [coLaKG](../support.md#colakg) section in *Model Support* for the full description of the LLM response cache.
   - `parameters`: model parameters in the format `parameter_name: parameter_value`
 
 The supported models and their parameters can be found at the [support](./support.md) documentation.

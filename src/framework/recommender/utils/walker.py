@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 
 def random_walks(graph, n_walks: int = 1, walk_len: int = 10, start_nodes=None,
-                 p: float = 1.0, q: float = 1.0):
+                 p: float = 1.0, q: float = 1.0, seed=None):
     """Run truncated random walks on ``graph``.
 
     This is a dependency-free replacement for the external ``graph-walker``
@@ -26,9 +26,16 @@ def random_walks(graph, n_walks: int = 1, walk_len: int = 10, start_nodes=None,
     :param p: return parameter of the Node2Vec second-order walk
     :param q: in-out parameter of the Node2Vec second-order walk
         (``p == q == 1`` -- the default -- yields a first-order uniform walk)
+    :param seed: optional integer that seeds a *local* ``numpy`` Generator so
+        the walks are reproducible. When ``None`` (the default) the numpy global
+        RNG is used unchanged, preserving prior behavior.
     :return: a list of walks, each a list of node ids beginning with its
         start node
     """
+    if seed is not None:
+        rng = np.random.default_rng(seed)
+    else:
+        rng = np.random
     if start_nodes is None:
         start_nodes = list(graph.nodes())
 
@@ -36,17 +43,18 @@ def random_walks(graph, n_walks: int = 1, walk_len: int = 10, start_nodes=None,
     walks = []
     for node in tqdm(start_nodes, total=len(start_nodes), desc="running random walks"):
         for _ in range(n_walks):
-            walks.append(_do_walk(graph, node, walk_len, p, q, biased))
+            walks.append(_do_walk(graph, node, walk_len, p, q, biased, rng))
 
     return walks
 
 
-def _do_walk(graph, node, walk_len: int, p: float, q: float, biased: bool) -> list:
+def _do_walk(graph, node, walk_len: int, p: float, q: float, biased: bool, rng) -> list:
     """A single truncated random walk of up to ``walk_len`` hops at ``node``.
 
     With ``biased=False`` (``p == q == 1``) this is a first-order uniform walk.
     Otherwise it is a Node2Vec second-order walk with return probability ``1/p``
-    and in-out probability ``1/q``.
+    and in-out probability ``1/q``. ``rng`` is a numpy Generator (or the global
+    ``np.random`` module) that provides the random draws.
     """
     walk = [node]
     if not biased:
@@ -55,7 +63,7 @@ def _do_walk(graph, node, walk_len: int, p: float, q: float, biased: bool) -> li
             if not neighbors:
                  # Dead end: stop early. Callers tolerate short walks.
                 break
-            walk.append(np.random.choice(neighbors))
+            walk.append(rng.choice(neighbors))
         return walk
 
     edge_fn = _get_edge_fn(graph)
@@ -79,7 +87,7 @@ def _do_walk(graph, node, walk_len: int, p: float, q: float, biased: bool) -> li
             [lambda w: w / p, lambda w: w, lambda w: w / q],
         )
         norm_probability = probability / sum(probability)
-        walk.append(np.random.choice(current_node_neighbors, 1, p=norm_probability)[0])
+        walk.append(rng.choice(current_node_neighbors, size=1, p=norm_probability)[0])
         previous_node_neighbors = current_node_neighbors
         previous_node = current_node
 

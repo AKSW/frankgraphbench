@@ -29,6 +29,10 @@ experiment:
     - name: coLaKG
       config:
         save_weights: True
+        # Optional: force regeneration of the LLM response cache on this run.
+        # A cache is also auto-regenerated when the system prompt no longer
+        # matches; see the coLaKG LLM response cache docs.
+        # reset_cache: False
       parameters:
         item_name: movie_title
         model_host: http://mac.fritz.box:11434
@@ -54,6 +58,9 @@ experiment:
           and analyze what kind of items this user would like.
           Your response should be a coherent paragraph with no more than 200 words.
         walk_len: 10
+        # Seed for the user random walks that build user prompts. Fixed so that
+        # generated user prompts (and their cache) are reproducible run-to-run.
+        walk_seed: 42
         latent_dim_rec: 64
         lightGCN_n_layers: 3
         use_drop_edge: 1
@@ -79,3 +86,5 @@ experiment:
 
   report:
     file: "experiment_results/fixed_db16_runs/test_colakg.csv"
+    execution_times:
+      file: "experiment_results/fixed_db16_runs/test_colakg_times.csv"
