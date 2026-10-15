@@ -53,7 +53,7 @@ Experiment ran using the MovieLens-100k dataset with the following presented mod
 
 ## ml-100k_enriched
 
-Experiment ran using the MovieLens-100k dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k_enriched.yml` and `config_files/run_gnns.yml`: 
+Experiment ran using the MovieLens-100k dataset with DBpedia enrichment and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-100k_enriched.yml` and `config_files/run_gnns.yml`: 
 
 - Summarized results from `experiment_results/fixed_db16_runs/ml-100k_enriched.csv` and `experiment_results/fixed_db16_runs/ml-100k_enriched_gnns.csv`:
 
@@ -154,7 +154,7 @@ Experiment ran using the MovieLens-1m dataset with the following presented model
 
 ## ml-1m_enriched
 
-Experiment ran using the MovieLens-1m dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-1m_enriched.yml`: 
+Experiment ran using the MovieLens-1m dataset with DBpedia enrichment and the following presented models and their configurations. The complete configuration can be found in `config_files/run_ml-1m_enriched.yml`: 
 
 - Summarized results from `experiment_results/fixed_db16_runs/ml-1m_enriched.csv`, `experiment_results/fixed_db16_runs/ml-1m_enriched_bPRMF.csv`, `experiment_results/fixed_db16_runs/ml-1m_enriched_cFKG.csv`:
 
@@ -204,7 +204,7 @@ Experiment ran using the MovieLens-1m dataset with DBpedia enrichement and the f
 
 ## lastfm
 
-Experiment ran using the Lastfm dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm.yml` and `config_files/run_gnns.yml`:
+Experiment ran using the LastFM dataset with the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm.yml` and `config_files/run_gnns.yml`:
 
 - Summarized results from `experiment_results/fixed_db16_runs/lastfm.csv` and `experiment_results/fixed_db16_runs/lastfm_gnns.csv`:
 
@@ -257,7 +257,7 @@ Experiment ran using the Lastfm dataset with the following presented models and 
 
 ## lastfm_enriched
 
-Experiment ran using the Lastfm dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm-enriched.yml` and `config_files/run_gnns.yml`:
+Experiment ran using the LastFM dataset with DBpedia enrichment and the following presented models and their configurations. The complete configuration can be found in `config_files/run_lastfm-enriched.yml` and `config_files/run_gnns.yml`:
 
 - Summarized results from `experiment_results/fixed_db16_runs/lastfm_enriched.csv` and `experiment_results/fixed_db16_runs/lastfm_enriched_gnns.csv`:
 
@@ -356,7 +356,7 @@ Experiment ran using the Douban Movie dataset with the following presented model
 
 ## douban-movie_enriched
 
-Experiment ran using the Douban Movie dataset with DBpedia enrichement and the following presented models and their configurations. The complete configuration can be found in `config_files/run_douban-movie_enriched.yml`: 
+Experiment ran using the Douban Movie dataset with DBpedia enrichment and the following presented models and their configurations. The complete configuration can be found in `config_files/run_douban-movie_enriched.yml`: 
 
 - Summarized results from `experiment_results/fixed_db16_runs/douban-movie_enriched.csv`:
 

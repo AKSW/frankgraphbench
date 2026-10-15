@@ -2,9 +2,34 @@ import pandas as pd
 import numpy as np
 import typing as t
 import os
+import socket
 import cpuinfo
 import psutil
 import GPUtil
+
+
+def get_host_info() -> t.Dict[str, t.Any]:
+    """Return machine specs used to describe the environment that produced a
+    result. This is the single source of truth for computer information; both
+    the reporters and the CoLaKG cache store reuse it so they stay consistent.
+    """
+    return {
+        "cpu": cpuinfo.get_cpu_info()["brand_raw"],
+        "ram_gb": round(psutil.virtual_memory().total / (1024 ** 3)),
+        "gpus": [gpu.name for gpu in GPUtil.getGPUs()],
+        "hostname": socket.gethostname(),
+    }
+
+
+def host_info_label() -> str:
+    """Human-readable machine-spec string, e.g. used as a report index."""
+    info = get_host_info()
+    return (
+        f"CPU: {info['cpu']}; "
+        f"RAM: {info['ram_gb']}GB; "
+        f"GPUs: {info['gpus']}"
+    )
+
 
 class Reporter:
     def __init__(self, output_file, eval_metrics):
@@ -96,6 +121,6 @@ class ExecutionTimesReporter:
             report['execution_time_mean'] = np.array(execution_times).mean(axis=0)
             report['execution_time_std'] = np.array(execution_times).std(axis=0)
             
-            results_processed[f'{model} (CPU: {cpuinfo.get_cpu_info()["brand_raw"]}; RAM: {round(psutil.virtual_memory().total/(1024**3))}GB; GPUs: {[gpu.name for gpu in GPUtil.getGPUs()]})'] = report
-        
+            results_processed[f'{model} ({host_info_label()})'] = report
+
         return results_processed

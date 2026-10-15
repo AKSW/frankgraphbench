@@ -1,9 +1,8 @@
-from ..dataloader.graph.graph import Graph
-from ..dataloader.graph.node import UserNode, ItemNode
-
-from ..utils import get_optional_argument
-
 import typing as t
+
+from ..dataloader.graph.graph import Graph
+from ..dataloader.graph.node import ItemNode, UserNode
+from ..utils import get_optional_argument
 
 """
     Recommender base class

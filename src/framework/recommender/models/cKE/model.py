@@ -1,20 +1,19 @@
-from typing import Dict, List, Tuple
+import argparse
+import sys
+from time import time
+
+import numpy as np
+from tqdm import tqdm
+
 from framework.dataloader.graph.graph import Graph
 from framework.dataloader.graph.node import ItemNode, UserNode
-from framework.recommender.models.cKE.helper import early_stopping
 from framework.recommender.models.cKE.batch_test import test, test_rank_list
-from framework.recommender.models.cKE.loader_cke import CKE_loader
 from framework.recommender.models.cKE.CKE import CKE_model
+from framework.recommender.models.cKE.helper import early_stopping
+from framework.recommender.models.cKE.loader_cke import CKE_loader
 
 from ...recommender import Recommender
 
-import numpy as np
-import tensorflow as tf
-from time import time
-from tqdm import tqdm
-
-import argparse
-import sys
 
 class CKE(Recommender):
     def __init__(
@@ -34,7 +33,8 @@ class CKE(Recommender):
                     lr: float = 0.0001,
                     report: int = 0,
                     ks: list = [10],
-                    random_seed: int = 42
+                    random_seed: int = 42,
+                    device: str = 'auto'
                  ):
         super().__init__(config)
         args_dict = {
@@ -62,15 +62,16 @@ class CKE(Recommender):
         self.lr = lr
         self.random_seed = random_seed
         self.batch_size = batch_size
+        self.device = device
 
     def name(self):
         text = "CKE"
         text += f";epoch={self.epoch};kge_size={self.kge_size};embed_size={self.embed_size};regs={self.regs};lr={self.lr}"
         return text
     
-    def train(self, G_train: Graph, ratings_train: Dict[UserNode, List[Tuple[ItemNode, float]]]):
+    def train(self, G_train: Graph, ratings_train: dict[UserNode, list[tuple[ItemNode, float]]]):
         self.ratings_train = ratings_train
-        self.G_train = G_train.convert_node_labels_to_integer()
+        self.G_train = G_train.convert_node_labels_to_integer(int_id_map=True)
         self._ratings_triples = self.G_train.get_ratings_triples(return_type="int")
         self._item_property_triples = self.G_train.get_item_property_triples(return_type="int")
         
@@ -86,22 +87,20 @@ class CKE(Recommender):
 
         self._pretrain_data = None
 
-        self._model = CKE_model(data_config=self._config, pretrain_data=self._pretrain_data, args=self._args)
-        
+        self._model = CKE_model(data_config=self._config, pretrain_data=self._pretrain_data, args=self._args, device=self.device)
+
         self.fit(t0)
 
     def fit(self, t0):
-        config = tf.compat.v1.ConfigProto()
-        config.gpu_options.allow_growth = True
-        self._sess = tf.compat.v1.Session(config=config)
-
-        self._sess.run(tf.compat.v1.global_variables_initializer())
         cur_best_pre_0 = 0.
 
         loss_loger, pre_loger, rec_loger, ndcg_loger, hit_loger = [], [], [], [], []
         stopping_step = 0
         should_stop = False
         self._batch_test_flag = False
+        # The eager PyTorch model keeps no external session; the (unused)
+        # argument passed to batch_test is kept as None for a stable call surface.
+        self._sess = None
 
         # train
         for epoch in range(self._args.epoch):
@@ -135,7 +134,7 @@ class CKE(Recommender):
             t2 = time()
             users_to_test = list(self._data_generator.test_user_dict.keys())
             print('validation start...')
-            ret = test(self._sess, self._model, users_to_test, self._data_generator, self._args, drop_flag=False, batch_test_flag=self._batch_test_flag)
+            ret = test(self._sess, self._model, users_to_test, self._data_generator, self._args, batch_test_flag=self._batch_test_flag)
             print('\nvalidation end...')
 
             # performance logging
@@ -178,13 +177,15 @@ class CKE(Recommender):
         print(final_perf)
 
 
-    def get_recommendations(self, k : int = 5) -> Dict[UserNode, List[ItemNode]]:
-        users_dict = {key: value for key, value in [(int(x.get_id()), x) for x in self.G_train.get_user_nodes()]}
-        items_dict = {key: value for key, value in [(int(x.get_id()), x) for x in self.G_train.get_item_nodes()]}
+    def get_recommendations(self, k : int = 5) -> dict[UserNode, list[ItemNode]]:
+         # Key user/item dicts by the same canonical 0-based ids the loader uses.
+        int_id_map = self.G_train._int_id_map
+        users_dict = {int_id_map["users"][u]: u for u in self.G_train.get_user_nodes()}
+        items_dict = {int_id_map["items"][i]: i for i in self.G_train.get_item_nodes()}
 
         users_to_test = list(users_dict.keys())
         print('getting recommendations start...')
-        ret = test_rank_list(self._sess, self._model, users_to_test, self._data_generator, self._args, drop_flag=False, batch_test_flag=self._batch_test_flag)
+        ret = test_rank_list(self._sess, self._model, users_to_test, self._data_generator, self._args, batch_test_flag=self._batch_test_flag, k=k)
         print('getting recommendations end...')
 
         print('formatting rec for frankgraph evaluator...')
@@ -193,6 +194,4 @@ class CKE(Recommender):
         for user, rec_items, _ in tqdm(ret, desc="generating return dict from recommendations"):
             recommendations[users_dict[user]] = list(set(recommendations[users_dict[user]]+[items_dict[item] for item in rec_items]))
 
-        self._sess.close()
-        
         return recommendations

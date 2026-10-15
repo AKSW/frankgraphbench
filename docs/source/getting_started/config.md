@@ -1,6 +1,6 @@
 # Setting up configuration file
 
-The directive `experiment` configures the experimetn pipeline that includes:
+The directive `experiment` configures the experiment pipeline that includes:
 
 - `dataset` configuration
 - `preprocess` methods
@@ -81,7 +81,7 @@ experiment:
     file: "experiment_results/ml100k_enriched/run1.csv"
 ```
 
-The next session goes through all details of each directive.
+The next section goes through the details of each directive.
 
 ## dataset
 
@@ -111,16 +111,16 @@ Let's break down the main directives for the dataset:
 
 - `item`: specifies the item info to be added to the network. (mandatory)
   - `path`: filepath of the standardized **item.csv**. (mandatory)
-  - `extra_features`: For default, the only column to be added is the `item_id`. With a list of column names the user can specify additional features to be added as property node. (optional)
+  - `extra_features`: By default, the only column added is the `item_id`. With a list of column names, the user can specify additional features to add as property nodes. (optional)
 - `user`: specifies the user info. (mandatory)
   - `path`: filepath of the standardized **user.csv**. (mandatory)
-  - `extra_features`: For default, the only column to be added is the `item_id`. With a list of column names the user can specify additional features to be added as property node. (optional)
+  - `extra_features`: By default, the only column added is the `user_id`. With a list of column names, the user can specify additional features to add as property nodes. (optional)
 - `ratings`: specifies the ratings info. (mandatory)
   - `path`: filepath of the standardized `ratings.csv`. (mandatory)
   - `timestamp`: boolean that indicates if the column `timestamp` is present.
 - `enrich`: specifies the enriched info. (mandatory)
   - `map_path`: filepath of the standardized `map.csv`. (mandatory)
-  - `enrich_path`: filepath of the standardized `user.csv`. (mandatory)
+  - `enrich_path`: filepath of the standardized `enriched.csv`. (mandatory)
   - `remove_unmatched`: boolean to specify if nodes unmatched with DBpedia should be removed. (mandatory)
   - `properties`: list of properties to enrich the dataset (mandatory)
 
@@ -307,6 +307,7 @@ Where,
   - `name`: model name (mandatory)
   - `config`: metadata config
     - _save_weights_: boolean that indicates if the model parameters must be saved after training.
+    - _reset_cache_: optional boolean (coLaKG only) that forces the LLM response cache to be regenerated. See the [coLaKG](../support.md#colakg) section in *Model Support* for the full description of the LLM response cache.
   - `parameters`: model parameters in the format `parameter_name: parameter_value`
 
 The supported models and their parameters can be found at the [support](./support.md) documentation.
@@ -331,7 +332,7 @@ Where,
   - `relevance_threshold`: threshold value to consider a rating relevant.
   - `metrics`: list of metric names to be evaluated. (mandatory)
 
-Check out the availables evaluation metric in the [support](./support.md) documentation.
+Check out the available evaluation metrics in the [support](./support.md) documentation.
 
 ## report
 

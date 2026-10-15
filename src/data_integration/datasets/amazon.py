@@ -12,9 +12,9 @@ class Amazon(Dataset):
     """
     General Amazon(Dataset) class for data loading all different Amazon datasets
     """
-    def __init__(self, input_path, output_path, n_workers=1):
-        super().__init__(input_path, output_path, n_workers)
-    
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
+
     def _parse(self, path):
         g = gzip.open(path, 'rb')
         for l in g:
@@ -29,8 +29,8 @@ class Amazon(Dataset):
         return pd.DataFrame.from_dict(df, orient='index')
     
 class AmazonVideoGames5(Amazon):
-    def __init__(self, input_path, output_path, n_workers=1):
-        super().__init__(input_path, output_path, n_workers)
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
         self.dataset_name = "Amazon Video Games 5-core"
 
         self.string_list_separator = "::"

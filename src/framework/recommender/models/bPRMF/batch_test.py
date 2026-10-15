@@ -5,10 +5,12 @@ Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In
 @author: Xiang Wang (xiangwang@u.nus.edu)
 @modifiedBy: Paulo do Carmo on Dec, 2025
 '''
-import framework.recommender.models.bPRMF.metrics as metrics
-import multiprocess
 import heapq
+
+import multiprocess
 import numpy as np
+
+from framework.recommender.models.bPRMF import metrics
 
 cores = multiprocess.cpu_count() // 2
 
@@ -102,7 +104,7 @@ def test_one_user(x):
     return get_performance(user_pos_test, r, auc, args.ks)
 
 
-def test(sess, model, users_to_test, data_generator, args, drop_flag=False, batch_test_flag=False):
+def test(sess, model, users_to_test, data_generator, args, batch_test_flag=False):
     result = {'precision': np.zeros(len(args.ks)), 'recall': np.zeros(len(args.ks)), 'ndcg': np.zeros(len(args.ks)),
               'hit_ratio': np.zeros(len(args.ks)), 'auc': 0.}
     
@@ -145,8 +147,7 @@ def test(sess, model, users_to_test, data_generator, args, drop_flag=False, batc
 
                 feed_dict = data_generator.generate_test_feed_dict(model=model,
                                                                    user_batch=user_batch,
-                                                                   item_batch=item_batch,
-                                                                   drop_flag=drop_flag)
+                                                                   item_batch=item_batch)
                 i_rate_batch = model.eval(sess, feed_dict=feed_dict)
                 i_rate_batch = i_rate_batch.reshape((-1, len(item_batch)))
 
@@ -159,8 +160,7 @@ def test(sess, model, users_to_test, data_generator, args, drop_flag=False, batc
             item_batch = range(data_generator.n_items)
             feed_dict = data_generator.generate_test_feed_dict(model=model,
                                                                user_batch=user_batch,
-                                                               item_batch=item_batch,
-                                                               drop_flag=drop_flag)
+                                                               item_batch=item_batch)
             rate_batch = model.eval(sess, feed_dict=feed_dict)
             rate_batch = rate_batch.reshape((-1, len(item_batch)))
 
@@ -197,9 +197,15 @@ def test_one_user_rank_list(x):
 
     return u, r, auc
 
-def test_rank_list(sess, model, users_to_test, data_generator, args, drop_flag=False, batch_test_flag=False):
-    
+def test_rank_list(sess, model, users_to_test, data_generator, args, batch_test_flag=False, k=None):
+
+      # ensure we retrieve at least k items so downstream @k metrics are not truncated short.
+      # idempotent: only extends ks when k exceeds the current maximum cutoff.
+    if k is not None and (not args.ks or k > max(args.ks)):
+        args.ks = list(args.ks) + [k]
+
     pool = multiprocess.Pool(cores)
+    all_results = []
 
     if args.model_type in ['ripple']:
 
@@ -238,8 +244,7 @@ def test_rank_list(sess, model, users_to_test, data_generator, args, drop_flag=F
 
                 feed_dict = data_generator.generate_test_feed_dict(model=model,
                                                                    user_batch=user_batch,
-                                                                   item_batch=item_batch,
-                                                                   drop_flag=drop_flag)
+                                                                   item_batch=item_batch)
                 i_rate_batch = model.eval(sess, feed_dict=feed_dict)
                 i_rate_batch = i_rate_batch.reshape((-1, len(item_batch)))
 
@@ -252,17 +257,16 @@ def test_rank_list(sess, model, users_to_test, data_generator, args, drop_flag=F
             item_batch = range(data_generator.n_items)
             feed_dict = data_generator.generate_test_feed_dict(model=model,
                                                                user_batch=user_batch,
-                                                               item_batch=item_batch,
-                                                               drop_flag=drop_flag)
+                                                               item_batch=item_batch)
             rate_batch = model.eval(sess, feed_dict=feed_dict)
             rate_batch = rate_batch.reshape((-1, len(item_batch)))
 
         user_batch_rating_uid = zip(rate_batch, user_batch)
         full_wrap = [(user_wrap, data_generator, args) for user_wrap in user_batch_rating_uid]
         batch_result = pool.map(test_one_user_rank_list, full_wrap)
+        all_results.extend(batch_result)
         count += len(batch_result)
-
 
     assert count == n_test_users
     pool.close()
-    return batch_result
+    return all_results

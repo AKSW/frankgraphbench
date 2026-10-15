@@ -9,9 +9,21 @@ from .datasets.worker import Worker
 from SPARQLWrapper import SPARQLWrapper, JSON
 from tqdm import tqdm
 
+MAX_RETRIES = 5
+
+
+class EndpointQueryError(Exception):
+    """Raised when a query to the SPARQL endpoint fails after all retries.
+
+    Propagated by the retrying ``_query`` helper so that an irrecoverable
+    endpoint failure can be surfaced instead of being silently swallowed.
+    """
+    pass
+
 
 class Dataset:
-    def __init__(self, input_path, output_path, n_workers=1):
+    def __init__(self, input_path, output_path, n_workers=1,
+                sparql_endpoint="http://141.57.8.18:8896/sparql"):
         r"""
         Base class for Recommender System's datasets
         """
@@ -19,8 +31,9 @@ class Dataset:
         self.output_path = output_path
         self.n_workers = n_workers
 
-        self.sparql_endpoint = "http://141.57.8.18:8896/sparql"
+        self.sparql_endpoint = sparql_endpoint
         self.timeout = 1000
+        self.max_retries = MAX_RETRIES
 
         # Output files
         self.item_filename = os.path.join(self.output_path, "item.csv")
@@ -162,15 +175,27 @@ class Dataset:
         return responses
 
     def _query(self, query, return_type=JSON) -> dict:
-        sparql = SPARQLWrapper(self.sparql_endpoint)
-        sparql.setTimeout(self.timeout)
-        sparql.setQuery(query)
-        sparql.setReturnFormat(return_type)
+        """
+        Query the SPARQL endpoint, retrying on any transient failure.
 
-        try:
-            return sparql.query().convert()
-        except Exception as e:
-            raise e
+        Retries up to ``self.max_retries`` times. If every attempt fails, the
+        last exception is raised as an ``EndpointQueryError``.
+        """
+        last_exception = None
+        for attempt in range(1, self.max_retries + 1):
+           try:
+               sparql = SPARQLWrapper(self.sparql_endpoint)
+               sparql.setTimeout(self.timeout)
+               sparql.setQuery(query)
+               sparql.setReturnFormat(return_type)
+               return sparql.query().convert()
+           except Exception as e:
+               last_exception = e
+               print(f"Query attempt {attempt}/{self.max_retries} failed: {e}")
+
+        raise EndpointQueryError(
+           f"Query failed after {self.max_retries} attempts: {last_exception}"
+        ) from last_exception
 
     def convert_item_data(self):
         """
@@ -196,7 +221,7 @@ class Dataset:
             print("Fields: " + ", ".join(df_user.columns))
             df_user.to_csv(self.user_filename, index=False)
         except NotImplementedError:
-            print(f"Override load_user_data() of your Dataset subclass.")
+            print("Override load_user_data() of your Dataset subclass.")
 
     def convert_rating_data(self):
         """
@@ -209,7 +234,7 @@ class Dataset:
             print("Fields: " + ", ".join(df_rating.columns))
             df_rating.to_csv(self.rating_filename, index=False)
         except NotImplementedError:
-            print(f"Override load_rating_data() of your Dataset subclass.")
+            print("Override load_rating_data() of your Dataset subclass.")
 
     def convert_social_data(self):
         """
@@ -221,7 +246,7 @@ class Dataset:
             print(f"{df_social.shape[0]} social link between users")
             df_social.to_csv(self.social_filename, index=False)
         except NotImplementedError:
-            print(f"Override load_rating_data() of your Dataset subclass.")
+            print("Override load_rating_data() of your Dataset subclass.")
 
     def map_URIs(self):
         """

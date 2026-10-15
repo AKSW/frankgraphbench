@@ -17,15 +17,16 @@ This project was designed to support further contributions, whether adding new s
     * **Note**: Now you have two remote repositories. `upstream` which refers to the original repository and `origin` which refers to your fork.
 
 2. Set up environment:
-   * Before contributing make sure to initialize the virtual environment using [virtualenv](https://docs.python.org/3/library/venv.html)
+   * Before contributing make sure to initialize the virtual environment using [virtualenv](https://docs.python.org/3/library/venv.html) and install the project from the repository root. We recommend a python 3.11 virtual environment:
         ```shell
         python3 -m venv venv/
         source venv/bin/activate
-        pip3 install -r requirements_framework.txt # or requirements_data_integration.txt
+        pip install .
         ```
-   * **Notes**: 
-     - If you are contributing to Data Integration step, make sure to use `requirements_data_integration.txt` and add any additional dependency.
-     - If you are contributing to the Framework, make sure to use `requirements_framework.txt` and add any additional dependency.
+   * **Notes**:
+     - Use `requirements.txt` when installing dependencies manually.
+     - `requirements.txt` covers every module (data integration, framework and chart generation).
+     - When you add a new dependency, add it to `requirements.txt` and in `setup.py`.
 
 3. Develop your contribution:
     * Pull the latest changes from upstream:

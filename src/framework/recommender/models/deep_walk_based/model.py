@@ -1,8 +1,7 @@
 from framework.dataloader.graph.node import UserNode
 from ...recommender import Recommender
-from ...utils.walker import BiasedRandomWalker
+from ...utils.walker import parallel_random_walks
 
-import walker
 import numpy as np
 import networkx as nx
 from gensim.models.word2vec import Word2Vec
@@ -99,11 +98,18 @@ class DeepWalkBased(Recommender):
 
     def fit(self):
         graph = self.G_train.convert_node_labels_to_integer()
-        self.walks = walker.random_walks(
-            graph, n_walks=self.n_walks, walk_len=self.walk_len
+        # Seed the random walks so the sampled walks (and thus the Word2Vec
+        # training sequences) are reproducible run-to-run. The same ``seed`` is
+        # also passed to Word2Vec below.
+        self.walks = parallel_random_walks(
+            graph,
+            n_walks=self.n_walks,
+            walk_len=self.walk_len,
+            p=self.p,
+            q=self.q,
+            seed=self.seed,
         )
-        print(f'Random walk shape: {self.walks.shape}')
-        self.walks = self.walks.tolist()
+        print(f'Number of random walks: {len(self.walks)}')
 
         model = Word2Vec(
             self.walks,

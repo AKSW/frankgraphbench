@@ -19,8 +19,8 @@ To support a new Dataset into the Data Integration step follow these steps:
         - `enrich()` for enriching each item with DBpedia's properties.
     *  Your code must be placed in a new file at `data_integration/datasets/`. 
 
-4. Store the submodule path to dinamically load the subclass.
-    * Go to the `data_integration/dataset2class.py` file. This file store the mapping between the dataset name and the submodule path and class name.
+4. Store the submodule path to dynamically load the subclass.
+    * Go to the `data_integration/dataset2class.py` file. This file stores the mapping between the dataset name and the submodule path and class name.
     * Create a new key with the dataset's name. This dataset name will be used to identify the dataset when using the `data_integration.py` script.
     * Store in this new key, the `submodule:` path, from `data_integration/`, and the `class:` name.
     * For example:

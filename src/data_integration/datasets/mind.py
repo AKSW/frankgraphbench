@@ -9,8 +9,8 @@ class MIND(Dataset):
     """
     General MIND class for all MIND datasets.
     """
-    def __init__(self, input_path, output_path, n_workers=1):
-        super().__init__(input_path, output_path, n_workers=n_workers)
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers=n_workers, sparql_endpoint=sparql_endpoint)
         self.item_fields = [
             "news_id::string",
             "category::string",
@@ -45,8 +45,8 @@ class MINDSmall(MIND):
     """
     MIND Small dataset.
     """
-    def __init__(self, input_path, output_path, n_workers=1):
-        super().__init__(input_path, output_path, n_workers=n_workers)
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers=n_workers, sparql_endpoint=sparql_endpoint)
 
     def load_item_data(self):
         # Reading item file of mind-small dataset
@@ -115,7 +115,9 @@ class MINDSmall(MIND):
         abstract_entities = df[["item_id::string", "abstract_entities"]][(df["abstract_entities"] != "[]") & (df["abstract_entities"].notna())]
         abstract_entities = abstract_entities.rename(columns={"item_id::string": "item_id::string", "abstract_entities": "entities::string"})
 
-        entities_mapping = pd.concat([title_entities, abstract_entities], ignore_index=True).drop_duplicates(subset=['item_id::string', 'entities::string']).reset_index(drop=True)
+        entities_mapping = pd.concat(
+            [title_entities, abstract_entities], ignore_index=True
+        ).drop_duplicates(subset=['item_id::string', 'entities::string'], ignore_index=True)
 
         return entities_mapping
 

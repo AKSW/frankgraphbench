@@ -62,5 +62,9 @@ model2class = {
     'cKE': {
         'submodule': 'cKE.model',
         'class': 'CKE'
+    },
+    'coLaKG': {
+        'submodule': 'coLaKG.model',
+        'class': 'CoLaKG'
     }
 }

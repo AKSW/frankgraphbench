@@ -1,12 +1,11 @@
-from setuptools import setup
-from setuptools import find_packages
+from setuptools import find_packages, setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name="FranKGraphBench",
-    version="0.1.2",
+    version="0.2.0",
     author="Paulo do Carmo and Alvaro Lopes",
     author_email='paulo.carmo@htwk-leipzig.de',
     url='https://github.com/AKSW/frankgraphbench/tree/main/',
@@ -20,10 +19,10 @@ setup(
         "": "src",
     },
     install_requires=[
-        'gensim', 'joblib', 'networkx', 'numpy<2', 'pandas', 'python-dateutil', 'pytz', 'PyYAML', 'scikit-learn', 'scipy', 'six', 'smart-open',
-        'threadpoolctl', 'tqdm', 'tzdata', 'pykeen', 'torch==2.2', 'py-cpuinfo', 'gputil', 'psutil', 'tf-keras', 'sentence-transformers', 'graph-walker', 'isodate',
-        'Levenshtein', 'pyparsing', 'python-Levenshtein', 'rapidfuzz', 'rdflib', 'SPARQLWrapper', 'thefuzz', 'tzdata',
-        'beautifulsoup4', 'matplotlib', 'contourpy', 'SPARQLWrapper', 'multiprocess', 'tensorflow'
+        'gensim', 'joblib', 'networkx', 'numpy', 'pandas', 'python-dateutil', 'pytz', 'PyYAML', 'scikit-learn', 'scipy', 'six', 'smart-open',
+        'threadpoolctl', 'tqdm', 'tzdata', 'pykeen', 'torch', 'py-cpuinfo', 'gputil', 'psutil', 'sentence-transformers', 'isodate',
+        'Levenshtein', 'pyparsing', 'python-Levenshtein', 'rapidfuzz', 'rdflib', 'SPARQLWrapper', 'thefuzz',
+        'beautifulsoup4', 'matplotlib', 'contourpy', 'multiprocess', 'ollama', 'polars', 'pyarrow',
     ],
     entry_points={
         'console_scripts': [

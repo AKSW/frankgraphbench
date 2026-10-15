@@ -73,6 +73,9 @@ experiment:
         n_walks: 50
         embedding_size: 64
         epochs: 1
+        # Seed for the random walks (and Word2Vec init). Fixed so the sampled
+        # walks and embeddings are reproducible run-to-run.
+        seed: 42
 
   evaluation:
     k: 10

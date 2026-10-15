@@ -1,0 +1,55 @@
+experiment:
+  dataset:
+    name: chembl
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/chembl-trypanosoma/processed/item.csv
+      extra_features: # number columns don't work with translation model
+        - molecular_weight # number
+        - number_ro5_violations # number
+        - alogp # number
+        - smiles
+        - standard_relation
+        - value(nM) # number
+        - cid # number
+        - molecular_formula
+        - inchi
+        - tpsa # nuber
+    # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/chembl-trypanosoma/processed/user.csv
+      extra_features: [target_type] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/chembl-trypanosoma/processed/rating.csv
+      timestamp: False
+
+  preprocess:
+    - method: filter_kcore
+      parameters:
+        k: 5
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+    test:
+      method: k_fold
+      k: 5
+      level: "user"
+
+  models:
+    - name: ePHEN
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: seyonec/ChemBERTa-zinc-base-v1
+        embed_with: smiles
+        iterations: 30
+        mi: 0.3
+
+  evaluation:
+    k: 100
+    relevance_threshold: 1
+    metrics: [F-score]
+
+  report:
+    file: "experiment_results/chembl/test_chem_berta.csv"

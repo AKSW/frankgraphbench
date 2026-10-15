@@ -13,11 +13,11 @@ To support a new RS model into the Data Integration step follow these steps:
      - `name()` that returns the model name. This name will be used in the experiment report as identification.
      - `train()` that defines the model training.
      - `get_recommendations()` that returns the model recommendations for all users.
-     - `get_user_recommendations()` that return the model recommendations for a given user.
+     - `get_user_recommendations()` that returns the model recommendations for a given user.
    * **Note:** In the `/recommender/utils/` you can reuse some methods that are commonly used by other models. If you are implementing a method that you believe can be reused to implement other models, please consider implementing those methods into the `utils` package.
 
-4. Store the submodule path to dinamically load the subclass.
-    * Go to the `recommender/model2class.py` file. This file store the mapping between the model name and the submodule path and class name.
+4. Store the submodule path to dynamically load the subclass.
+    * Go to the `recommender/model2class.py` file. This file stores the mapping between the model name and the submodule path and class name.
     * Create a new key with the model's name. This model name will be used to identify the RS model when using the framework.
     * Store in this new key, the `submodule:` path, from `framework/recommender/models`, and the `class:` name.
     * For example:

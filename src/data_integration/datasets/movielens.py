@@ -1,17 +1,16 @@
 import os
-import re
 import queue
-from io import BytesIO
+import re
 from collections import defaultdict
-
-
+from io import BytesIO
 from string import Template
-from ..dataset import Dataset
 
 import pandas as pd
-from tqdm import tqdm
-from thefuzz import process
 from SPARQLWrapper import CSV
+from thefuzz import process
+from tqdm import tqdm
+
+from ..dataset import Dataset
 
 
 class MovieLens(Dataset):
@@ -19,8 +18,8 @@ class MovieLens(Dataset):
     General MovieLens(Dataset) class for data integration between DBpedia and MovieLens
     """
 
-    def __init__(self, input_path, output_path, n_workers=1):
-        super().__init__(input_path, output_path, n_workers)
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
         self.map_fields = {"item_id": "item_id::string", "URI": "URI::string"}
         self.map_query_template = Template(
             """
@@ -201,8 +200,8 @@ class MovieLens100k(MovieLens):
     Dataset class for data integration between DBpedia and MovieLens-100k
     """
 
-    def __init__(self, input_path, output_path, n_workers=1):
-        super().__init__(input_path, output_path, n_workers)
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
         self.dataset_name = "MovieLens100k"
 
         self.item_separator = "|"
@@ -298,8 +297,8 @@ class MovieLens1M(MovieLens):
     Dataset class for data integration between DBpedia and MovieLens 1M
     """
 
-    def __init__(self, input_path, output_path, n_workers=1):
-        super().__init__(input_path, output_path, n_workers)
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
         self.dataset_name = "MovieLens1M"
 
         self.item_separator = "::"

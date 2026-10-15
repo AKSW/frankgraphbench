@@ -4,13 +4,24 @@ Tensorflow Implementation of the Baseline Model, CKE, in:
 Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In KDD 2019.
 @author: Xiang Wang (xiangwang@u.nus.edu)
 '''
-import numpy as np
 import random as rd
+
+import numpy as np
+
 from framework.recommender.utils.load_data import Data
+
 
 class CKE_loader(Data):
     def __init__(self, ratings_triples, item_property_triples, args, batch_size, random_seed):
         super().__init__(ratings_triples, item_property_triples, args, batch_size, random_seed)
+
+        # The relation ids coming from the dataset need not form a contiguous
+        # 0-indexed block, but the model's relation embedding tables are sized by
+        # ``n_relations`` (the number of distinct relations). Hand the raw ids
+        # straight through would index past those tables whenever an id is not in
+        # ``0..n_relations - 1``. Map each raw relation id to its positional index
+        # so every lookup stays in bounds.
+        self._rel_to_pos = {r: i for i, r in enumerate(sorted(self.relation_dict.keys()))}
 
     def _generate_train_kg_batch(self):
         exist_heads = self.kg_dict.keys()
@@ -74,28 +85,29 @@ class CKE_loader(Data):
         batch_data['neg_items'] = neg_items
 
         batch_data['heads'] = heads
-        batch_data['relations'] = relations
+        batch_data['relations'] = [self._rel_to_pos[r] for r in relations]
         batch_data['pos_tails'] = pos_tails
         batch_data['neg_tails'] = neg_tails
         return batch_data
 
     def generate_train_feed_dict(self, model, batch_data):
-        feed_dict ={
-            model.u: batch_data['users'],
-            model.pos_i: batch_data['pos_items'],
-            model.neg_i: batch_data['neg_items'],
+        # PyTorch version: map the numpy batch onto the model's key contract.
+        feed_dict = {
+            'u': batch_data['users'],
+            'pos_i': batch_data['pos_items'],
+            'neg_i': batch_data['neg_items'],
 
-            model.h: batch_data['heads'],
-            model.r: batch_data['relations'],
-            model.pos_t: batch_data['pos_tails'],
-            model.neg_t: batch_data['neg_tails']
+            'h': batch_data['heads'],
+            'r': batch_data['relations'],
+            'pos_t': batch_data['pos_tails'],
+            'neg_t': batch_data['neg_tails']
         }
 
         return feed_dict
 
-    def generate_test_feed_dict(self, model, user_batch, item_batch, drop_flag=False):
+    def generate_test_feed_dict(self, model, user_batch, item_batch):
         feed_dict = {
-            model.u: user_batch,
-            model.pos_i: item_batch
+            'u': user_batch,
+            'pos_i': item_batch
         }
         return feed_dict

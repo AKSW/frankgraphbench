@@ -4,23 +4,31 @@ Tensorflow Implementation of the Baseline Model, CFKG, in:
 Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In KDD 2019.
 @author: Xiang Wang (xiangwang@u.nus.edu)
 @modifiedBy: Paulo do Carmo on Dec, 2025
+@converted to PyTorch: Oct, 2026
 '''
-import tensorflow as tf
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+import torch
+from torch import nn
 
-class CFKG_model(object):
-    def __init__(self, data_config, pretrain_data, args):
-        self._parse_args(data_config, pretrain_data, args)
-        self._build_inputs()
+from framework.recommender.utils.device import resolve_device
+from framework.recommender.utils.initializers import variance_scaling
+
+
+class CFKG_model(nn.Module):
+    def __init__(self, data_config, pretrain_data, args, device=None):
+        super().__init__()
+
+        self._parse_args(data_config, pretrain_data, args, device)
+
         self.weights = self._build_weights()
 
-        self._build_model()
-        self._build_loss()
+        # Optimization process (replaces tf.compat.v1.train.GradientDescentOptimizer).
+        self.optimizer = torch.optim.SGD(self.parameters(), lr=self.lr)
 
         self._statistics_params()
 
-    def _parse_args(self, data_config, pretrain_data, args):
+    def _parse_args(self, data_config, pretrain_data, args, device):
+        self.device = resolve_device(device)
+
         self.model_type = 'cfkg'
 
         self.pretrain_data = pretrain_data
@@ -52,113 +60,105 @@ class CFKG_model(object):
         self.regs = args.regs
         self.verbose = args.verbose
 
-    def _build_inputs(self):
-        # placeholder definition
-
-        tf.compat.v1.disable_eager_execution()
-
-        self.h = tf.compat.v1.placeholder(tf.int32, shape=[None], name='h')
-        self.r = tf.compat.v1.placeholder(tf.int32, shape=[None], name='r')
-        self.pos_t = tf.compat.v1.placeholder(tf.int32, shape=[None], name='pos_t')
-        self.neg_t = tf.compat.v1.placeholder(tf.int32, shape=[None], name='neg_t')
-
-        # dropout: node dropout (adopted on the ego-networks); message dropout (adopted on the convolution operations).
-        self.node_dropout = tf.compat.v1.placeholder(tf.float32, shape=[None])
-        self.mess_dropout = tf.compat.v1.placeholder(tf.float32, shape=[None])
-
     def _build_weights(self):
-        all_weights = dict()
-
-        initializer = tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution =("uniform" if False else "truncated_normal"))
+        all_weights = nn.ParameterDict()
 
         if self.pretrain_data is None:
-            all_weights['user_embed'] = tf.Variable(initializer([self.n_users, self.emb_dim]), name='user_embed')
-            all_weights['entity_embed'] = tf.Variable(initializer([self.n_entities, self.emb_dim]), name='entity_embed')
+            all_weights['user_embed'] = nn.Parameter(
+                variance_scaling((self.n_users, self.emb_dim), distribution="truncated_normal", scale=1.0, device=self.device))
+            all_weights['entity_embed'] = nn.Parameter(
+                variance_scaling((self.n_entities, self.emb_dim), distribution="truncated_normal", scale=1.0, device=self.device))
             print('using xavier initialization')
         else:
-            all_weights['user_embed'] = tf.Variable(initial_value=self.pretrain_data['user_embed'], trainable=True,
-                                                    name='user_embed', dtype=tf.float32)
-
-            item_embed = self.pretrain_data['item_embed']
-            other_embed = initializer([self.n_entities - self.n_items, self.emb_dim])
-
-            all_weights['entity_embed'] = tf.Variable(initial_value=tf.concat([item_embed, other_embed], 0),
-                                                      trainable=True, name='entity_embed', dtype=tf.float32)
+            user_embed = nn.Parameter(torch.as_tensor(self.pretrain_data['user_embed'], dtype=torch.float32, device=self.device))
+            other_embed = variance_scaling((self.n_entities - self.n_items, self.emb_dim),
+                                          distribution="truncated_normal", scale=1.0, device=self.device)
+            all_weights['user_embed'] = user_embed
+            all_weights['entity_embed'] = nn.Parameter(torch.cat([
+                torch.as_tensor(self.pretrain_data['item_embed'], dtype=torch.float32, device=self.device),
+                other_embed], dim=0))
             print('using pretrained initialization')
 
-        all_weights['relation_embed'] = tf.Variable(initializer([self.n_relations, self.emb_dim]),
-                                                    name='relation_embed')
+        all_weights['relation_embed'] = nn.Parameter(
+            variance_scaling((self.n_relations, self.emb_dim), distribution="truncated_normal", scale=1.0, device=self.device))
 
         return all_weights
 
+    def _get_kg_inference(self, h, r, pos_t, neg_t=None):
+        embeddings = torch.cat([self.weights['user_embed'], self.weights['entity_embed']], dim=0)
 
-    def _build_model(self):
-        self.h_e, self.r_e, self.pos_t_e, self.neg_t_e = self._get_kg_inference(self.h, self.r, self.pos_t, self.neg_t)
+        # head & tail entity embeddings: batch_size * emb_dim
+        h_e = embeddings[h]
+        pos_t_e = embeddings[pos_t]
 
+        # relation embeddings: batch_size * emb_dim
+        r_e = self.weights['relation_embed'][r]
 
-        # self.batch_predictions = tf.matmul(self.h_e + self.r_e, self.pos_t_e, transpose_a=False, transpose_b=True)
-        # self.batch_predictions = tf.reduce_sum((self.h_e + self.r_e - self.pos_t_e) ** 2, 1, keepdims = True)
-
-    def _get_kg_inference(self, h, r, pos_t, neg_t):
-        embeddings = tf.concat([self.weights['user_embed'], self.weights['entity_embed']], axis=0)
-
-        # head & tail entity embeddings: batch_size *1 * emb_dim
-        h_e = tf.nn.embedding_lookup(params=embeddings, ids=h)
-        pos_t_e = tf.nn.embedding_lookup(params=embeddings, ids=pos_t)
-        neg_t_e = tf.nn.embedding_lookup(params=embeddings, ids=neg_t)
-
-        # relation embeddings: batch_size * kge_dim
-        r_e = tf.nn.embedding_lookup(params=self.weights['relation_embed'], ids=r)
-
-        # h_e = tf.math.l2_normalize(h_e, axis=1)
-        # pos_t_e = tf.math.l2_normalize(pos_t_e, axis=1)
-        # neg_t_e = tf.math.l2_normalize(neg_t_e, axis=1)
-        # r_e = tf.math.l2_normalize(r_e, axis=1)
+        neg_t_e = embeddings[neg_t] if neg_t is not None else None
 
         return h_e, r_e, pos_t_e, neg_t_e
 
-    def _build_loss(self):
+    def _forward_scores(self, batch):
+        neg_t = batch.get('neg_t', None)
+        h_e, r_e, pos_t_e, neg_t_e = self._get_kg_inference(batch['h'], batch['r'], batch['pos_t'], neg_t)
+
         if self.L1_flag:
-            pos_kg_score = tf.reduce_sum(input_tensor=abs(self.h_e + self.r_e - self.pos_t_e), axis=1, keepdims = True)
-            neg_kg_score = tf.reduce_sum(input_tensor=abs(self.h_e + self.r_e - self.neg_t_e), axis=1, keepdims = True)
-
-            self.batch_predictions = - pos_kg_score
+            pos_kg_score = torch.sum(torch.abs(h_e + r_e - pos_t_e), dim=1, keepdim=True)
         else:
-            pos_kg_score = tf.reduce_sum(input_tensor=(self.h_e + self.r_e - self.pos_t_e) ** 2, axis=1, keepdims=True)
-            neg_kg_score = tf.reduce_sum(input_tensor=(self.h_e + self.r_e - self.neg_t_e) ** 2, axis=1, keepdims=True)
+            pos_kg_score = torch.sum((h_e + r_e - pos_t_e) ** 2, dim=1, keepdim=True)
 
-            self.batch_predictions = - pos_kg_score
+        batch_predictions = -pos_kg_score
 
-        kg_loss = tf.reduce_mean(input_tensor=tf.maximum(pos_kg_score - neg_kg_score + self.margin, 0))
+        # At inference time (eval) only the positive triple is provided; the
+        # triplet-margin loss and its regularizer are only meaningful at train time.
+        if neg_t is not None:
+            if self.L1_flag:
+                neg_kg_score = torch.sum(torch.abs(h_e + r_e - neg_t_e), dim=1, keepdim=True)
+            else:
+                neg_kg_score = torch.sum((h_e + r_e - neg_t_e) ** 2, dim=1, keepdim=True)
 
-        # kg_reg_loss = tf.nn.l2_loss(self.h_e) + tf.nn.l2_loss(self.r_e) + \
-        #               tf.nn.l2_loss(self.pos_t_e) + tf.nn.l2_loss(self.neg_t_e)
-        # kg_reg_loss = kg_reg_loss / self.batch_size
+            kg_loss = torch.mean(torch.clamp(pos_kg_score - neg_kg_score + self.margin, min=0.0))
+        else:
+            kg_loss = torch.zeros(1, dtype=torch.float32, device=self.device)
 
-        self.reg_loss = tf.constant(0.0, tf.float32, [1])
-        self.base_loss = tf.constant(0.0, tf.float32, [1])
-        self.kge_loss = kg_loss
-        # self.reg_loss = self.regs[0] * kg_reg_loss
-        self.loss = self.kge_loss + self.reg_loss
+        reg_loss = torch.zeros(1, dtype=torch.float32, device=self.device)
+        base_loss = torch.zeros(1, dtype=torch.float32, device=self.device)
+        kge_loss = kg_loss
+        loss = kge_loss + reg_loss
 
-        # Optimization process.
-        self.opt = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=self.lr).minimize(self.loss)
+        return loss, base_loss, kge_loss, reg_loss, batch_predictions
 
     def _statistics_params(self):
-        # number of params
         total_parameters = 0
-        for variable in self.weights.values():
-            shape = variable.get_shape()  # shape is an array of tf.Dimension
+        for param in self.parameters():
             variable_parameters = 1
-            for dim in shape:
+            for dim in param.shape:
                 variable_parameters *= dim
             total_parameters += variable_parameters
         if self.verbose > 0:
             print("#params: %d" % total_parameters)
 
-    def train(self, sess, feed_dict):
-        return sess.run([self.opt, self.loss, self.base_loss, self.kge_loss, self.reg_loss], feed_dict)
+    def _to_device(self, batch):
+        device = self.device
+        out = {}
+        for key in ('h', 'r', 'pos_t', 'neg_t'):
+            if key in batch:
+                out[key] = torch.as_tensor(batch[key], dtype=torch.long, device=device)
+        return out
 
-    def eval(self, sess, feed_dict):
-        batch_predictions = sess.run(self.batch_predictions, feed_dict)
-        return batch_predictions
+    # Keep the original call surface: the (now unused) ``sess`` argument is
+    # accepted so batch_test.py / helper.py / metrics.py stay untouched.
+    def train(self, sess=None, feed_dict=None):
+        batch = self._to_device(feed_dict)
+        self.optimizer.zero_grad()
+        loss, base_loss, kge_loss, reg_loss, _ = self._forward_scores(batch)
+        loss.backward()
+        self.optimizer.step()
+        return None, loss.item(), base_loss.item(), kge_loss.item(), reg_loss.item()
+
+    def eval(self, sess=None, feed_dict=None):
+        self.training = False
+        with torch.no_grad():
+            batch = self._to_device(feed_dict)
+            _, _, _, _, batch_predictions = self._forward_scores(batch)
+        return batch_predictions.cpu().numpy()

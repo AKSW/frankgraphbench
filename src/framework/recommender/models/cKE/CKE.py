@@ -3,21 +3,28 @@ Created on Dec 18, 2018
 Tensorflow Implementation of the Baseline Model, CKE, in:
 Wang Xiang et al. KGAT: Knowledge Graph Attention Network for Recommendation. In KDD 2019.
 @author: Xiang Wang (xiangwang@u.nus.edu)
+@modifiedBy: Paulo do Carmo on Dec, 2025
+@converted to PyTorch: Oct, 2026
 '''
-import tensorflow as tf
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+import torch
+from torch import nn
 
-class CKE_model(object):
-    def __init__(self, data_config, pretrain_data, args):
-        self._parse_args(data_config, pretrain_data, args)
-        self._build_inputs()
+from framework.recommender.utils.device import resolve_device
+from framework.recommender.utils.initializers import variance_scaling
+
+
+class CKE_model(nn.Module):
+    def __init__(self, data_config, pretrain_data, args, device=None):
+        super().__init__()
+        self._parse_args(data_config, pretrain_data, args, device)
         self.weights = self._build_weights()
-        self._build_model()
-        self._build_loss()
+        # Optimization process (replaces tf.compat.v1.train.AdamOptimizer).
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         self._statistics_params()
 
-    def _parse_args(self, data_config, pretrain_data, args):
+    def _parse_args(self, data_config, pretrain_data, args, device):
+        self.device = resolve_device(device)
+
         self.model_type = 'cke'
         self.pretrain_data = pretrain_data
 
@@ -38,147 +45,156 @@ class CKE_model(object):
 
         self.verbose = args.verbose
 
-    def _build_inputs(self):
-        
-        tf.compat.v1.disable_eager_execution()
-        
-        # for user-item interaction modelling
-        self.u = tf.compat.v1.placeholder(tf.int32, shape=[None,], name='u')
-        self.pos_i = tf.compat.v1.placeholder(tf.int32, shape=[None,], name='pos_i')
-        self.neg_i = tf.compat.v1.placeholder(tf.int32, shape=[None,], name='neg_i')
-
-        # for knowledge graph modeling (TransD)
-        self.h = tf.compat.v1.placeholder(tf.int32, shape=[None], name='h')
-        self.r = tf.compat.v1.placeholder(tf.int32, shape=[None], name='r')
-        self.pos_t = tf.compat.v1.placeholder(tf.int32, shape=[None], name='pos_t')
-        self.neg_t = tf.compat.v1.placeholder(tf.int32, shape=[None], name='neg_t')
-
-
     def _build_weights(self):
-        all_weights = dict()
-        initializer = tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution="uniform")
+        all_weights = nn.ParameterDict()
 
         if self.pretrain_data is None:
-            all_weights['user_embed'] = tf.Variable(initializer([self.n_users, self.emb_dim]), name='user_embed')
-            all_weights['item_embed'] = tf.Variable(initializer([self.n_items, self.emb_dim]), name='item_embed')
+            all_weights['user_embed'] = nn.Parameter(
+                variance_scaling((self.n_users, self.emb_dim), distribution="uniform", scale=1.0, device=self.device))
+            all_weights['item_embed'] = nn.Parameter(
+                variance_scaling((self.n_items, self.emb_dim), distribution="uniform", scale=1.0, device=self.device))
             print('using xavier initialization')
         else:
-            all_weights['user_embed'] = tf.Variable(initial_value=self.pretrain_data['user_embed'], trainable=True,
-                                                    name='user_embed', dtype=tf.float32)
-            all_weights['item_embed'] = tf.Variable(initial_value=self.pretrain_data['item_embed'], trainable=True,
-                                                    name='item_embed', dtype=tf.float32)
+            all_weights['user_embed'] = nn.Parameter(
+                torch.as_tensor(self.pretrain_data['user_embed'], dtype=torch.float32, device=self.device))
+            all_weights['item_embed'] = nn.Parameter(
+                torch.as_tensor(self.pretrain_data['item_embed'], dtype=torch.float32, device=self.device))
             print('using pretrained initialization')
 
-        all_weights['kg_entity_embed'] = tf.Variable(initializer([self.n_entities, 1, self.emb_dim]),
-                                                     name='kg_entity_embed')
-        all_weights['kg_relation_embed'] = tf.Variable(initializer([self.n_relations, self.kge_dim]),
-                                                       name='kg_relation_embed')
-
-        all_weights['trans_W'] = tf.Variable(initializer([self.n_relations, self.emb_dim, self.kge_dim]))
+        all_weights['kg_entity_embed'] = nn.Parameter(
+            variance_scaling((self.n_entities, 1, self.emb_dim), distribution="uniform", scale=1.0, device=self.device))
+        all_weights['kg_relation_embed'] = nn.Parameter(
+            variance_scaling((self.n_relations, self.kge_dim), distribution="uniform", scale=1.0, device=self.device))
+        all_weights['trans_W'] = nn.Parameter(
+            variance_scaling((self.n_relations, self.emb_dim, self.kge_dim), distribution="uniform", scale=1.0, device=self.device))
 
         return all_weights
 
-    def _build_model(self):
-        self.u_e, self.pos_i_e, self.neg_i_e = self._get_cf_inference(self.u, self.pos_i, self.neg_i)
-
-        self.h_e, self.r_e, self.pos_t_e, self.neg_t_e= self._get_kg_inference(self.h, self.r, self.pos_t, self.neg_t)
-
-        # All predictions for all users.
-        self.batch_predictions = tf.matmul(self.u_e, self.pos_i_e, transpose_a=False, transpose_b=True)
-
-
-    def _build_loss(self):
-        self.kg_loss, self.kg_reg_loss = self._get_kg_loss()
-        self.cf_loss, self.cf_reg_loss = self._get_cf_loss()
-
-        self.base_loss = self.cf_loss
-        self.kge_loss = self.kg_loss
-        self.reg_loss = self.regs[0] * self.cf_reg_loss + self.regs[1] * self.kg_reg_loss
-        self.loss = self.base_loss + self.kge_loss + self.reg_loss
-
-        # Optimization process.
-        self.opt = tf.compat.v1.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss)
-
     def _get_kg_inference(self, h, r, pos_t, neg_t):
-        # head & tail entity embeddings: batch_size *1 * emb_dim
-        h_e = tf.nn.embedding_lookup(params=self.weights['kg_entity_embed'], ids=h)
-        pos_t_e = tf.nn.embedding_lookup(params=self.weights['kg_entity_embed'], ids=pos_t)
-        neg_t_e = tf.nn.embedding_lookup(params=self.weights['kg_entity_embed'], ids=neg_t)
+        # head & tail entity embeddings: batch_size * 1 * emb_dim
+        h_e = self.weights['kg_entity_embed'][h]
+        pos_t_e = self.weights['kg_entity_embed'][pos_t]
+        neg_t_e = self.weights['kg_entity_embed'][neg_t]
 
         # relation embeddings: batch_size * kge_dim
-        r_e = tf.nn.embedding_lookup(params=self.weights['kg_relation_embed'], ids=r)
+        r_e = self.weights['kg_relation_embed'][r]
 
         # relation transform weights: batch_size * kge_dim * emb_dim
-        trans_M = tf.nn.embedding_lookup(params=self.weights['trans_W'], ids=r)
+        trans_M = self.weights['trans_W'][r]
 
-        # batch_size * 1 * kge_dim -> batch_size * kge_dim
-        h_e = tf.reshape(tf.matmul(h_e, trans_M), [-1, self.kge_dim])
-        pos_t_e = tf.reshape(tf.matmul(pos_t_e, trans_M), [-1, self.kge_dim])
-        neg_t_e = tf.reshape(tf.matmul(neg_t_e, trans_M), [-1, self.kge_dim])
+        # The entity embedding table is (n_entities, 1, emb_dim), so the matmul
+        # yields (batch, 1, kge_dim). Collapse the spurious middle dimension to
+        # (batch, kge_dim) before combining with the 2-D relation embedding r_e;
+        # otherwise (h_e + r_e - t_e) broadcasts the two operands into
+        # (batch, batch, kge_dim) and materialises a batch^2 x kge_dim
+        # intermediate (hundreds of GiB for this dataset). This matches the
+        # ``.reshape(-1, emb_dim)`` already used in predict/_get_cf_inference and
+        # the original TF model.
+        h_e = torch.matmul(h_e, trans_M).reshape(-1, self.kge_dim)
+        pos_t_e = torch.matmul(pos_t_e, trans_M).reshape(-1, self.kge_dim)
+        neg_t_e = torch.matmul(neg_t_e, trans_M).reshape(-1, self.kge_dim)
 
-        # l2-normalize
-        h_e = tf.math.l2_normalize(h_e, axis=1)
-        r_e = tf.math.l2_normalize(r_e, axis=1)
-        pos_t_e = tf.math.l2_normalize(pos_t_e, axis=1)
-        neg_t_e = tf.math.l2_normalize(neg_t_e, axis=1)
+        # l2-normalize (epsilon=1e-12 matches tf.math.l2_normalize default)
+        h_e = torch.nn.functional.normalize(h_e, p=2, dim=1, eps=1e-12)
+        r_e = torch.nn.functional.normalize(r_e, p=2, dim=1, eps=1e-12)
+        pos_t_e = torch.nn.functional.normalize(pos_t_e, p=2, dim=1, eps=1e-12)
+        neg_t_e = torch.nn.functional.normalize(neg_t_e, p=2, dim=1, eps=1e-12)
 
         return h_e, r_e, pos_t_e, neg_t_e
 
     def _get_cf_inference(self, u, pos_i, neg_i):
-        u_e = tf.nn.embedding_lookup(params=self.weights['user_embed'], ids=u)
-        pos_i_e = tf.nn.embedding_lookup(params=self.weights['item_embed'], ids=pos_i)
-        neg_i_e = tf.nn.embedding_lookup(params=self.weights['item_embed'], ids=neg_i)
+        u_e = self.weights['user_embed'][u]
+        pos_i_e = self.weights['item_embed'][pos_i]
+        neg_i_e = self.weights['item_embed'][neg_i]
 
-        pos_i_kg_e = tf.reshape(tf.nn.embedding_lookup(params=self.weights['kg_entity_embed'], ids=pos_i), [-1, self.emb_dim])
-        neg_i_kg_e = tf.reshape(tf.nn.embedding_lookup(params=self.weights['kg_entity_embed'], ids=neg_i), [-1, self.emb_dim])
+        pos_i_kg_e = self.weights['kg_entity_embed'][pos_i].reshape(-1, self.emb_dim)
+        neg_i_kg_e = self.weights['kg_entity_embed'][neg_i].reshape(-1, self.emb_dim)
 
         return u_e, pos_i_e + pos_i_kg_e, neg_i_e + neg_i_kg_e
 
-    def _get_kg_loss(self):
+    def _get_kg_loss(self, h_e, r_e, pos_t_e, neg_t_e):
         def _get_kg_score(h_e, r_e, t_e):
-            kg_score = tf.reduce_sum(input_tensor=tf.square((h_e + r_e - t_e)), axis=1, keepdims=True)
+            kg_score = torch.sum((h_e + r_e - t_e) ** 2, dim=1, keepdim=True)
             return kg_score
 
-        pos_kg_score = _get_kg_score(self.h_e, self.r_e, self.pos_t_e)
-        neg_kg_score = _get_kg_score(self.h_e, self.r_e, self.neg_t_e)
+        pos_kg_score = _get_kg_score(h_e, r_e, pos_t_e)
+        neg_kg_score = _get_kg_score(h_e, r_e, neg_t_e)
 
-        maxi = tf.math.log(tf.nn.sigmoid(neg_kg_score - pos_kg_score))
-        kg_loss = tf.negative(tf.reduce_mean(input_tensor=maxi))
-        kg_reg_loss = tf.nn.l2_loss(self.h_e) + tf.nn.l2_loss(self.r_e) + \
-                      tf.nn.l2_loss(self.pos_t_e) + tf.nn.l2_loss(self.neg_t_e)
+        # BPR hinge as ``-log(sigmoid(neg - pos))``. Written as
+        # ``F.softplus(-(neg - pos))`` it is the exact same loss (since
+        # ``-log(sigmoid(x)) == softplus(-x)``) but avoids the ``log(0)`` that
+        # ``torch.log(torch.sigmoid(...))`` produces when the margin is large and
+        # negative. Mirrors the KGAT / cFKG ports in this codebase.
+        kg_loss = torch.nn.functional.softplus(-(neg_kg_score - pos_kg_score)).mean()
+        kg_reg_loss = (h_e ** 2).sum() + (r_e ** 2).sum() + (pos_t_e ** 2).sum() + (neg_t_e ** 2).sum()
 
         return kg_loss, kg_reg_loss
 
-    def _get_cf_loss(self):
+    def _get_cf_loss(self, u_e, pos_i_e, neg_i_e):
         def _get_cf_score(u_e, i_e):
-            cf_score = tf.reduce_sum(input_tensor=tf.multiply(u_e, i_e), axis=1)
+            cf_score = torch.sum(u_e * i_e, dim=1)
             return cf_score
 
-        pos_cf_score = _get_cf_score(self.u_e, self.pos_i_e)
-        neg_cf_score = _get_cf_score(self.u_e, self.neg_i_e)
+        pos_cf_score = _get_cf_score(u_e, pos_i_e)
+        neg_cf_score = _get_cf_score(u_e, neg_i_e)
 
-        maxi = tf.math.log(1e-10 + tf.nn.sigmoid(pos_cf_score - neg_cf_score))
-        cf_loss = tf.negative(tf.reduce_mean(input_tensor=maxi))
-        cf_reg_loss = tf.nn.l2_loss(self.u_e) + tf.nn.l2_loss(self.pos_i_e) + tf.nn.l2_loss(self.neg_i_e)
+        maxi = torch.log(1e-10 + torch.sigmoid(pos_cf_score - neg_cf_score))
+        cf_loss = -maxi.mean()
+        cf_reg_loss = (u_e ** 2).sum() + (pos_i_e ** 2).sum() + (neg_i_e ** 2).sum()
 
         return cf_loss, cf_reg_loss
 
+    def _forward_loss(self, batch):
+        u_e, pos_i_e, neg_i_e = self._get_cf_inference(batch['u'], batch['pos_i'], batch['neg_i'])
+        h_e, r_e, pos_t_e, neg_t_e = self._get_kg_inference(batch['h'], batch['r'], batch['pos_t'], batch['neg_t'])
+
+        kg_loss, kg_reg_loss = self._get_kg_loss(h_e, r_e, pos_t_e, neg_t_e)
+        cf_loss, cf_reg_loss = self._get_cf_loss(u_e, pos_i_e, neg_i_e)
+
+        base_loss = cf_loss
+        kge_loss = kg_loss
+        reg_loss = self.regs[0] * cf_reg_loss + self.regs[1] * kg_reg_loss
+        loss = base_loss + kge_loss + reg_loss
+
+        return loss, base_loss, kge_loss, reg_loss
+
+    def predict(self, batch):
+        u_e = self.weights['user_embed'][batch['u']]
+        pos_i_e = self.weights['item_embed'][batch['pos_i']]
+        pos_i_kg_e = self.weights['kg_entity_embed'][batch['pos_i']].reshape(-1, self.emb_dim)
+        return torch.mm(u_e, (pos_i_e + pos_i_kg_e).t())
+
     def _statistics_params(self):
-        # number of params
         total_parameters = 0
-        for variable in self.weights.values():
-            shape = variable.get_shape()  # shape is an array of tf.Dimension
+        for param in self.parameters():
             variable_parameters = 1
-            for dim in shape:
+            for dim in param.shape:
                 variable_parameters *= dim
             total_parameters += variable_parameters
         if self.verbose > 0:
             print("#params: %d" % total_parameters)
 
-    def train(self, sess, feed_dict):
-        return sess.run([self.opt, self.loss, self.base_loss, self.kge_loss, self.reg_loss], feed_dict)
+    def _to_device(self, batch):
+        device = self.device
+        out = {}
+        for key in ('u', 'pos_i', 'neg_i', 'h', 'r', 'pos_t', 'neg_t'):
+            if key in batch:
+                out[key] = torch.as_tensor(batch[key], dtype=torch.long, device=device)
+        return out
 
-    def eval(self, sess, feed_dict):
-        batch_predictions = sess.run(self.batch_predictions, feed_dict)
-        return batch_predictions
+    # Keep the original call surface: the (now unused) ``sess`` argument is
+    # accepted so batch_test.py / helper.py / metrics.py stay untouched.
+    def train(self, sess=None, feed_dict=None):
+        batch = self._to_device(feed_dict)
+        self.optimizer.zero_grad()
+        loss, base_loss, kge_loss, reg_loss = self._forward_loss(batch)
+        loss.backward()
+        self.optimizer.step()
+        return None, loss.item(), base_loss.item(), kge_loss.item(), reg_loss.item()
 
+    def eval(self, sess=None, feed_dict=None):
+        self.training = False
+        with torch.no_grad():
+            batch = self._to_device(feed_dict)
+            batch_predictions = self.predict(batch)
+        return batch_predictions.cpu().numpy()

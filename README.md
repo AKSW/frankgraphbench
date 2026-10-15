@@ -1,21 +1,20 @@
-# FranKGraphBench: Knowledge Graph Aware Recommender Systems Framework for Benchmarking
+# FranKGraphBench: Reproducible Benchmarking for Knowledge Graph-based Recommendation
 [![DOI](https://zenodo.org/badge/646290327.svg)](https://doi.org/10.5281/zenodo.14513776)
 
-The FranKGraphBench is a framework to allow KG Aware RSs to be benchmarked in a reproducible and easy to implement manner. 
-It was first created on Google Summer of Code 2023 for Data Integration between DBpedia and some standard RS datasets in a reproducible framework.
+FranKGraphBench is a framework for reproducible benchmarking of Knowledge Graph-based recommender systems.
+It was first created on Google Summer of Code 2023 for Data Integration between DBpedia and some standard RS datasets in a reproducible framework and was accepted at the Resource Track from the 35th ACM International Conference on Information and Knowledge Management in Rome, Italy from the 7th to 11th November 2026.
 
 Check the [docs](https://frankgraphbench.readthedocs.io/en/latest/index.html) for more information.
 
-* This repository was first created for Data Integration between DBpedia and some standard Recommender Systems datasets and a framework for reproducible experiments. For more info, check the [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and the project progress with weekly (as possible) [updates](https://github.com/AKSW/frankgraphbench/wiki).
+* For more info, check the [project proposal](https://github.com/AlvaroJoseLopes/GSoC-2023) and the project progress with weekly (as possible) [updates](https://github.com/AKSW/frankgraphbench/wiki).
 
 # Data Integration
 
 ## pip
 
-We recommend using a python 3.8 virtual environment:
+We recommend using a python 3.11 virtual environment:
 
 ```shell
-pip install pybind11
 pip install frankgraphbench
 ```
 
@@ -29,13 +28,15 @@ bash ml-1m.sh   # Downloaded at `datasets/ml-1m` folder
 
 ## Source
 
-Install the required packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
+Install from the repository root using `pip install .`. We recommend a python 3.11 virtual environment:
 
 ```shell
 python3 -m venv venv_data_integration/
 source venv_data_integration/bin/activate
-pip3 install -r requirements_data_integration.txt 
+pip install .
 ```
+
+To install the exact dependency set manually, use `pip install -r requirements.txt`.
 
 Install the full dataset using bash scripts located at `datasets/`:
 
@@ -95,32 +96,31 @@ Dataset enrichment, except for the MIND-small dataset, is done through a fixed D
 
 ## pip
 
-For x86 windows and linux PCs we recommend using a python 3.8 virtual environment. For Apple Silicon we recommend a python 3.11 virtual environment and using the manual install with `requirements_framework_apple.txt`, however the deep_walk_based embedding method does not work in this version:
+We recommend using a python 3.11 virtual environment for all platforms.
+
+`pip install frankgraphbench` installs the regular `tensorflow` package on every platform. No manual install is therefore required:
 
 ```shell
-pip install pybind11
 pip install frankgraphbench
+```
+
+If you run into trouble with the automatic install, you can still install manually with the matching requirements file:
+
+```shell
+pip install -r requirements.txt
 ```
 
 ## source
 
-Install the require packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
+Install from the repository root using `pip install .`. We recommend a python 3.11 virtual environment:
 
 ```shell
 python3 -m venv venv_framework/
 source venv_framework/bin/activate
-pip3 install -r requirements_framework.txt 
+pip install .
 ```
 
-### Apple silicon
-
-```shell
-python3 -m venv venv_framework/
-source venv_framework/bin/activate
-pip3 install -r requirements_framework_apple.txt
-```
-
-## Usage 
+## Usage
 
 pip:
 ```shell
@@ -139,16 +139,16 @@ The experiment config file should be a .yaml file like this:
 
 ```yaml
 experiment:
-  dataset: 
+  dataset:
     name: ml-100k
     item:
-      path: datasets/ml-100k/processed/item.csv 
-      extra_features: [movie_year, movie_title] 
+      path: datasets/ml-100k/processed/item.csv
+      extra_features: [movie_year, movie_title]
     user:
-      path: datasets/ml-100k/processed/user.csv 
-      extra_features: [gender, occupation] 
-    ratings: 
-      path: datasets/ml-100k/processed/rating.csv 
+      path: datasets/ml-100k/processed/user.csv
+      extra_features: [gender, occupation]
+    ratings:
+      path: datasets/ml-100k/processed/rating.csv
       timestamp: True
     enrich:
       map_path: datasets/ml-100k/processed/map.csv
@@ -188,7 +188,7 @@ experiment:
         n_walks: 50
         embedding_size: 64
         epochs: 1
-  
+
   evaluation:
     k: 5
     relevance_threshold: 3
@@ -208,7 +208,7 @@ Those are the currently supported pre-processing methods:
 
 ## Supported Splitting Methods
 
-Currently the supported Splitting method are:
+Currently the supported Splitting methods are:
 * Random by Ratio
 * Timestamp by Ratio
 * Fixed Timestamp
@@ -229,22 +229,22 @@ Chart generation module based on: https://github.com/hfawaz/cd-diagram
 
 ## pip
 
-We recommend using a python 3.8 virtual environment
+We recommend using a python 3.11 virtual environment
 
 ```shell
-pip install pybind11
 pip install frankgraphbench
 ```
 
 ## source
 
-Install the required packages using python [virtualenv](https://docs.python.org/3/library/venv.html), using:
+Install from the repository root using `pip install .`. We recommend a python 3.11 virtual environment:
 
 ```shell
 python3 -m venv venv_chart_generation/
 source venv_chart_generation/bin/activate
-pip3 install -r requirements_chart_generation.txt 
+pip install .
 ```
+
 After obtaining results from some experiments, you can use this module to generate charts for them. The module is based on the CD-Diagram, which is a chart to compare multiple methods across multiple datasets and metrics. It is based on the Critical Difference diagram, but with some modifications to allow it to be more informative and easier to read.
 
 

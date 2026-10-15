@@ -1,19 +1,19 @@
-from typing import Dict, List, Tuple
+import importlib
+
+import multiprocess
+import networkx as nx
+import numpy as np
+import pandas as pd
+from scipy.spatial.distance import cosine
+from tqdm import tqdm
+
 from framework.dataloader.graph.graph import Graph
 from framework.dataloader.graph.node import ItemNode, UserNode
 from framework.recommender.models.entity2rec.entity2rec import Entity2RecD2K
 
-from ...recommender import Recommender
 from ...model2class import model2class
+from ...recommender import Recommender
 
-import importlib
-import multiprocess
-import pandas as pd
-import networkx as nx
-import numpy as np
-
-from scipy.spatial.distance import cosine
-from tqdm import tqdm
 
 class Entity2Rec(Recommender):
     def __init__(
@@ -63,13 +63,13 @@ class Entity2Rec(Recommender):
         text += f"workers={self.workers};iterations={self.iterations};collab_only={self.collab_only};content_only={self.content_only}"
         return text
     
-    def train(self, G_train: Graph, ratings_train: Dict[UserNode, List[Tuple[ItemNode, float]]]):
+    def train(self, G_train: Graph, ratings_train: dict[UserNode, list[tuple[ItemNode, float]]]):
         self.G_train = G_train
         self.ratings_train = ratings_train
         self._triples = G_train.get_all_triples(return_type="obj")
         self.fit()
     
-    def get_recommendations(self, k: int = 5) -> Dict[UserNode, List[ItemNode]]:
+    def get_recommendations(self, k: int = 5) -> dict[UserNode, list[ItemNode]]:
         x_test, y_test, qids_test, items_test = self._compute_features('test', n_jobs=self.workers)
         recs = self._e2rec.predict(x_test, qids_test)
 
@@ -153,7 +153,7 @@ class Entity2Rec(Recommender):
 
                     features = self.__compute_user_item_features(user, item, items_liked_by_user, users_liking_an_item)
                     
-                    if features:
+                    if features.size > 0:
                         TX.append(features)
                         Ty.append(self.__get_relevance(user, item))
                         Tqids.append(user)

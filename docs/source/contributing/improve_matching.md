@@ -15,8 +15,8 @@ Otherwise, if you figured out another approach that would be better to match RS 
 2. Make the necessary changes to the `map.csv` corresponding to the mentioned dataset, changing only the `URI` field.
    * **Note:** the `map.csv` file can be found at `datasets/{dataset_name}/processed/` folder.
 
-2. Make a commit with your changes.
+3. Make a commit with your changes.
 
-3. Make a Pull Request on Github mentioning the issue.
+4. Make a Pull Request on Github mentioning the issue.
   
 

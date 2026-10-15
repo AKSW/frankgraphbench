@@ -1,6 +1,7 @@
+import numpy as np
+
 from ..metric import Metric
 
-import numpy as np
 
 class nDCG(Metric):
     def __init__(self, k: int, relevance_threshold: int = 0):
@@ -20,7 +21,7 @@ class nDCG(Metric):
         return np.mean(users_ndcg)
 
     def _calculate_dcg(self, recs):
-        recs = np.asfarray(recs)[:self.k]
+        recs = np.asarray(recs, dtype=float)[:self.k]
         if not recs.size:
             return 0.0
         else:

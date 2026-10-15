@@ -1,0 +1,2 @@
+model,fold-1_F1.0-score@100,fold-2_F1.0-score@100,F1.0-score@100_mean,F1.0-score@100_std
+EPHEN based model + cosine similarity;embedding_model=seyonec/ChemBERTa-zinc-base-v1;embedding_model_kwargs=None;embed_with=smiles;iterations=30;mi=0.3.,0.03622296435749074,0.009343785115685123,0.02278337473658793,0.01343958962090281

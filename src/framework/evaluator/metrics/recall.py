@@ -1,5 +1,6 @@
 from ..metric import Metric
 
+
 class Recall(Metric):
     def __init__(self, k: int, relevance_threshold: int = 0):
         super().__init__(k, relevance_threshold)
