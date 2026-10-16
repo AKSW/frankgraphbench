@@ -82,6 +82,12 @@ class CoLaKG(Recommender):
         self.user_system_prompt = user_system_prompt
         self.walk_len = walk_len
         self.walk_seed = walk_seed
+        # Split technique + seed that produced the disturbed training graph, set
+        # in train() from G_train._split_signature. It is part of the *user*
+        # cache key (user prompts are walks over that graph) but deliberately not
+        # part of the item cache key (item prompts read only item-property edges,
+        # which the split never touches).
+        self._split_signature = None
         self.validate_frac = validate_frac
         self.validate_seed = validate_seed
         self.epochs = epochs
@@ -124,6 +130,10 @@ class CoLaKG(Recommender):
 
     def train(self, G_train: Graph, ratings_train):
         self.ratings_train = ratings_train
+         # Capture the split technique + seed that produced this disturbed graph,
+         # if the pipeline attached it. It keys the *user* cache so a different
+         # split cannot silently reuse walks from another disturbed graph.
+        self._split_signature = getattr(G_train, "_split_signature", None)
          # Keep the original-node graph for prompt building but register the
          # canonical 0-based int id-map that get_ratings_triples("int") requires.
         self.G_train = G_train.convert_node_labels_to_integer(int_id_map=True)
@@ -283,6 +293,22 @@ class CoLaKG(Recommender):
     def _sanitize_name(name: str) -> str:
         return re.sub(r"[^A-Za-z0-9._-]+", "_", str(name)).strip("_") or "unknown"
 
+    def _split_signature_token(self) -> str:
+        """Render the split technique + seed into a stable, filename-safe token.
+
+        The token is derived from the canonical JSON of ``_split_signature``
+        (``{"seed", "test", "validation"}``), so it changes whenever the split
+        method or any of its parameters -- or the split seed -- changes. Returns
+        an empty string when no split signature is available (e.g. a graph built
+        outside the pipeline), in which case the user cache falls back to its
+        split-independent filename.
+        """
+        signature = self._split_signature
+        if not signature:
+            return ""
+        canonical = json.dumps(signature, sort_keys=True, separators=(",", ":"))
+        return self._sanitize_name(canonical)
+
     def _cache_dir(self) -> str:
         # <repo_root>/datasets/<dataset>/colakg-cache
         # repo root = 4 levels up from this file
@@ -294,13 +320,19 @@ class CoLaKG(Recommender):
         return os.path.join(dataset_root, "colakg-cache")
 
     def _cache_path(self, target_type: str) -> str:
-        # The user prompts depend on the random-walk seed, so it is part of the
-        # user cache filename -- changing the seed yields a different path, so an
-        # old-seed cache is naturally not reused. Item prompts don't use the walk,
-        # so the item filename stays seed-independent (one item file per model).
+        # The user prompts depend on the random-walk seed *and* on the split that
+        # produced the disturbed training graph (user prompts are walks over that
+        # graph), so both are part of the user cache filename -- changing either
+        # yields a different path, so a stale-seed or stale-split cache is
+        # naturally not reused. Item prompts use neither the walk nor the split,
+        # so the item filename stays independent of both (one item file per
+        # model).
         filename = f"{self._sanitize_name(self.model_name)}-{target_type}"
         if target_type == "user":
             filename += f"-walkseed-{self.walk_seed}"
+            split_token = self._split_signature_token()
+            if split_token:
+                filename += f"-split-{split_token}"
         return os.path.join(self._cache_dir(), f"{filename}.json")
 
     def _load_cache(self, target_type: str, system_prompt: str):
@@ -309,8 +341,9 @@ class CoLaKG(Recommender):
         Returns (cache_dict, compatible) where cache_dict is the parsed JSON
         (or {} if the file is missing) and compatible is False when the cache
         must be regenerated -- either because it is absent, its stored system
-        prompt no longer matches, it was generated for a different dataset, or it
-        was produced by a different random-walk variant.
+        prompt no longer matches, it was generated for a different dataset, it was
+        produced by a different random-walk variant, or (for the user cache) it
+        was generated under a different split technique or seed.
         """
         path = self._cache_path(target_type)
         if not os.path.exists(path):
@@ -339,7 +372,17 @@ class CoLaKG(Recommender):
         # variant must match to avoid serving stale prompts. Caches written
         # before this guard carried no ``walk_variant`` and are regenerated.
         if target_type == "user" and cache.get("walk_variant") != self._WALK_VARIANT:
-            print(f"Walk-variant mismatch for 'user': regenerating cache.")
+            print("Walk-variant mismatch for 'user': regenerating cache.")
+            return cache, False
+        # User prompts are walks over the *disturbed* training graph, so they
+        # depend on the split technique and seed, not just the walk seed. The
+        # split token already lives in the user cache filename (so a different
+        # split points at a different, absent file); this compares the stored
+        # full signature as a defensive guard against any filename-collision edge
+        # case and regenerates user caches predating the split key. The item
+        # cache never records the split, so it is unaffected.
+        if target_type == "user" and cache.get("split_signature") != self._split_signature:
+            print("Split mismatch for 'user': regenerating cache.")
             return cache, False
         return cache, True
 
@@ -360,6 +403,11 @@ class CoLaKG(Recommender):
              "count_limit": count_limit,
              "responses": responses,
         }
+        # The user cache also records the split technique + seed, since user
+        # prompts are walks over the split's disturbed graph. It is omitted for
+        # the item cache, whose prompts never touch the split.
+        if target_type == "user":
+            payload["split_signature"] = self._split_signature
         with open(path, "w", encoding="utf-8") as f:
             json.dump(payload, f, indent=2, ensure_ascii=False)
         print(f"Saved LLM response cache for '{target_type}' to {path}")

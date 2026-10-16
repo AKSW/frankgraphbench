@@ -266,27 +266,53 @@ Currently the supported Recommender System models are:
 
         ```
         datasets/<dataset>/colakg-cache/<llm_model>-item.json
-        datasets/<dataset>/colakg-cache/<llm_model>-user-walkseed-<walk_seed>.json
+        datasets/<dataset>/colakg-cache/<llm_model>-user-walkseed-<walk_seed>-split-<split>.json
         ```
 
       where `<llm_model>` is the chat model name (e.g. `qwen3:1.7b` becomes
       `qwen3_1.7b`). Each JSON file stores the target node ids, the LLM responses,
       the system prompt used, the LLM/embedding model names, the walk seed, the
-      generation time, and the computer information of the host that produced it.
-    - coLaKG builds user prompts from a random walk over the graph, so it is made
-      reproducible with a `walk_seed` model parameter (default `42`). The walk seed
-      is part of the **user** cache filename (`-walkseed-42`); item prompts do not
-      use the walk, so the item filename stays seed-independent and a single item
-      file is reused across walk seeds.
+      generation time, and the computer information of the host that produced it;
+      the user file additionally stores the split signature (see below).
+    - coLaKG builds user prompts from a random walk over the *training* graph, so
+      they are made reproducible with a `walk_seed` model parameter (default `42`).
+      The walk seed is part of the **user** cache filename (`-walkseed-42`); item
+      prompts do not use the walk, so the item filename stays seed-independent and
+      a single item file is reused across walk seeds.
+    - *Why the user cache must depend on the split.* The user prompts are
+      random walks over the *disturbed* training graph -- i.e. the graph the
+      experiment's **splitting technique** (the `split` block: `test` method and
+      parameters, any `validation` split, and the split `seed`) produces. Because
+      the splitter only removes *rating* edges, changing the split technique or seed
+      changes which rating edges are held out, so the neighbourhood a walk can reach
+      -- and therefore the user prompt -- is different for every split. If the user
+      cache were keyed on the walk seed alone, running a new split would silently
+      reuse the previous split's cached user prompts: the embeddings (and hence the
+      recommendations) would describe one split's disturbed graph while the training
+      and evaluation are measured against another's. That is a **leakage bug** --
+      results that look reproducible but are taken from a graph that does not
+      correspond to the split being evaluated -- and it is especially dangerous
+      because it is invisible: no error is raised, the cached run just skips the LLM
+      calls. This is the reason the user cache is *required* to be split-aware.
+      Mechanically, the split signature -- the sanitized JSON of
+      `{seed, test, validation}` -- is appended to the user filename as
+      `-split-<split>`, so a different split points at a different (empty) file and
+      its user prompts are regenerated; the old file is left untouched.
+      **The item cache is intentionally *not* split-dependent**: item prompts read
+      only item-property edges, which the splitter never touches, so one item file
+      is reused across splits and split changes. Changing the split technique or seed
+      therefore regenerates only the user cache, leaving the item cache stable.
     - *Recovering the cache.* The cache is recovered automatically, keyed by the LLM
-      model and target type (and, for users, the walk seed). To reuse a previous
-      run's responses: keep the same `dataset`, `model_name`,
-      `item_system_prompt`/`user_system_prompt`, and `walk_seed` -- the run will
-      load the matching `colakg-cache` file and skip the LLM calls. The user cache
-      path is `.../<llm_model>-user-walkseed-<walk_seed>.json`, so **changing the
-      walk seed selects a different (empty) cache**, forcing a fresh user
-      generation; the old seed's file is left untouched. `walk_seed` is also stored
-      in the JSON and re-checked on load as a defensive guard.
+      model and target type (and, for users, the walk seed *and* the split
+      signature). To reuse a previous run's responses: keep the same `dataset`,
+      `model_name`, `item_system_prompt`/`user_system_prompt`, `walk_seed`, **and
+      the `split` block** -- the run will load the matching `colakg-cache` file and
+      skip the LLM calls. The user cache path is
+      `.../<llm_model>-user-walkseed-<walk_seed>-split-<split>.json`, so **changing
+      the walk seed or the split selects a different (empty) cache**, forcing a
+      fresh user generation; the old cache's file is left untouched. `walk_seed` and
+      the split signature are also stored in the JSON and re-checked on load as
+      defensive guards.
     - *When the cache is regenerated.* Before every run the cache is checked and
       reused when present. A cached file is reused only when it matches the current
       run; it is regenerated automatically when any of the following holds:
@@ -295,7 +321,9 @@ Currently the supported Recommender System models are:
       - the stored **system prompt no longer matches** the current one (this always
         forces a re-cache, ignoring `reset_cache`),
       - the **walk seed no longer matches** for the user cache (a different
-        `walk_seed` points at a different, absent file), or
+        `walk_seed` points at a different, absent file),
+      - the **split signature no longer matches** for the user cache (a different
+        split technique or seed points at a different, absent file), or
       - the cache does not cover the nodes the run will request (e.g. a previously
         limited run followed by a full run); in this case only the missing nodes
         are generated and merged back into the existing cache.
