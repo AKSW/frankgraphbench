@@ -40,10 +40,35 @@ def split(G, **split_config):
                 print(f'\tNumber of validation instances: {len_instances(ratings_val)}')
 
         ratings_train = G_train.get_ratings_with_labels()
+        # Attach the split technique + seed that produced this disturbed graph so
+        # models building user-side artefacts from it (e.g. coLaKG's random-walk
+        # prompts) can key their cache on it and avoid cross-split leakage.
+        G_train._split_signature = build_split_signature(split_config, seed)
         dataset.set_train_data(G_train, ratings_train)
         print(f'Number of training instances: {len_instances(ratings_train)}')
 
         yield dataset
+
+def build_split_signature(split_config, seed):
+    """Return the technique signature of a split.
+
+    The signature captures everything that determines the *disturbed* training
+    graph -- i.e. which rating edges are held out -- from the split technique
+    (the ``test`` method and its parameters, plus the optional ``validation``
+    split) together with the top-level ``seed``. It is attached to ``G_train`` so
+    a model that builds user-side artefacts from the training graph (e.g. coLaKG's
+    random-walk prompts) can key its cache on it and avoid serving a cache built
+    under a different split. Item-side artefacts do not depend on the split and
+    are intentionally excluded.
+
+    The returned object is plain and JSON-serializable so it can be stored in a
+    cache file and rendered into a cache filename.
+    """
+    return {
+        'seed': seed,
+        'test': dict(split_config.get('test', {}) or {}),
+        'validation': dict(split_config.get('validation', {}) or {}),
+    }
 
 def len_instances(data):
     return sum([len(items) for items in data.values()])
