@@ -1,0 +1,134 @@
+experiment:
+  dataset:
+    name: chembl
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/chembl-trypanosoma/processed/item.csv
+      extra_features: # number columns don't work with translation model
+        - molecule_chembl_id
+        - molecular_weight # number
+        - number_ro5_violations # number
+        - alogp # number
+        - smiles
+        - standard_relation
+        - value(nM) # number
+        - cid # number
+        - molecular_formula
+        - inchi
+        - tpsa # number
+    # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/chembl-trypanosoma/processed/user.csv
+      extra_features: [target_type] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/chembl-trypanosoma/processed/rating.csv
+      timestamp: False
+    enrich:
+      map_path: datasets/chembl-trypanosoma/processed/map.csv
+      enrich_path: datasets/chembl-trypanosoma/processed/enriched.csv
+      remove_unmatched: False
+      properties:
+        - coco_id
+        - canonical_smiles
+        - name
+        - annotation_level
+        - total_atom_count # number
+        - heavy_atom_count # number
+        - exact_molecular_weight # number
+        - topological_polar_surface_area # number
+        - rotatable_bond_count # number
+        - hydrogen_bond_acceptors # number
+        - hydrogen_bond_donors # number 
+        - hydrogen_bond_acceptors_lipinski # number
+        - hydrogen_bond_donors_lipinski # number
+        - lipinski_rule_of_five_violations # number
+        - aromatic_rings_count # number
+        - qed_drug_likeliness # number
+        - formal_charge # number
+        - fractioncsp3 # number
+        - number_of_minimal_rings # number
+        - van_der_walls_volume # number
+        - contains_sugar
+        - contains_ring_sugars
+        - contains_linear_sugars
+        - murcko_framework
+        - np_likeness # number
+        - chemical_class
+        - chemical_sub_class
+        - chemical_super_class
+        - direct_parent_classification
+        - np_classifier_pathway
+        - np_classifier_superclass
+        - np_classifier_class
+        - np_classifier_is_glycoside
+        - organisms
+        - collections
+        - dois
+        - synonyms
+        - cas
+
+  preprocess:
+    - method: filter_kcore
+      parameters:
+        k: 5 # guarantees enough samples for for kfold
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+    test:
+      method: k_fold
+      k: 5
+      level: "user"
+
+  models:
+    - name: bPRMF
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
+    - name: cFKG
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
+    - name: cKE
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
+    - name: kGAT
+      config:
+        save_weights: True
+      parameters:
+        embed_size: 64
+        kge_size: 64
+        epoch: 1000
+        verbose: 10
+        validate_factor: 50
+        validate_frac: .001
+        test_flag: sort
+
+  evaluation:
+    k: 100
+    relevance_threshold: 1
+    metrics: [F-score, recall, precision, MAP, nDCG]
+
+  report:
+    file: "experiment_results/chembl/test_chembl-trypanosoma_coconut_gnn.csv"
+    execution_times:
+      file: "experiment_results/chembl/test_chembl-trypanosoma_coconut_gnn_times.csv"
