@@ -81,26 +81,6 @@ experiment:
       level: "user"
 
   models:
-    - name: deepwalk_based
-      config:
-        save_weights: True
-      parameters:
-        walk_len: 10
-        p: 1.0
-        q: 1.0
-        n_walks: 50
-        embedding_size: 64
-        epochs: 1
-    - name: deepwalk_based
-      config:
-        save_weights: True
-      parameters:
-        walk_len: 10
-        p: 0.8
-        q: 0.6
-        n_walks: 50
-        embedding_size: 64
-        epochs: 1
     - name: ePHEN
       config:
         save_weights: True
@@ -109,6 +89,22 @@ experiment:
         embed_with: smiles
         iterations: 30
         mi: 0.5
+    - name: ePHEN
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: seyonec/ChemBERTa-zinc-base-v1
+        embed_with: smiles
+        iterations: 30
+        mi: 0.3
+    - name: ePHEN
+      config:
+        save_weights: True
+      parameters:
+        embedding_model: seyonec/ChemBERTa-zinc-base-v1
+        embed_with: smiles
+        iterations: 30
+        mi: 0.8
 
   evaluation:
     k: 100
