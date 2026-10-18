@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="FranKGraphBench",
-    version="0.2.0",
+    version="0.2.1",
     author="Paulo do Carmo and Alvaro Lopes",
     author_email='paulo.carmo@htwk-leipzig.de',
     url='https://github.com/AKSW/frankgraphbench/tree/main/',
