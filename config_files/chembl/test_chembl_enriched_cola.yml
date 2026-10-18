@@ -1,6 +1,6 @@
 experiment:
   dataset:
-    name: chembl
+    name: chembl-trypanosoma
     item: # infos related to item dataset (mandatory, at least item_id)
       path: datasets/chembl-trypanosoma/processed/item.csv
       extra_features: # number columns don't work with translation model
