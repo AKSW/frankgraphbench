@@ -1,0 +1,90 @@
+experiment:
+  dataset:
+    name: ml-100k
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/ml-100k/processed/item.csv
+      extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/ml-100k/processed/user.csv
+      extra_features: [gender, occupation] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/ml-100k/processed/rating.csv
+      timestamp: True
+
+  preprocess:
+    - method: filter_kcore
+      parameters:
+        k: 20
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+    test:
+      method: k_fold
+      k: 5
+      level: "user"
+
+  models:
+    - name: coLaKG
+      config:
+        save_weights: True
+        # Optional: force regeneration of the LLM response cache on this run.
+        # A cache is also auto-regenerated when the system prompt no longer
+        # matches; see the coLaKG LLM response cache docs.
+        # reset_cache: False
+      parameters:
+        item_name: movie_title
+        model_host: http://mac.fritz.box:11434
+        # model_host: http://localhost:11434
+        model_name: qwen3.8:27b-mlx
+        emb_model_name: qwen3-embedding:0.6b
+        # MANDATORY: item_system_prompt and user_system_prompt are required (no defaults).
+        # They are the instructions sent to the LLM and drive how it writes the
+        # semantic descriptions (item and user) that are then embedded and used for
+        # recommendations. Tune them to steer the generated descriptions.
+        item_system_prompt: >-
+          Assume you are an expert in movie recommendation.
+          You will be given a title and year that references a movie.
+          Based on this information and your world knowledge,
+          please analyze and summarize the characteristics of this movie,
+          and analyze what kind of users would like to watch it.
+          Your response should be a coherent paragraph with no more than 200 words.
+        user_system_prompt: >-
+          Assume you are an expert in recommendation.
+          You will be given some information about a user who wants to watch movies he would be interested in.
+          Based on this information and your world knowledge,
+          please analyze and summarize the characteristics of this user,
+          and analyze what kind of movies they would like to watch.
+          Your response should be a coherent paragraph with no more than 200 words.
+        walk_len: 10
+        # Seed for the user random walks that build user prompts. Fixed so that
+        # generated user prompts (and their cache) are reproducible run-to-run.
+        walk_seed: 42
+        latent_dim_rec: 64
+        lightGCN_n_layers: 3
+        use_drop_edge: 1
+        keep_prob: 0.8
+        bpr_batch_size: 2048
+        test_u_batch_size: 100
+        neighbor_k: 10
+        dropout_i: 0.6
+        dropout_u: 0.6
+        dropout_n: 0.6
+        semantic_hid_dim: 32
+        device: auto
+        # Limits for the LLM/embedding calls; null => use every node.
+        # Set a small integer (e.g. 10) to smoke-test the pipeline quickly.
+        item_llm_limit: null
+        user_llm_limit: null
+        epochs: 1000
+
+  evaluation:
+    k: 10
+    relevance_threshold: 0
+    metrics: [MAP, nDCG]
+
+  report:
+    file: "experiment_results/colakg/ml-100k_qwen.csv"
+    execution_times:
+      file: "experiment_results/colakg/ml-100k_qwen_times.csv"
