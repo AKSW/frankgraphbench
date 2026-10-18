@@ -203,7 +203,17 @@ class CoLaKG(Recommender):
         sorted_indices = torch.tensor(sorted_indices).long().to(self.device)
 
         ratings_triples = self.G_train.get_ratings_triples(return_type="int")
-        self.dataset = Loader(self.config, ratings_triples, self.validate_frac, self.validate_seed)
+        # Pass the full canonical entity counts so the model's embedding tables
+        # match the semantic-embedding rows even when a split leaves a node
+        # disconnected (a node with a semantic embedding but no rating triple).
+        self.dataset = Loader(
+             self.config,
+             ratings_triples,
+             self.validate_frac,
+             self.validate_seed,
+             n_users=n_users,
+             n_items=n_items,
+        )
 
         self.model = CoLaKG_model(
              self.config,

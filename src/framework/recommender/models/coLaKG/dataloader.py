@@ -63,7 +63,8 @@ class Loader(BasicDataset):
     gowalla dataset
     """
 
-    def __init__(self, config, ratings_triples, validate_frac, random_seed):
+    def __init__(self, config, ratings_triples, validate_frac, random_seed,
+                 n_users=None, n_items=None):
         # train or test
         print('loading with ratings_triples...')
         self.split = config['A_split']
@@ -79,8 +80,20 @@ class Loader(BasicDataset):
         train_ratings_triples = ratings_triples[~ratings_triples.isin(test_ratings_triples)].dropna().reset_index(drop=True).astype(int)
         test_ratings_triples = test_ratings_triples.reset_index(drop=True)
 
+        # The counts the semantic-embedding side uses come from the full canonical
+        # node set (every item/user node in the disturbed graph), while the
+        # rating-triple side can be *smaller*: a k-fold split may leave a node
+        # disconnected, so that node has a semantic embedding row but no rating
+        # triple, making max(tail)+1 fall one short of the true entity count.
+        # Derive the embedding-table sizes from the triples, then widen them to
+        # the authoritative n_users/n_items so the learned tables and the semantic
+        # arrays always share the same 0-based id space.
         self.m_item = max(train_ratings_triples["tail"].max(), test_ratings_triples["tail"].max()) + 1
         self.n_user = max(train_ratings_triples["head"].max(), test_ratings_triples["head"].max()) + 1
+        if n_users is not None:
+            self.n_user = max(self.n_user, n_users)
+        if n_items is not None:
+            self.m_item = max(self.m_item, n_items)
 
         self.traindataSize = len(train_ratings_triples)
         self.testDataSize = len(test_ratings_triples)

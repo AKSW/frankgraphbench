@@ -118,23 +118,53 @@ class CoLaKG_model(BasicModel):
             graph = self.__dropout_x(self.Graph, keep_prob)
         return graph
     
+    def _align_semantic(self, learned_emb, semantic_emb):
+        """Reconcile a semantic embedding tensor with a learned embedding table.
+
+        The learned table (e.g. ``embedding_item.weight``) and the semantic
+        embedding are expected to share the same 0-based entity id space, but a
+        k-fold split can leave a node disconnected: that node contributes a
+        semantic row yet no rating triple, so the two tensors can end up with
+        different row counts. Instead of letting the elementwise add below raise
+        a ``RuntimeError`` on a size mismatch, pad the shorter side with a
+        neutral (zero) base tensor and, if a semantic tensor is empty, replace it
+        entirely with a neutral tensor. This keeps a single disconnected node
+        from breaking the run.
+        """
+        target = learned_emb.shape[0]
+        semantic_dim = self.latent_dim
+        base = torch.zeros(target, semantic_dim, device=self.device)
+
+        if semantic_emb is None:
+            return base
+
+        if semantic_emb.shape[0] != target:
+            base = base.clone()
+            n = min(semantic_emb.shape[0], target)
+            base[:n] = semantic_emb[:n]
+            semantic_emb = base
+
+        return semantic_emb
+
     def computer(self):
         """
         propagate methods for lightGCN
-        """       
+        """
         users_emb = self.embedding_user.weight
         items_emb = self.embedding_item.weight
-        
+
         items_semantic_emb = F.dropout(self.semantic_emb, self.dropout_i, training=self.training)
         items_semantic_emb = self.semantic_map(items_semantic_emb)
         items_semantic_emb = F.elu(items_semantic_emb)
         items_semantic_emb = F.dropout(items_semantic_emb, self.dropout_i, training=self.training)
+        items_semantic_emb = self._align_semantic(items_emb, items_semantic_emb)
         items_emb_merged = (items_emb + items_semantic_emb) / 2
-        
+
         user_semantic_emb = F.dropout(self.user_semantic_emb, self.dropout_u, training=self.training)
         user_semantic_emb = self.user_semantic_map(user_semantic_emb)
         user_semantic_emb = F.elu(user_semantic_emb)
         user_semantic_emb = F.dropout(user_semantic_emb, self.dropout_u, training=self.training)
+        user_semantic_emb = self._align_semantic(users_emb, user_semantic_emb)
         users_emb_merged = (users_emb + user_semantic_emb) / 2
         
         
