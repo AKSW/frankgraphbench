@@ -88,6 +88,13 @@ class CoLaKG(Recommender):
         # part of the item cache key (item prompts read only item-property edges,
         # which the split never touches).
         self._split_signature = None
+        # 1-based index of the split fold this graph came from, set in train()
+        # from G_train._fold_index. A k-fold split produces a different disturbed
+        # graph per fold, so the fold is part of the *user* cache key -- without
+        # it, fold N and fold M would collide on the same user cache file and
+        # one fold's prompts would leak into another. Item prompts never depend
+        # on the fold, so the item cache key is unaffected.
+        self._fold_index = 1
         self.validate_frac = validate_frac
         self.validate_seed = validate_seed
         self.epochs = epochs
@@ -134,6 +141,12 @@ class CoLaKG(Recommender):
          # if the pipeline attached it. It keys the *user* cache so a different
          # split cannot silently reuse walks from another disturbed graph.
         self._split_signature = getattr(G_train, "_split_signature", None)
+         # Capture the 1-based fold index the pipeline attached. A k-fold split
+         # yields a different disturbed graph per fold, so without it two folds
+         # would share one user cache file and leak across folds. Fall back to 1
+         # (a single-split graph, or a graph built outside the pipeline).
+        fold_index = getattr(G_train, "_fold_index", None)
+        self._fold_index = fold_index if isinstance(fold_index, int) else 1
          # Keep the original-node graph for prompt building but register the
          # canonical 0-based int id-map that get_ratings_triples("int") requires.
         self.G_train = G_train.convert_node_labels_to_integer(int_id_map=True)
@@ -268,8 +281,10 @@ class CoLaKG(Recommender):
         client = Client(host=self.model_host)
 
         # Get (or reuse cached) LLM responses for items and users, then embed
-        # them. The cache lives under datasets/<dataset>/colakg-cache/ and is
-        # keyed by the LLM model and target type; see _get_or_cache_responses.
+        # them. The cache lives under caches/<dataset>/colakg-cache/ at the
+        # repository root (a sibling of datasets/ and src/); it is keyed by the
+        # LLM model and target type -- and, for users, the walk seed, split, and
+        # fold -- see _get_or_cache_responses.
         llm_responses_items_dict = self._get_or_cache_responses(
              client, "item",
              self.__build_input_item, self.item_system_prompt, self.item_llm_limit,
@@ -300,8 +315,8 @@ class CoLaKG(Recommender):
         (``{"seed", "test", "validation"}``), so it changes whenever the split
         method or any of its parameters -- or the split seed -- changes. Returns
         an empty string when no split signature is available (e.g. a graph built
-        outside the pipeline), in which case the user cache falls back to its
-        split-independent filename.
+        outside the pipeline), in which case the user cache omits the ``-split-``
+        token but still carries the walk-seed and ``-fold-`` components.
         """
         signature = self._split_signature
         if not signature:
@@ -310,29 +325,36 @@ class CoLaKG(Recommender):
         return self._sanitize_name(canonical)
 
     def _cache_dir(self) -> str:
-        # <repo_root>/datasets/<dataset>/colakg-cache
-        # repo root = 4 levels up from this file
+        # <repo_root>/caches/<dataset>/colakg-cache
+        # repo root = 5 levels up from this file (one level behind src/), so the
+        # cache lives at the same level as the top-level datasets/ and src/
+        # folders rather than inside the source tree (the cache is data, not
+        # code to be hosted under src/).
         #   model.py -> coLaKG -> models -> recommender -> framework -> src -> root
-        src_root = os.path.abspath(
-             os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, os.pardir)
+        repo_root = os.path.abspath(
+             os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, os.pardir, os.pardir)
         )
-        dataset_root = os.path.join(src_root, "datasets", self._dataset_name())
-        return os.path.join(dataset_root, "colakg-cache")
+        caches_root = os.path.join(repo_root, "caches", self._dataset_name())
+        return os.path.join(caches_root, "colakg-cache")
 
     def _cache_path(self, target_type: str) -> str:
         # The user prompts depend on the random-walk seed *and* on the split that
         # produced the disturbed training graph (user prompts are walks over that
         # graph), so both are part of the user cache filename -- changing either
         # yields a different path, so a stale-seed or stale-split cache is
-        # naturally not reused. Item prompts use neither the walk nor the split,
-        # so the item filename stays independent of both (one item file per
-        # model).
+        # naturally not reused. The user cache is further keyed by the fold
+        # index: a k-fold split yields a different disturbed graph per fold, so
+        # without the fold in the name two folds would collide on the same file
+        # and leak across folds. Item prompts use neither the walk, the split,
+        # nor the fold, so the item filename stays independent of all three
+        # (one item file per model).
         filename = f"{self._sanitize_name(self.model_name)}-{target_type}"
         if target_type == "user":
             filename += f"-walkseed-{self.walk_seed}"
             split_token = self._split_signature_token()
             if split_token:
                 filename += f"-split-{split_token}"
+            filename += f"-fold-{self._fold_index}"
         return os.path.join(self._cache_dir(), f"{filename}.json")
 
     def _load_cache(self, target_type: str, system_prompt: str):
@@ -343,7 +365,7 @@ class CoLaKG(Recommender):
         must be regenerated -- either because it is absent, its stored system
         prompt no longer matches, it was generated for a different dataset, it was
         produced by a different random-walk variant, or (for the user cache) it
-        was generated under a different split technique or seed.
+        was generated under a different split technique/seed or a different fold.
         """
         path = self._cache_path(target_type)
         if not os.path.exists(path):
@@ -384,6 +406,15 @@ class CoLaKG(Recommender):
         if target_type == "user" and cache.get("split_signature") != self._split_signature:
             print("Split mismatch for 'user': regenerating cache.")
             return cache, False
+        # A k-fold split produces a different disturbed graph per fold, so the
+        # fold index is part of the user cache filename (a different fold points
+        # at a different, absent file). This compares the stored fold as a
+        # defensive guard and regenerates user caches predating the fold key,
+        # which carried no `fold_index` (treated as a mismatch). The item cache
+        # never records the fold, so it is unaffected.
+        if target_type == "user" and cache.get("fold_index") != self._fold_index:
+            print("Fold mismatch for 'user': regenerating cache.")
+            return cache, False
         return cache, True
 
     def _write_cache(self, target_type: str, system_prompt: str, responses: dict,
@@ -408,6 +439,9 @@ class CoLaKG(Recommender):
         # the item cache, whose prompts never touch the split.
         if target_type == "user":
             payload["split_signature"] = self._split_signature
+            # Record the fold this user cache belongs to, so a different fold of a
+            # k-fold split regenerates instead of reusing another fold's walks.
+            payload["fold_index"] = self._fold_index
         with open(path, "w", encoding="utf-8") as f:
             json.dump(payload, f, indent=2, ensure_ascii=False)
         print(f"Saved LLM response cache for '{target_type}' to {path}")

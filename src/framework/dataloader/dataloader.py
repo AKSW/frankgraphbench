@@ -23,7 +23,11 @@ def preprocess(G, methods: list):
 def split(G, **split_config):
     seed = get_optional_argument(split_config, 'seed', 42)
     edge_splitter_test = EdgeSplitter(G, seed=seed)
-    for (G_train, ratings_test) in edge_splitter_test.split(**split_config['test']):
+    # enumerate so each yielded fold carries its 1-based fold index (e.g. in a
+    # k-fold split, fold 1..k). A k-fold split produces a *different* disturbed
+    # training graph per fold, so models keying user-side artefacts on the graph
+    # must also key on the fold, not just the split technique + seed.
+    for fold_index, (G_train, ratings_test) in enumerate(edge_splitter_test.split(**split_config['test'])):
         dataset = Dataset()
         dataset.set_test_data(ratings_test)
         print(f'\tDisturbed graph info after splitting test data: {G_train.info()}')
@@ -44,6 +48,11 @@ def split(G, **split_config):
         # models building user-side artefacts from it (e.g. coLaKG's random-walk
         # prompts) can key their cache on it and avoid cross-split leakage.
         G_train._split_signature = build_split_signature(split_config, seed)
+        # 1-based fold index of the current split fold. A k-fold split yields a
+        # distinct disturbed graph per fold, so the fold is part of the user-cache
+        # key; single-split methods (random_by_ratio, timestamp_by_ratio,
+        # fixed_timestamp) yield one fold, so this is 1.
+        G_train._fold_index = fold_index + 1
         dataset.set_train_data(G_train, ratings_train)
         print(f'Number of training instances: {len_instances(ratings_train)}')
 

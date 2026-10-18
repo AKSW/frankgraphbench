@@ -1,5 +1,5 @@
 {
-  "dataset": "chembl",
+  "dataset": "chembl-trypanosoma",
   "target_type": "item",
   "llm_model": "medgemma:27b",
   "emb_model": "embeddinggemma-2:740m",
