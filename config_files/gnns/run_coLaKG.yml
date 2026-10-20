@@ -1,6 +1,7 @@
 experiment:
   dataset:
-    name: ml-100k
+    # name: ml-100k
+    name: ml-100k-enriched
     item: # infos related to item dataset (mandatory, at least item_id)
       path: datasets/ml-100k/processed/item.csv
       extra_features: [movie_year, movie_title] # features(columns) beside item_id to be used
@@ -10,6 +11,11 @@ experiment:
     ratings: # mandatory (at least [user_id, item_id, rating])
       path: datasets/ml-100k/processed/rating.csv
       timestamp: True
+    enrich:
+      map_path: datasets/ml-100k/processed/map.csv
+      enrich_path: datasets/ml-100k/processed/enriched.csv
+      remove_unmatched: False
+      properties: [subject, director, abstract, starring]
 
   preprocess:
     - method: filter_kcore
@@ -85,6 +91,6 @@ experiment:
     metrics: [MAP, nDCG]
 
   report:
-    file: "experiment_results/colakg/ml-100k_qwen.csv"
+    file: "experiment_results/colakg/ml-100k_enriched_qwen.csv"
     execution_times:
-      file: "experiment_results/colakg/ml-100k_qwen_times.csv"
+      file: "experiment_results/colakg/ml-100k_enriched_qwen_times.csv"
