@@ -85,7 +85,7 @@ experiment:
       config:
         save_weights: True
       parameters:
-        item_name: movie_title
+        item_name: compound
         model_host: http://mac.fritz.box:11434
         model_name: medgemma:27b
         emb_model_name: embeddinggemma-2:740m
