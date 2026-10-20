@@ -1,0 +1,2 @@
+model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
+CoLaKG;model=qwen3.8:27b-mlx;emb_model=qwen3-embedding:0.6b;walk_len=10 (CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []),33994.75629687309,14251.943440675735,14997.492219209671,24070.30634689331,14683.1905772686,20399.537776184083,7719.535557754007
