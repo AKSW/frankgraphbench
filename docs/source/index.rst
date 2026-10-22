@@ -6,7 +6,7 @@
 Welcome to FranKGraphbench's documentation!
 ==================================================================================
 
-This project is an outcome of `Google Summer of Code 2023 <https://summerofcode.withgoogle.com/programs/2023/projects/3NTZTLYb>`_ project at DBpedia, named FranKGraphBench: Reproducible Benchmarking for Knowledge Graph-based Recommendation. The Framework was accepted at the Resource Track from the 35th ACM International Conference on Information and Knowledge Management in Rome, Italy from the 7th to 11th November 2026.
+This project is an outcome of `Google Summer of Code 2023 <https://summerofcode.withgoogle.com/programs/2023/projects/3NTZTLYb>`_ project at DBpedia, named FranKGraphBench: Framework for ranking Knowledge Graph and reproducible Benchmarking. The Framework was accepted at the Resource Track from the 35th ACM International Conference on Information and Knowledge Management in Rome, Italy from the 7th to 11th November 2026.
 
 This project has three main components:
 
