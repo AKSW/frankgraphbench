@@ -1,4 +1,4 @@
-# FranKGraphBench: Reproducible Benchmarking for Knowledge Graph-based Recommendation
+# FranKGraphBench: Framework for ranking Knowledge Graph and reproducible Benchmarking
 [![DOI](https://zenodo.org/badge/646290327.svg)](https://doi.org/10.5281/zenodo.14513776)
 
 FranKGraphBench is a framework for reproducible benchmarking of Knowledge Graph-based recommender systems.
