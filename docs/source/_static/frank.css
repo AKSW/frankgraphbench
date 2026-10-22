@@ -1,83 +1,136 @@
-/* ==========================================================================
-   1. Main Content Link Colors & Hover States
-   ========================================================================== */
+/*
+ * Green accent theme for sphinx_rtd_theme
+ * Save as custom.css and load it after the Read the Docs theme CSS.
+ * Keeps the original charcoal sidebar and light documentation content.
+ */
 
-.wy-nav-content a, 
-.rst-content a.reference.internal, 
-.rst-content a.reference.external {
-    color: #619B54 !important;
+:root {
+  --frank-green: #7fc46b;          /* green from the supplied icon */
+  --frank-green-light: #e6f3e1;     /* subtle hover surface */
+  --frank-green-heading: #a5df95;   /* readable on charcoal */
+  --frank-green-dark: #285b32;     /* active state with white text */
+  --frank-green-border: #5d9f4d;
+  --frank-charcoal: #202b37;       /* dark blue-charcoal from the icon */
+  --frank-text: #263238;
+}
+
+/* Preserve the familiar dark Read the Docs sidebar. */
+.wy-nav-side {
+  background: var(--frank-charcoal);
+}
+
+.wy-side-nav-search {
+  background: #18222d;
+}
+
+.wy-side-nav-search input[type="text"] {
+  border-color: var(--frank-green-border);
+}
+
+.wy-side-nav-search input[type="text"]:focus {
+  border-color: var(--frank-green);
+  box-shadow: 0 0 0 2px rgb(127 196 107 / 28%);
+}
+
+/* Sidebar section headings / captions. */
+.wy-menu-vertical p.caption,
+.wy-menu-vertical .caption-text {
+  color: var(--frank-green-heading);
+}
+
+.wy-menu-vertical header,
+.wy-menu-vertical .caption {
+  color: var(--frank-green-heading);
+}
+
+/* Default links remain light for contrast against the dark sidebar. */
+.wy-menu-vertical a {
+  color: #f2f4f5;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+/* Hover: pale green surface with dark text for strong contrast. */
+.wy-menu-vertical a:hover,
+.wy-menu-vertical li.toctree-l1 > a:hover,
+.wy-menu-vertical li.toctree-l2 > a:hover,
+.wy-menu-vertical li.toctree-l3 > a:hover {
+  color: #18351d;
+  background: var(--frank-green-light);
+}
+
+/* Current page / selected navigation item. */
+.wy-menu-vertical li.current > a,
+.wy-menu-vertical li.on a {
+  color: var(--frank-text);
+  background: #f7faf6;
+  border-right: 3px solid var(--frank-green-border);
+}
+
+/* Keep nested current-page links readable and visually grouped. */
+.wy-menu-vertical li.current,
+.wy-menu-vertical li.current > ul,
+.wy-menu-vertical li.toctree-l2.current > a {
+  background: #edf5e9;
+}
+
+.wy-menu-vertical li.current > a:hover,
+.wy-menu-vertical li.on a:hover {
+  color: #18351d;
+  background: var(--frank-green-light);
+}
+
+/* Active/current item: darker green with white text. */
+.wy-menu-vertical li.current > a.current,
+.wy-menu-vertical li.current > a[aria-current="page"] {
+  color: #fff;
+  background: var(--frank-green-dark);
+  border-right-color: var(--frank-green);
+}
+
+/* Expand/collapse markers and other sidebar icons. */
+.wy-menu-vertical li button.toctree-expand,
+.wy-menu-vertical li span.toctree-expand {
+  color: var(--frank-green);
+}
+
+/* Main content stays close to the stock theme; add restrained green accents. */
+.wy-nav-content a,
+.rst-content a {
+  color: #2f7138;
 }
 
 .wy-nav-content a:hover,
-.rst-content a.reference.internal:hover {
-    color: #4e8042 !important;
+.rst-content a:hover {
+  color: #214f29;
+  text-decoration: underline;
 }
 
-
-/* ==========================================================================
-   2. Main Page Body Headers (Strictly Dark Gray/Black)
-   ========================================================================== */
-
-.rst-content h1, 
-.rst-content h2, 
-.rst-content h3, 
-.rst-content h4, 
-.rst-content h5, 
-.rst-content h6,
-.wy-nav-content h1, 
-.wy-nav-content h2, 
-.rst-content div.section h1, 
-.rst-content div.section h2 {
-    color: #2d3748 !important;
+.rst-content h1,
+.rst-content h2,
+.rst-content h3,
+.rst-content h4,
+.rst-content h5,
+.rst-content h6 {
+  color: #263238;
 }
 
-
-/* ==========================================================================
-   3. Sidebar Navigation & Readability Fixes
-   ========================================================================== */
-
-/* Main top-level section captions and headers */
-.wy-menu-vertical caption,
-.wy-menu-vertical p.caption,
-.wy-menu-vertical li.toctree-l1 > a {
-    color: #ffffff !important;
-    font-weight: bold !important;
+.rst-content h2 {
+  border-bottom: 2px solid var(--frank-green-light);
+  padding-bottom: 0.2em;
 }
 
-/* Standard sidebar links (ensures all unselected text is clearly visible) */
-.wy-menu-vertical a {
-    color: #d8d8d8 !important;
+/* Keyboard focus should remain obvious and accessible. */
+.wy-menu-vertical a:focus,
+.wy-nav-content a:focus,
+.rst-content a:focus,
+.wy-side-nav-search input:focus {
+  outline: 2px solid var(--frank-green);
+  outline-offset: 2px;
 }
 
-/* Nested sub-menu items (toctree-l2, l3, etc.) for crystal-clear readability */
-.wy-menu-vertical li.toctree-l2 a,
-.wy-menu-vertical li.toctree-l3 a {
-    color: #c9d1d9 !important;
-}
-
-/* Sidebar link hover state */
-.wy-menu-vertical a:hover {
-    color: #ffffff !important;
-    background-color: #4e8042 !important;
-}
-
-/* Active / currently selected page link in the sidebar */
-.wy-menu-vertical li.current > a {
-    color: #ffffff !important;
-    background-color: #619B54 !important;
-    font-weight: bold !important;
-}
-
-/* Click / Focus state for sidebar links */
-.wy-menu-vertical a:active,
-.wy-menu-vertical a:focus {
-    color: #ffffff !important;
-    background-color: #3b6332 !important;
-}
-
-/* Nested sub-menu active indicator */
-.wy-menu-vertical li.toctree-l1.current li.current > a {
-    border-left: 4px solid #619B54 !important;
-    background-color: rgba(97, 155, 84, 0.25) !important;
-    color: #ffffff !important;
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  .wy-menu-vertical a {
+    transition: none;
+  }
 }
