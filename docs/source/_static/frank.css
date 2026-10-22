@@ -2,17 +2,63 @@
 .wy-nav-content a, 
 .rst-content a.reference.internal, 
 .rst-content a.reference.external {
-    color: #7cc56b; /* Change to your preferred accent hex color */
+    color: #619B54; /* Change to your preferred accent hex color */
 }
 
 /* Change link hover color */
 .wy-nav-content a:hover,
 .rst-content a.reference.internal:hover {
-    color: #9efa89;
+    color: #4e8042;
 }
 
 /* Change sidebar active/current link accent background or text color */
 .wy-menu-verticalppings li.current a {
-    border-bottom-color: #7cc56b;
-    border-top-color: #7cc56b;
+    border-bottom-color: #619B54;
+    border-top-color: #619B54;
+}
+
+/* ==========================================================================
+   Chapter / Section Headings (In main page body)
+   ========================================================================== */
+
+/* Target main chapter titles (h1) and subheadings (h2, h3, h4, etc.) */
+.rst-content h1, 
+.rst-content h2, 
+.rst-content h3, 
+.rst-content h4, 
+.rst-content h5, 
+.rst-content h6 {
+    color: #619B54 !important; /* Matches your header green accent */
+}
+
+
+/* ==========================================================================
+   Navbar Links: Active, Hover, and Click States
+   ========================================================================== */
+
+/* Active / currently selected page link in the sidebar */
+.wy-menu-vertical li.current > a {
+    color: #ffffff !important;           /* Text color for active item */
+    background-color: #619B54 !important; /* Background highlight when active */
+    font-weight: bold;
+}
+
+/* Hover state for links in the left sidebar menu */
+.wy-menu-vertical a:hover {
+    background-color: #4e8042 !important; /* Slightly darker shade on hover */
+    color: #ffffff !important;
+}
+
+/* Click/Focus state (when clicking or focusing on a link in the navbar) */
+.wy-menu-vertical a:active,
+.wy-menu-vertical a:focus {
+    background-color: #3b6332 !important; /* Click feedback color */
+    color: #ffffff !important;
+}
+
+/* Selected item in nested sub-menus (child navigation items) */
+.wy-menu-vertical li.toctree-l1.current li.current > a {
+    border-left: 4px solid #619B54 !important; /* Left indicator bar */
+    background-color: #f3f9f2 !important;     /* Light green tint background */
+    color: #2c3e50 !important;
 }
