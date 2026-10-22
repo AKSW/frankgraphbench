@@ -15,7 +15,7 @@
 
 
 /* ==========================================================================
-   2. Main Page Body Headers (Strictly Black / Dark Gray)
+   2. Main Page Body Headers (Strictly Dark Gray/Black)
    ========================================================================== */
 
 .rst-content h1, 
@@ -33,41 +33,44 @@
 
 
 /* ==========================================================================
-   3. Sidebar Navigation: White Links, Green Header, Green Interactions
+   3. Sidebar Navigation & Section Header Styling
    ========================================================================== */
 
-/* Standard sidebar links and section headers (Getting Started, Contributing, etc.) */
-.wy-menu-vertical a,
+/* Main top-level section captions (Getting Started, Contributing, etc.) */
 .wy-menu-vertical caption,
-.wy-menu-vertical p.caption,
-.wy-menu-vertical li.toctree-l1 > a {
-    color: #ffffff !important; /* White text for readable sidebar */
+.wy-menu-vertical p.caption {
+    color: #619B54 !important;
+    font-weight: bold !important;
 }
 
-/* Hover state for sidebar links */
-.wy-menu-vertical a:hover,
-.wy-menu-vertical li.toctree-l1 > a:hover {
-    color: #619B54 !important; /* Turns green on hover */
-    background-color: rgba(255, 255, 255, 0.05) !important;
+/* Sidebar navigation links */
+.wy-menu-vertical a {
+    color: #d8d8d8 !important;
+}
+
+/* Sidebar link hover state */
+.wy-menu-vertical a:hover {
+    color: #ffffff !important;
+    background-color: #4e8042 !important;
 }
 
 /* Active / currently selected page link in the sidebar */
 .wy-menu-vertical li.current > a {
     color: #ffffff !important;
-    background-color: #619B54 !important; /* Green background highlight */
-    font-weight: bold;
+    background-color: #619B54 !important;
+    font-weight: bold !important;
 }
 
-/* Click / Focus state for navbar links */
+/* Click / Focus state for sidebar links */
 .wy-menu-vertical a:active,
 .wy-menu-vertical a:focus {
     color: #ffffff !important;
-    background-color: #4e8042 !important; /* Darker green click feedback */
+    background-color: #3b6332 !important;
 }
 
-/* Selected item in nested sub-menus */
+/* Nested sub-menu active indicator */
 .wy-menu-vertical li.toctree-l1.current li.current > a {
     border-left: 4px solid #619B54 !important;
-    background-color: rgba(97, 155, 84, 0.1) !important;
+    background-color: rgba(97, 155, 84, 0.15) !important;
     color: #ffffff !important;
 }
