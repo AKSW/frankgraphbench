@@ -62,3 +62,41 @@
     background-color: #f3f9f2 !important;     /* Light green tint background */
     color: #2c3e50 !important;
 }
+
+/* ==========================================================================
+   Sidebar Top-Level Section Names (Getting Started, Contributing, etc.)
+   ========================================================================== */
+
+/* Target category headers and section captions in the sidebar */
+.wy-menu-vertical caption,
+.wy-menu-vertical p.caption,
+.wy-menu-vertical li.toctree-l1 > a {
+    color: #4a5568 !important; /* Change sidebar section text to a clean dark gray */
+}
+
+/* Hover state for sidebar section titles */
+.wy-menu-vertical li.toctree-l1 > a:hover {
+    color: #2d3748 !important;
+}
+
+
+/* ==========================================================================
+   Main Page Body Headers (h1, h2, h3, etc. strictly black/gray)
+   ========================================================================== */
+
+.rst-content h1, 
+.rst-content h2, 
+.rst-content h3, 
+.rst-content h4, 
+.rst-content h5, 
+.rst-content h6 {
+    color: #2d3748 !important; /* Dark neutral gray/black for high readability */
+}
+
+/* Also target titles inside individual sections or article headers if present */
+.wy-nav-content h1, 
+.wy-nav-content h2, 
+.rst-content div.section h1, 
+.rst-content div.section h2 {
+    color: #2d3748 !important;
+}
