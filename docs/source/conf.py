@@ -34,7 +34,7 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
 
 # logo conf
-html_logo = "_static/frank-favicon.svg"
+html_logo = "frank-favicon.svg"
 html_theme_options = {
     "logo_only": False, 
     "collapse_navigation": True,
@@ -42,5 +42,5 @@ html_theme_options = {
 }
 
 html_css_files = [
-    'frank.css',
+    "frank.css",
 ]
