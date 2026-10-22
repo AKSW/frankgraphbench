@@ -1,2 +1,2 @@
 model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
-CoLaKG;model=medgemma:27b;emb_model=embeddinggemma-2:740m;walk_len=10 (CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []),578.654045343399,742.153003692627,736.9916942119598,759.4151887893677,759.5738608837128,715.3575585842133,68.94931240213215
+CoLaKG;model=medgemma:27b;emb_model=embeddinggemma-2:740m;walk_len=10 (CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []),580.3644049167633,753.9448227882385,750.2559118270874,756.3064799308777,748.114287853241,717.7971814632416,68.77511501669733

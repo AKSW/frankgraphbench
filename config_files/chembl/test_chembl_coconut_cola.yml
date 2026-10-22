@@ -84,7 +84,7 @@ experiment:
     - name: coLaKG
       config:
         save_weights: True
-        reset_cache: True
+        reset_cache: False
       parameters:
         item_name: compound
         model_host: http://mac.fritz.box:11434
