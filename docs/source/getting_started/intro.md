@@ -3,6 +3,8 @@
 This project is an outcome of [Google Summer of Code 2023](https://summerofcode.withgoogle.com/programs/2023/projects/3NTZTLYb)
 project at DBpedia named FranKGraphBench: Framework for ranking Knowledge Graph and reproducible Benchmarking. The Framework was accepted at the Resource Track from the 35th ACM International Conference on Information and Knowledge Management in Rome, Italy from the 7th to 11th November 2026.
 
+![project banner](../imgs/logos/frankgraphbench-wide-light.svg)
+
 This project has three main components:
 
 - **Data Integration**: for loading standard datasets that will be evaluated in the Recommendation task. It also allows enriching them with Knowledge Graphs and related datasets through a map and enrichment interface.

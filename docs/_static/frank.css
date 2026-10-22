@@ -1,0 +1,18 @@
+/* Change the primary accent color for links */
+.wy-nav-content a, 
+.rst-content a.reference.internal, 
+.rst-content a.reference.external {
+    color: #7cc56b; /* Change to your preferred accent hex color */
+}
+
+/* Change link hover color */
+.wy-nav-content a:hover,
+.rst-content a.reference.internal:hover {
+    color: #9efa89;
+}
+
+/* Change sidebar active/current link accent background or text color */
+.wy-menu-verticalppings li.current a {
+    border-bottom-color: #7cc56b;
+    border-top-color: #7cc56b;
+}

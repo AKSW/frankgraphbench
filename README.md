@@ -1,6 +1,8 @@
 # FranKGraphBench: Framework for ranking Knowledge Graph and reproducible Benchmarking
 [![DOI](https://zenodo.org/badge/646290327.svg)](https://doi.org/10.5281/zenodo.14513776)
 
+![frankgraphbench banner](docs/source/imgs/logos/frankgraphbench-wide-dark.svg)
+
 FranKGraphBench is a framework for reproducible benchmarking of Knowledge Graph-based recommender systems.
 It was first created on Google Summer of Code 2023 for Data Integration between DBpedia and some standard RS datasets in a reproducible framework and was accepted at the Resource Track from the 35th ACM International Conference on Information and Knowledge Management in Rome, Italy from the 7th to 11th November 2026.
 
