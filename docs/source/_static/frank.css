@@ -33,19 +33,26 @@
 
 
 /* ==========================================================================
-   3. Sidebar Navigation & Section Header Styling
+   3. Sidebar Navigation & Readability Fixes
    ========================================================================== */
 
-/* Main top-level section captions (Getting Started, Contributing, etc.) */
+/* Main top-level section captions and headers */
 .wy-menu-vertical caption,
-.wy-menu-vertical p.caption {
-    color: #619B54 !important;
+.wy-menu-vertical p.caption,
+.wy-menu-vertical li.toctree-l1 > a {
+    color: #ffffff !important;
     font-weight: bold !important;
 }
 
-/* Sidebar navigation links */
+/* Standard sidebar links (ensures all unselected text is clearly visible) */
 .wy-menu-vertical a {
     color: #d8d8d8 !important;
+}
+
+/* Nested sub-menu items (toctree-l2, l3, etc.) for crystal-clear readability */
+.wy-menu-vertical li.toctree-l2 a,
+.wy-menu-vertical li.toctree-l3 a {
+    color: #c9d1d9 !important;
 }
 
 /* Sidebar link hover state */
@@ -71,6 +78,6 @@
 /* Nested sub-menu active indicator */
 .wy-menu-vertical li.toctree-l1.current li.current > a {
     border-left: 4px solid #619B54 !important;
-    background-color: rgba(97, 155, 84, 0.15) !important;
+    background-color: rgba(97, 155, 84, 0.25) !important;
     color: #ffffff !important;
 }
