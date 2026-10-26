@@ -71,4 +71,4 @@ experiment:
   report:
     file: "experiment_results/chembl/test_chembl-trypanosoma_ephen.csv"
     execution_times:
-      file: "experiment_results/chembl/test_chembl-trypanosoma_colakg_ephen.csv"
+      file: "experiment_results/chembl/test_chembl-trypanosoma_ephen_times.csv"
