@@ -1,0 +1,2 @@
+model,fold-1_execution_time,fold-2_execution_time,fold-3_execution_time,fold-4_execution_time,fold-5_execution_time,execution_time_mean,execution_time_std
+CoLaKG;model=medgemma:27b;emb_model=embeddinggemma-2:740m;walk_len=10 (CPU: Apple M3 Ultra; RAM: 256GB; GPUs: []),161349.28933501244,755.5524778366089,760.0154390335083,761.1698460578918,774.638475894928,32880.13311476707,64234.57842627561
