@@ -1,0 +1,95 @@
+experiment:
+  dataset:
+    name: chembl-leishmania
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/chembl-leishmania/processed/item.csv
+      extra_features: # number columns don't work with translation model
+        - molecule_chembl_id
+        - molecular_weight # number
+        - number_ro5_violations # number
+        - alogp # number
+        - smiles
+        - standard_relation
+        - value(nM) # number
+        - cid # number
+        - molecular_formula
+        - inchi
+        - tpsa # number
+    # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/chembl-leishmania/processed/user.csv
+      extra_features: [target_type] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/chembl-leishmania/processed/rating.csv
+      timestamp: False
+
+  preprocess:
+    - method: filter_kcore
+      parameters:
+        k: 5 # guarantees enough samples for for kfold
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+    test:
+      method: k_fold
+      k: 5
+      level: "user"
+
+  models:
+    - name: coLaKG
+      config:
+        save_weights: True
+        reset_cache: False
+      parameters:
+        item_name: compound
+        model_host: http://mac.fritz.box:11434
+        model_name: medgemma:27b
+        emb_model_name: embeddinggemma-2:740m
+        # MANDATORY: item_system_prompt and user_system_prompt are required (no defaults).
+        # They are the instructions sent to the LLM and drive how it writes the
+        # semantic descriptions (item and user) that are then embedded and used for
+        # recommendations. Tune them to steer the generated descriptions.
+        item_system_prompt: >-
+          Assume you are an expert in computational drug discovery to attack leishmania and related proteins.
+          You will be given some information about a compound that might or not be effective against it.
+          Based on this information and your world knowledge,
+          please analyze and summarize the characteristics of this compound,
+          and if it would be effective against leishmania.
+          Your response should be a coherent paragraph with no more than 200 words.
+        user_system_prompt: >-
+          Assume you are an expert in computational drug discovery to attack leishmania and related proteins.
+          You will be given information about leishmania or a related protein.
+          Based on this information and your world knowledge,
+          please analyze and summarize the characteristics of the organism or that single protein,
+          and analyze what kind of compound could be effective to attack it.
+          Your response should be a coherent paragraph with no more than 200 words.
+        walk_len: 10
+        latent_dim_rec: 64
+        lightGCN_n_layers: 3
+        use_drop_edge: 1
+        keep_prob: 0.8
+        bpr_batch_size: 2048
+        test_u_batch_size: 100
+        neighbor_k: 10
+        dropout_i: 0.6
+        dropout_u: 0.6
+        dropout_n: 0.6
+        semantic_hid_dim: 32
+        device: auto
+        # Limits for the LLM/embedding calls; null => use every node.
+        # Set a small integer (e.g. 10) to smoke-test the pipeline quickly.
+        item_llm_limit: null
+        user_llm_limit: null
+        epochs: 1000
+
+  evaluation:
+    k: 100
+    relevance_threshold: 1
+    metrics: [F-score, recall, precision, MAP, nDCG]
+
+  report:
+    file: "experiment_results/chembl/test_chembl-leishmania_colakg.csv"
+    execution_times:
+      file: "experiment_results/chembl/test_chembl-leishmania_colakg_times.csv"
