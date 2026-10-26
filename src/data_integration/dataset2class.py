@@ -38,5 +38,9 @@ dataset2class = {
     'chembl-trypanosoma': {
         'submodule': 'datasets.chembl',
         'class': 'CHEMBLTrypanosoma'
+    },
+    'chembl-leishmania': {
+        'submodule': 'datasets.chembl',
+        'class': 'CHEMBLLeishmania'
     }
 }

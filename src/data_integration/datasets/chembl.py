@@ -22,6 +22,12 @@ class CHEMBL(Dataset):
         self.user_separator = ","
         self.rating_separator = ","
 
+         # Input file names within input_path. Both variants ship the same
+         # "mixed.csv" binding table and the same CoCoNut CSV, so these
+         # are shared defaults a variant can override if it uses others.
+        self.mixed_filename = "mixed.csv"
+        self.coconut_filename = "coconut_csv-10-2026.csv"
+
          # Item (chemical compound) fields. Every column of mixed.csv except the
          # two target columns is kept; the standardized name keeps the original
          # ChEMBL column name and only appends the "::type" suffix, matching the
@@ -112,9 +118,6 @@ class CHEMBL(Dataset):
             "cas": "cas::string",
         }
 
-class CHEMBLTrypanosoma(CHEMBL):
-    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
-        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
 
     def load_item_data(self) -> pd.DataFrame:
         """
@@ -130,7 +133,7 @@ class CHEMBLTrypanosoma(CHEMBL):
         :return: pd.DataFrame with one row per item (molecule) and a sequential
         ``item_id::string`` column.
         """
-        filename = os.path.join(self.input_path, "mixed.csv")
+        filename = os.path.join(self.input_path, self.mixed_filename)
         df = pd.read_csv(filename, sep=self.item_separator)
 
             # keep only the item fields (i.e. drop the two target columns)
@@ -163,7 +166,7 @@ class CHEMBLTrypanosoma(CHEMBL):
         :return: pd.DataFrame with one row per user (target) and a sequential
         ``user_id::string`` column.
         """
-        filename = os.path.join(self.input_path, "mixed.csv")
+        filename = os.path.join(self.input_path, self.mixed_filename)
         df = pd.read_csv(filename, sep=self.user_separator)
 
             # extract the unique targets, each becoming a single user
@@ -196,7 +199,7 @@ class CHEMBLTrypanosoma(CHEMBL):
         :return: pd.DataFrame with columns ``user_id::string``,
         ``item_id::string`` and ``rating::number``.
         """
-        filename = os.path.join(self.input_path, "mixed.csv")
+        filename = os.path.join(self.input_path, self.mixed_filename)
         df = pd.read_csv(filename, sep=self.rating_separator)
 
         # the processed item and user files must exist beforehand
@@ -243,7 +246,7 @@ class CHEMBLTrypanosoma(CHEMBL):
         return pd.DataFrame(rating_dict)
     
     def entity_linking(self, df_item) -> pd.DataFrame():
-        filename = os.path.join(self.input_path, "coconut_csv-10-2026.csv")
+        filename = os.path.join(self.input_path, self.coconut_filename)
         lf = pl.scan_csv(filename)
 
         lf_item = pl.from_pandas(df_item).lazy()
@@ -261,7 +264,7 @@ class CHEMBLTrypanosoma(CHEMBL):
         return df_map
 
     def enrich(self, df_map) -> pd.DataFrame():
-        filename = os.path.join(self.input_path, "coconut_csv-10-2026.csv")
+        filename = os.path.join(self.input_path, self.coconut_filename)
         lf = pl.scan_csv(filename)
 
         lf_map = pl.from_pandas(df_map).lazy()
@@ -287,3 +290,16 @@ class CHEMBLTrypanosoma(CHEMBL):
             )
 
         return df_enrich
+
+
+class CHEMBLTrypanosoma(CHEMBL):
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
+        self.dataset_name = "CHEMBL Trypanosoma"
+
+
+
+class CHEMBLLeishmania(CHEMBL):
+    def __init__(self, input_path, output_path, n_workers=1, sparql_endpoint="http://141.57.8.18:8896/sparql"):
+        super().__init__(input_path, output_path, n_workers, sparql_endpoint)
+        self.dataset_name = "CHEMBL Leishmania"
