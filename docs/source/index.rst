@@ -22,7 +22,6 @@ This project has three main components:
 .. image:: imgs/framework.svg
    :alt: project pipeline
 
-
 .. toctree::
    :maxdepth: 2
    :caption: Getting Started:
@@ -50,6 +49,30 @@ This project has three main components:
    :caption: Benchmark Results:
 
    benchmark_results/results
+
+How to Cite
+===========
+
+FranKGraphBench was published under `FranKGraphBench: Reproducible Benchmarking for Knowledge Graph-based Recommendation <https://doi.org/10.1145/3799682.3840189>`_ in CIKM 2026. To cite it use the following bibtex:
+
+.. code-block:: bibtex
+
+   @inproceedings{carmo2026FranK,
+     author = {Viviurka Do Carmo, Paulo and Lopes, Alvaro Jos{\'e} and Silva G{\^o}lo, Marcos Paulo and Marx, Edgard},
+     title = {FranKGraphBench: Reproducible Benchmarking for Knowledge Graph-based Recommendation},
+     year = {2026},
+     isbn = {9798400725395},
+     publisher = {Association for Computing Machinery},
+     address = {New York, NY, USA},
+     url = {https://doi.org/10.1145/3799682.3840189},
+     doi = {10.1145/3799682.3840189},
+     booktitle = {Proceedings of the 35th ACM International Conference on Information and Knowledge Management},
+     pages = {9024–9029},
+     numpages = {6},
+     keywords = {knowledge graphs, recommender systems, reproducibility},
+     location = {Rome, Italy},
+     series = {CIKM '26}
+   }
 
 Indices and tables
 ==================
