@@ -50,6 +50,16 @@ This project has three main components:
 
    benchmark_results/results
 
+Half-day Workshop
+=================
+
+## Half-day 
+
+Sign-up now and vote on your prefered dates for participating in an online workshop on reproducible recommendation benchmarking with FranKGraphBenchan. It will teach you how to create your configuration file and run experiments using FranKGraphBench. Sign up at the `google forms <https://forms.gle/YDZ9t1uPBtgE3cxq8>`_ or by reading the QR Code:
+
+.. image:: imgs/frankgraphbench-form-qr-transparent.png
+   :alt: workshop qr
+
 How to Cite
 ===========
 

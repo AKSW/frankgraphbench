@@ -16,6 +16,12 @@ As part of the Data Integration module we fixed and used the DBpedia 2016-10 cor
 
 ![project pipeline](../imgs/framework.svg)
 
+## Half-day online workshop on reproducible recommendation benchmarking with FranKGraphBench
+
+Sign-up now and vote on your prefered dates for participating in an online workshop that will teach you how to create your configuration file and run experiments using FranKGraphBench. Sign up at the [google forms](https://forms.gle/YDZ9t1uPBtgE3cxq8) or by reading the QR Code:
+
+![workshop form](docs/source/imgs/frankgraphbench-form-qr-transparent-light.png)
+
 ## How to Cite
 
 FranKGraphBench was published under [FranKGraphBench: Reproducible Benchmarking for Knowledge Graph-based Recommendation](https://doi.org/10.1145/3799682.3840189) in CIKM 2026. To cite it use the following bibtex:
