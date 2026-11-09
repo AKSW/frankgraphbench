@@ -14,7 +14,7 @@ Check the [docs](https://frankgraphbench.readthedocs.io/en/latest/index.html) fo
 
 Sign-up now and vote on your prefered dates for participating in an online workshop that will teach you how to create your configuration file and run experiments using FranKGraphBench. Sign up at the [google forms](https://forms.gle/YDZ9t1uPBtgE3cxq8) or by reading the QR Code:
 
-![workshop form](docs/source/imgs/frankgraphbench-form-qr-transparent-light.png)
+![workshop form](docs/source/imgs/frankgraphbench-form-qr-readme-on-dark.svg)
 
 ## How to Cite
 
