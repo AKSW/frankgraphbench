@@ -52,8 +52,20 @@ class Data(object):
         user_dict = dict()
         inter_mat = list()
 
-        for index, row in ratings_triples.groupby('head').apply(lambda x: x['tail']).items():
-            inter_mat.append([index[0], row])
+        # Build the [head, tail] rows by iterating the groupby directly.
+        # The previous ``groupby('head').apply(lambda x: x['tail']).items()``
+        # assumed a two-level (group_label, within_group_pos) index whose first
+        # element it could slice with ``index[0]``. That assumption holds only when
+        # several groups exist: with a single group (e.g. a test split where every
+        # sampled rating belongs to the same user, as in fold 5 of
+        # chembl-trypanosoma-coconut) pandas collapses the apply result to a
+        # single-level DataFrame with an int index, so ``index`` is an int and
+        # ``index[0]`` raises ``TypeError: 'int' object is not subscriptable``.
+        # Iterating the groups directly is index-collapsing-independent and yields
+        # the identical (head, tail) rows in the same order.
+        for head, group in ratings_triples.groupby('head'):
+            for tail in group['tail']:
+                inter_mat.append([head, tail])
 
         for user in ratings_triples['head'].unique():
             items = ratings_triples['tail'][ratings_triples['head'] == user].to_list()
