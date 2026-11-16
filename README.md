@@ -1,5 +1,7 @@
 # FranKGraphBench: Framework for ranking Knowledge Graph and reproducible Benchmarking
-[![DOI](https://zenodo.org/badge/646290327.svg)](https://doi.org/10.5281/zenodo.14513776)
+[![paper DOI](docs/source/imgs/frankgraphbench-paper-badge.svg)](https://doi.org/10.1145/3799682.3840189)
+[![code DOI](https://zenodo.org/badge/646290327.svg)](https://doi.org/10.5281/zenodo.14513776)
+
 
 ![frankgraphbench banner](docs/source/imgs/logos/frankgraphbench-wide-dark.svg)
 
