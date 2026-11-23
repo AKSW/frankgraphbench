@@ -1,6 +1,7 @@
 # FranKGraphBench: Framework for ranking Knowledge Graph and reproducible Benchmarking
 [![paper DOI](docs/source/imgs/frankgraphbench-paper-badge.svg)](https://doi.org/10.1145/3799682.3840189)
 [![code DOI](https://zenodo.org/badge/646290327.svg)](https://doi.org/10.5281/zenodo.14513776)
+[![PyPI version](https://img.shields.io/pypi/v/frankgraphbench?style=flat&color=blue)](https://pypi.org/project/FranKGraphBench/)
 
 
 [![frankgraphbench banner](docs/source/imgs/logos/frankgraphbench-wide-dark.svg)](https://frankgraphbench.readthedocs.io/en/latest/)

@@ -3,6 +3,16 @@ from setuptools import find_packages, setup
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+# Single source of truth: the dependency set is declared once, in requirements.txt
+# (shipped in the sdist via MANIFEST.in), so install_requires stays in sync
+# automatically and future upgrades edit only one file.
+with open("requirements.txt", "r") as fh:
+    install_requires = [
+        line.strip()
+        for line in fh
+        if line.strip() and not line.strip().startswith("#")
+    ]
+
 setup(
     name="FranKGraphBench",
     version="0.2.1",
@@ -18,12 +28,9 @@ setup(
     package_dir={
         "": "src",
     },
-    install_requires=[
-        'gensim', 'joblib', 'networkx', 'numpy', 'pandas', 'python-dateutil', 'pytz', 'PyYAML', 'scikit-learn', 'scipy', 'six', 'smart-open',
-        'threadpoolctl', 'tqdm', 'tzdata', 'pykeen', 'torch', 'py-cpuinfo', 'gputil', 'psutil', 'sentence-transformers', 'isodate',
-        'Levenshtein', 'pyparsing', 'python-Levenshtein', 'rapidfuzz', 'rdflib', 'SPARQLWrapper', 'thefuzz',
-        'beautifulsoup4', 'matplotlib', 'contourpy', 'multiprocess', 'ollama', 'polars', 'pyarrow',
-    ],
+    # install_requires is read from requirements.txt above (single source of truth;
+    # kept in sync automatically and shipped in the sdist via MANIFEST.in).
+    install_requires=install_requires,
     entry_points={
         'console_scripts': [
             'framework=framework:framework',

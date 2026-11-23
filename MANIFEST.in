@@ -1,0 +1,7 @@
+# Include the dependency manifests and project metadata in the sdist so that
+# `install_requires` can be resolved from requirements.txt at build time and
+# `pip install frankgraphbench` (from the sdist/wheel) is fully self-contained.
+include requirements.txt
+include docs/requirements.txt
+include README.md
+include LICENSE
