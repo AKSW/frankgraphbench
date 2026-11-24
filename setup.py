@@ -17,7 +17,7 @@ setup(
     name="FranKGraphBench",
     version="0.2.1",
     author="Paulo do Carmo and Alvaro Lopes",
-    author_email='paulo.carmo@htwk-leipzig.de',
+    author_email='carmo@infai.org',
     url='https://github.com/AKSW/frankgraphbench/tree/main/',
     description="pip install package for frankgraphbench.",
     long_description=long_description,

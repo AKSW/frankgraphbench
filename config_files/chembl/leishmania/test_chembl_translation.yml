@@ -1,0 +1,126 @@
+experiment:
+  dataset:
+    name: chembl-leishmania
+    item: # infos related to item dataset (mandatory, at least item_id)
+      path: datasets/chembl-leishmania/processed/item.csv
+      extra_features: # number columns don't work with translation model
+        - molecule_chembl_id
+        # - molecular_weight # number
+        # - number_ro5_violations # number
+        # - alogp # number
+        - smiles
+        - standard_relation
+        # - value(nM) # number
+        # - cid # number
+        - molecular_formula
+        - inchi
+        # - tpsa # number
+    # features(columns) beside item_id to be used
+    user: # mandatory (at least user_id)
+      path: datasets/chembl-leishmania/processed/user.csv
+      extra_features: [target_type] # features beside user_id
+    ratings: # mandatory (at least [user_id, item_id, rating])
+      path: datasets/chembl-leishmania/processed/rating.csv
+      timestamp: False
+
+  preprocess:
+    - method: filter_kcore
+      parameters:
+        k: 5 # guarantees enough samples for for kfold
+        iterations: 1
+        target: user # user or rating
+
+  split:
+    seed: 42
+    test:
+      method: k_fold
+      k: 5
+      level: "user"
+
+  models:
+    - name: transE
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        scoring_fct_norm: 1
+        epochs: 5
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: transH
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        scoring_fct_norm: 2
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: transR
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        relation_dim: 90
+        scoring_fct_norm: 2
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: transD
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 150
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: tuckER
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 200
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: rESCAL
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 50
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: distMult
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 50
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: complEx
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 100
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+    - name: rotatE
+      config:
+        save_weights: True
+      parameters:
+        embedding_dim: 200
+        epochs: 25
+        seed: 42
+        triples: all # only (ratings) or (all) triples for training
+
+  evaluation:
+    k: 100
+    relevance_threshold: 1
+    metrics: [F-score, recall, precision]
+
+  report:
+    file: "experiment_results/chembl/test_chembl-leishmania_translation.csv"
+    execution_times:
+      file: "experiment_results/chembl/test_chembl-leishmania_translation_times.csv"
